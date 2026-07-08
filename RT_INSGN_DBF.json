@@ -1,0 +1,33 @@
+{
+  "table": "RT_INSGN_DBF",
+  "description": "Return Swap instrument/generator configuration table. One row per generator (template). Stores top-level generator settings and security/performance leg configuration. Used by all Return Swap product types (BRS, equity TRS, index TRS). Joined from RT_LOAN_DBF via M_GEN_NUM or M_GEN_INSNUM. Column suffix 0 = security/performance leg.",
+  "source": "MX_FIELDS_DOC_V0.xlsx — internal Qaracter documentation, June 2026",
+  "fields": [
+    { "field_label": "Financing template label", "subtype": "General", "db_column": "M_INSTR", "db_column_uncertain": false, "values": null, "remark": "Customized return swap:\nRT_LOAN_DBF[M_GEN_NUM] -> RT_INSGN_DBF[M_GEN_NUM]\nFilter RT_LOAN_DBF.M_GEN_NUM > 0\n\nDefault return swap generator:\nRT_LOAN_DBF[M_GEN_INSNUM] -> RT_INSGN_DBF[M_GEN_NUM]\nFilter RT_LOAN_DBF.M_GEN_NUM < 0" },
+    { "field_label": "Description", "subtype": "General", "db_column": "M_INSTR_DESC", "db_column_uncertain": false, "values": null, "remark": null },
+    { "field_label": "Evaluation", "subtype": "General", "db_column": "M_EVAL_MODE", "db_column_uncertain": false, "values": { "0": "Default", "1": "Net Present Value", "2": "Accrual", "3": "Accrual-PV effect" }, "remark": null },
+    { "field_label": "Flows Projection Delay", "subtype": "General", "db_column": "M_FLP_MOD", "db_column_uncertain": false, "values": { "0": "+1 OPEN DAY", "1": "redefined" }, "remark": null },
+    { "field_label": "Flows Projection Delay Label", "subtype": "General", "db_column": "M_FLP", "db_column_uncertain": false, "values": null, "remark": null },
+    { "field_label": "Stub Period Position", "subtype": "General", "db_column": "M_BROKEN", "db_column_uncertain": false, "values": { "0": "Up front", "1": "In arrears", "2": "None", "3": "Both ends (backward)", "5": "Both ends (forward)" }, "remark": null },
+    { "field_label": "Implied capital group direction", "subtype": "General", "db_column": "M_FINCPDIR", "db_column_uncertain": false, "values": { "0": "quantity", "1": "price", "2": "haircut", "3": "nominal" }, "remark": null },
+    { "field_label": "Non-settled cash handling", "subtype": "General", "db_column": "M_NSC_HNDL", "db_column_uncertain": false, "values": { "0": "FC: all non-settled (known but yet to be paid) cash are pushed in Future Cash", "1": "MV: all non-settled cash are pushed in Market Value" }, "remark": null },
+    { "field_label": "Early Settlement", "subtype": "General", "db_column": "M_FLAGS", "db_column_uncertain": false, "values": null, "remark": null },
+    { "field_label": "Settlement Delay", "subtype": "General", "db_column": "M_SETTL_MOD", "db_column_uncertain": false, "values": { "0": "Inherited from currency", "1": "for Specific delay", "3": "for inherited from Security" }, "remark": null },
+    { "field_label": "Valuation mode", "subtype": "General", "db_column": "M_GEN_VAL_S_MOD", "db_column_uncertain": false, "values": { "0": "Inherited from security", "1": "Specific delay" }, "remark": null },
+    { "field_label": "Valuation mode label", "subtype": "General", "db_column": "M_GEN_VAL_S", "db_column_uncertain": false, "values": null, "remark": null },
+    { "field_label": "Future Cash Proceed cutoff", "subtype": "General", "db_column": "M_FCPCUTOFF", "db_column_uncertain": false, "values": null, "remark": null },
+    { "field_label": "Increase Lot Fungibility Mode", "subtype": "General", "db_column": "M_INC_FUNG", "db_column_uncertain": false, "values": { "0": "AlwaysEffectiveDate", "1": "ZeroDayIfMatchingFixingDate", "2": "AlwaysZeroDayOnlyAtInsertion", "3": "ZeroDayOnResetDate" }, "remark": null },
+    { "field_label": "Multi-Currency Propagation", "subtype": "Security leg", "db_column": "M_FLAGS", "db_column_uncertain": false, "values": { "18": "Unchecked", "2066": "Checked" }, "remark": null },
+    { "field_label": "First Prices Inherited", "subtype": "Security leg", "db_column": "M_LNGN_SFLGS0", "db_column_uncertain": false, "values": { "0": "From Trade (Customized)", "512": "From Closing" }, "remark": null },
+    { "field_label": "Interest Flows Rounding", "subtype": "Security leg", "db_column": "M_ROUND_RUL0", "db_column_uncertain": false, "values": { "0": "Round", "1": "Nearest", "2": "By Default", "3": "By Access" }, "remark": null },
+    { "field_label": "Rounding Decimal", "subtype": "Security leg", "db_column": "M_DECIMALS0", "db_column_uncertain": false, "values": null, "remark": null },
+    { "field_label": "Substitution In Case Of CA", "subtype": "Security leg", "db_column": "M_CA_SUBST0", "db_column_uncertain": false, "values": { "1": "Checked", "0": "Unchecked" }, "remark": null },
+    { "field_label": "Initial Exchange", "subtype": "Security leg", "db_column": "M_INIT_CAP0", "db_column_uncertain": false, "values": { "2": "Unchecked", "1": "Checked" }, "remark": null },
+    { "field_label": "Intermediate Payments", "subtype": "Security leg", "db_column": "M_INTER_CAP0", "db_column_uncertain": false, "values": { "2": "Unchecked", "1": "Checked" }, "remark": null },
+    { "field_label": "Final Exchange", "subtype": "Security leg", "db_column": "M_FINAL_CAP0", "db_column_uncertain": false, "values": { "2": "Unchecked", "1": "Checked" }, "remark": null }
+  ],
+  "fields_missing_db_mapping": [
+    { "field_label": "Security Rounding", "subtype": "Security leg", "db_column": null, "db_column_uncertain": null, "values": null, "remark": null },
+    { "field_label": "NPV Currency", "subtype": "Security leg", "db_column": null, "db_column_uncertain": null, "values": null, "remark": null }
+  ]
+}

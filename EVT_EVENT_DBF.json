@@ -1,0 +1,35 @@
+{
+  "table": "EVT_EVENT_DBF",
+  "description": "Trade event definition table. One row per event execution. Stores who performed the event and from which user group. Joined to EVT_IMP_DBF via EVT_EVENT_DBF.M_REFERENCE = EVT_IMP_DBF.M_EVT.",
+  "source": "Internal Qaracter documentation, June 2026",
+  "join_keys": {
+    "to_EVT_IMP_DBF": "EVT_EVENT_DBF.M_REFERENCE = EVT_IMP_DBF.M_EVT"
+  },
+  "fields": [
+    {
+      "field_label": "Event Reference",
+      "subtype": "General",
+      "db_column": "M_REFERENCE",
+      "db_column_uncertain": false,
+      "values": null,
+      "remark": "Primary key. Join target from EVT_IMP_DBF.M_EVT."
+    },
+    {
+      "field_label": "Username",
+      "subtype": "General",
+      "db_column": "M_USER",
+      "db_column_uncertain": false,
+      "values": null,
+      "remark": "Username of the user who performed the event. PII — must be tokenised before any LLM processing."
+    },
+    {
+      "field_label": "User Group",
+      "subtype": "General",
+      "db_column": "M_GROUP",
+      "db_column_uncertain": false,
+      "values": null,
+      "remark": "The Murex user group from which the event was performed (e.g. SLBMO_BOES, GL_PROCESS)."
+    }
+  ],
+  "fields_missing_db_mapping": []
+}

@@ -1,0 +1,27 @@
+{
+  "table": "EVT_MAP_DBF",
+  "description": "Event type mapping table. Maps internal event type codes to human-readable event labels. One row per event type. Joined to EVT_IMP_DBF via EVT_MAP_DBF.M_EVT_INTID = EVT_IMP_DBF.M_EVT_INTID.",
+  "source": "Internal Qaracter documentation, June 2026",
+  "join_keys": {
+    "to_EVT_IMP_DBF": "EVT_MAP_DBF.M_EVT_INTID = EVT_IMP_DBF.M_EVT_INTID"
+  },
+  "fields": [
+    {
+      "field_label": "Event Internal ID",
+      "subtype": "General",
+      "db_column": "M_EVT_INTID",
+      "db_column_uncertain": false,
+      "values": null,
+      "remark": "Internal event type code. Primary join key from EVT_IMP_DBF.M_EVT_INTID."
+    },
+    {
+      "field_label": "Event Display Label",
+      "subtype": "General",
+      "db_column": "M_EVT_DLABEL",
+      "db_column_uncertain": false,
+      "values": null,
+      "remark": "Human-readable label for the event type (e.g. 'New Trade', 'Early Termination', 'Rate Reset'). This is the primary field for identifying what type of event was performed on a trade."
+    }
+  ],
+  "fields_missing_db_mapping": []
+}

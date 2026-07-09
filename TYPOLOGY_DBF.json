@@ -1,0 +1,28 @@
+{
+  "table": "TYPOLOGY_DBF",
+  "description": "Typology reference table. One row per typology. Stores client-customized product typology labels used to classify trades at a finer level than the standard Murex Family/Group/Type hierarchy. Unlike M_TRN_FMLY, M_TRN_GRP, and M_TRN_TYPE (which are standard Murex fields), typologies are defined and maintained by each client. Joined to TRN_HDR_DBF via TRN_HDR_DBF.M_TYPOLOGY = TYPOLOGY_DBF.M_REFERENCE.",
+  "source": "Internal Qaracter documentation, June 2026",
+  "join_keys": {
+    "from_TRN_HDR_DBF": "M_TYPOLOGY",
+    "to_TYPOLOGY_DBF": "M_REFERENCE"
+  },
+  "fields": [
+    {
+      "field_label": "Typology Reference",
+      "subtype": "General",
+      "db_column": "M_REFERENCE",
+      "db_column_uncertain": false,
+      "values": null,
+      "remark": "Primary key. Join target from TRN_HDR_DBF.M_TYPOLOGY."
+    },
+    {
+      "field_label": "Typology Label",
+      "subtype": "General",
+      "db_column": "M_LABEL",
+      "db_column_uncertain": false,
+      "values": null,
+      "remark": "Human-readable label of the typology as configured by the client. Examples: 'Bond Return Swap', 'Commodity Swap', 'Interest Rate Swap', 'Cross Currency Swap'."
+    }
+  ],
+  "fields_missing_db_mapping": []
+}

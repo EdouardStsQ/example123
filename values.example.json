@@ -1,0 +1,85 @@
+{
+  "_readme": [
+    "03-sql/values.json - the ONLY thing the agent writes for the SQL. scripts/render_sql.py builds the four .sql files from it.",
+    "Copy this file to RUN_FOLDER/03-sql/values.json and replace every <...>. The renderer refuses any <...>, TODO or TBD left.",
+    "Every value is {\"value\": ..., \"source\": ...}. A source names a query ID (Q-...), a 00-inputs.md input, or a decision (decision N = row N of 00-decisions.md).",
+    "Numbers may be written as JSON numbers or strings (\"20007.4\"). Keys starting with _ are comments and are ignored.",
+    "Steps: every walk step has an entry. status is one of the eight canonical statuses and must equal the step's row in 02-findings.md.",
+    "  PROPOSED / DERIVED = build it. SME_DECISION_REQUIRED / EVIDENCE_REQUIRED / EXTERNAL_CHECK_REQUIRED = held (add waits_on); a held step makes the files a DRAFT.",
+    "Never write or edit a .sql file. Wrong SQL means wrong values or a template defect: fix values.json, or report the template defect."
+  ],
+  "run": {
+    "run_no": "<run number, e.g. 6>",
+    "run_date": "<YYYY-MM-DD>",
+    "branch_code": "<e.g. NY_SCH>",
+    "target_env": "<e.g. Tier 2 PRE>",
+    "env_slug": "<e.g. tier2-pre>"
+  },
+  "environment": {
+    "target_auth_code":        {"value": "<auth_code from Q-G3c (a)>", "source": "Q-G3c (a)"},
+    "sequence_function_owner": {"value": "<OWNER of F___SEQUENCE, Q-G3b (b)>", "source": "Q-G3b (b)"},
+    "precommit_package_owner": {"value": "<OWNER of PKG_ENGPRECOMMIT, Q-G3b (d)>", "source": "Q-G3b (d)"}
+  },
+  "identity": {
+    "_note": "Q-G7 derivation per destination object (Q-G6 as cross-check). Four owners, five extensions, all different.",
+    "owner_engconf":      {"value": "<BOX_ENG_Config>", "source": "Q-G7 / Q-G6"},
+    "ext_engconf_x":      {"value": "<apBranch>", "source": "Q-G7 / Q-G6"},
+    "ext_engaccrconf":    {"value": "<amAccrualConfig>", "source": "Q-G7 / Q-G6"},
+    "ext_config_accrual": {"value": "<BOX_ENG_Config_Accrual>", "source": "Q-G7 / Q-G6"},
+    "ext_conf_by_book":   {"value": "<amConfigByBook>", "source": "Q-G7 / Q-G6"},
+    "owner_engfcurve":    {"value": "<BOX_ENG_FixingCurve>", "source": "Q-G7 / Q-G6"},
+    "ext_englkfc":        {"value": "<apQuoteReference>", "source": "Q-G7 / Q-G6"},
+    "owner_errors_fe":    {"value": "<BOX - Limit Error Assign>", "source": "Q-G7 / Q-G6"},
+    "owner_days_matured": {"value": "<BOX_ENG_Days_Matured>", "source": "Q-G7 / Q-G6"}
+  },
+  "branch": {
+    "branch_pk":    {"value": "<Q-G1>", "source": "Q-G1; 00-inputs.md BRANCH_PK"},
+    "source_front": {"value": "<Murex instance>", "source": "00-inputs.md SOURCE_FRONT; Q-02c"},
+    "approved_instruments": [
+      {"value": "<instrument PK>", "name": "<instrument name>", "source": "00-inputs.md APPROVED_INSTRUMENTS"}
+    ]
+  },
+  "gbo": {
+    "config_pk": {"value": "<GBO MIS config, FK_MISCONFIG>", "source": "Q-G2 level 1"},
+    "curve_pk":  {"value": "<GBO curve>", "source": "Q-02 FK_CURVEMAN; Q-03"}
+  },
+  "steps": {
+    "1":  {"status": "CONFIRMED_ABSENT", "source": "Q-01"},
+    "2":  {"status": "PROPOSED", "source": "Q-02",
+           "description": {"value": "<DESCRIPTION exactly as mined>", "source": "Q-02"},
+           "fk_calendar": {"value": "<FK_CALENDAR>", "source": "Q-02"},
+           "fk_currency": {"value": "<FK_CURRENCY>", "source": "Q-02"}},
+    "3":  {"status": "PROPOSED", "source": "Q-03",
+           "description": {"value": "<DESCRIPTION exactly as mined>", "source": "Q-03"},
+           "fk_currency": {"value": "<FK_CURRENCY>", "source": "Q-03"}},
+    "4":  {"status": "PROPOSED", "source": "Q-04c",
+           "_note": "the set itself is read from 01-evidence/Q-04c-quote-ref-column-gbo.csv, never typed here",
+           "expected_count": {"value": "<N_FK_BS>", "source": "Q-04c (b)"}},
+    "4b": {"status": "CONFIRMED_ABSENT", "source": "Q-G7 (Question G, closed 2026-09-22)"},
+    "5":  {"status": "PROPOSED", "source": "Q-01c"},
+    "6":  {"status": "PROPOSED", "source": "Q-05, Q-05d", "decisions": [1],
+           "_note": "one row per approved instrument; every column present - null for an empty one; four NOT NULL",
+           "rows": [
+             {"FK_INSTRUMENT": "<PK>", "FK_FEEFIRSTDAYSEL": "<n>", "FK_INTFIRSTDAYSEL": "<n>", "INTCOMMONBASIS": "<n>",
+              "BYTRIGGER": "<n>", "BYRESIDUAL": "<n or null>", "INTERVAL": "<n or null>", "FK_BASIS": "<n or null>",
+              "FK_MDRBASIS": "<n or null>", "source": "decision 1; Q-05"}
+           ]},
+    "7":  {"status": "PROPOSED", "source": "Q-06, Q-06c",
+           "_note": "rows are read from 01-evidence/Q-06c-accrual-exceptions-emit.csv, filtered to branch_pk and the approved instruments",
+           "expected_count": {"value": "<rows after both filters>", "source": "Q-06c"}},
+    "8":  {"status": "CONFIRMED_ABSENT", "source": "Q-07"},
+    "9":  {"status": "CONFIRMED_ABSENT", "source": "Q-08 (Question G, closed 2026-09-22)"},
+    "10": {"status": "CONFIRMED_ABSENT", "source": "Q-09 (Question G, closed 2026-09-22)"},
+    "11": {"status": "PROPOSED", "source": "Q-10, Q-10d", "decisions": [2, 3],
+           "books": [{"value": "<label PK>", "name": "<book code>", "source": "decision 2; Q-10"}],
+           "dummy_book": {"value": "<Tier 2 dummy label PK>", "name": "<CODE - DESCRIPTION>", "source": "decision 3; Q-10d"}},
+    "12": {"status": "PROPOSED", "source": "Q-13 (b), ADR 0004", "decisions": [4],
+           "rows": [{"FK_INSTRUMENT": "<PK>", "LIMIT_ERRORS": "<whole number > 0>", "source": "decision 4; Q-13 (b)"}]},
+    "13": {"status": "DERIVED", "source": "Q-11"},
+    "14a": {"status": "PROPOSED", "source": "Q-12 (a), Q-12 (b)", "decisions": [5],
+            "already_present": [{"value": "<PK with a Days Matured row>", "source": "Q-12 (a)"}],
+            "ddate": {"value": "SYSDATE", "source": "decision 5"},
+            "rows": [{"FK_INSTRUMENT": "<PK without one>", "NUM_DAYS": "<days>", "source": "decision 5; Q-12 (b)"}]},
+    "14b": {"status": "NOT_BRANCH_SCOPED", "source": "Q-12"}
+  }
+}

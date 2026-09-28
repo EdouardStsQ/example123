@@ -1,0 +1,93 @@
+--# TEMPLATE for scripts/render_sql.py (also rendered alone with --precheck). Never filled by hand. ASCII only.
+--# Pre-step P1 [BOX Lead review, 2026-09-25]: the PK mechanism is checked, and resolved, BEFORE the
+--# config is built. The config's own chk_pk keeps only the auth-code check.
+SET DEFINE OFF
+-- ============================================================================
+-- {{BRANCH_CODE}} - BOX FE configuration - {{TARGET_ENV}}
+-- PRE-STEP P1 - PK MECHANISM CHECK. Run it FIRST, with the APPLYING account, before any config file exists.
+-- {{RENDERED_LINE}}
+--
+-- Writes nothing. For each of the ten tables the config writes, it draws one PK from F___SEQUENCE (as
+-- the config will), checks the auth-code fraction, and counts the existing PKs with this environment's
+-- fraction that sit AT or AHEAD of the sequence - typed PKs that the next values would collide with.
+-- The ten sequence values it draws are simply skipped (gaps are harmless).
+--
+-- Save the whole Script Output as 01-evidence/Q-P1-pk-precheck.txt. Its last line is either
+--   PK PRECHECK OK - auth code NN ...        the config can be built
+--   PK PRECHECK PROBLEM - ...                a PROPOSAL follows for the BOX FE team; the config cannot
+--                                            be built until this file prints OK
+-- ============================================================================
+SET SERVEROUTPUT ON SIZE UNLIMITED
+ALTER SESSION SET NLS_NUMERIC_CHARACTERS = '.,';
+DECLARE
+  c_auth_code  CONSTANT NUMBER := {{TARGET_AUTH_CODE}};   -- {{SRC_TARGET_AUTH_CODE}}
+  c_fraction   CONSTANT NUMBER := {{TARGET_PK_FRACTION}};   -- auth code / 10^digits
+  c_margin     CONSTANT NUMBER := 1000;   -- head room proposed above the highest typed PK
+  v_next       NUMBER;
+  v_ahead      PLS_INTEGER;
+  v_max        NUMBER;
+  v_n_ahead    PLS_INTEGER := 0;
+  v_bad_frac   PLS_INTEGER := 0;
+  v_max_ahead  NUMBER;
+  v_last_next  NUMBER;
+  v_incr       NUMBER;
+
+  PROCEDURE chk (p_table VARCHAR2) IS
+  BEGIN
+    v_next := {{SEQ}}(p_table, 'X');
+    v_last_next := v_next;
+    EXECUTE IMMEDIATE 'SELECT COUNT(*), MAX(TRUNC(PK)) FROM BOX_FE.' || p_table
+      || ' WHERE PK - TRUNC(PK) = :f AND TRUNC(PK) >= :n' INTO v_ahead, v_max USING c_fraction, TRUNC(v_next);
+    DBMS_OUTPUT.PUT_LINE(RPAD(p_table, 26) || ' next PK ' || RPAD(TO_CHAR(v_next), 14)
+      || ' PKs at/ahead of it: ' || v_ahead
+      || CASE WHEN v_ahead > 0 THEN ' (highest ' || TO_CHAR(v_max + c_fraction) || ')' END);
+    IF v_next IS NULL OR v_next - TRUNC(v_next) <> c_fraction THEN
+      v_bad_frac := v_bad_frac + 1;
+      DBMS_OUTPUT.PUT_LINE('  ^ fraction ' || TO_CHAR(v_next - TRUNC(v_next)) || ', expected ' || TO_CHAR(c_fraction));
+    END IF;
+    v_n_ahead := v_n_ahead + v_ahead;
+    IF v_ahead > 0 AND (v_max_ahead IS NULL OR v_max > v_max_ahead) THEN
+      v_max_ahead := v_max;
+    END IF;
+  END chk;
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('P1 - PK mechanism check, built for auth code ' || c_auth_code || ' (fraction ' || c_fraction || ')');
+  chk('T_BOX_ENGCONF_S');
+  chk('T_BOX_ENGFCURVE_S');
+  chk('T_BOX_ENGLKFC_X');
+  chk('T_BOX_ENGCONF_X');
+  chk('T_BOX_ENGACCRCONF_S');
+  chk('T_BOX_CONFIG_ACCRUAL_S');
+  chk('T_BOX_FIXING_BY_INSTR_S');
+  chk('T_BOX_CONF_BY_BOOK_S');
+  chk('T_BOX_ERRORS_FE_S');
+  chk('T_BOX_ENGDAYS_MATURED_S');
+  IF v_bad_frac > 0 THEN
+    DBMS_OUTPUT.PUT_LINE('PK PRECHECK PROBLEM - F___SEQUENCE returned ' || v_bad_frac || ' PK(s) without the fraction '
+      || c_fraction || ': wrong environment, or the auth code recorded from Q-G3c is wrong. Stop; ask the BOX FE team.');
+  ELSIF v_n_ahead = 0 THEN
+    DBMS_OUTPUT.PUT_LINE('PK PRECHECK OK - auth code ' || c_auth_code || ': the sequence is ahead of every PK in the ten tables.');
+  ELSE
+    BEGIN
+      SELECT INCREMENT_BY INTO v_incr FROM ALL_SEQUENCES
+      WHERE  SEQUENCE_OWNER = '{{SEQ_OWNER}}' AND SEQUENCE_NAME = 'SQ_BOX_FINANENG1';
+    EXCEPTION
+      WHEN NO_DATA_FOUND THEN v_incr := NULL;
+    END;
+    DBMS_OUTPUT.PUT_LINE('PK PRECHECK PROBLEM - ' || v_n_ahead || ' existing PK(s) with fraction ' || c_fraction
+      || ' sit at or ahead of the sequence (highest integer part ' || v_max_ahead || ', sequence now near '
+      || TRUNC(v_last_next) || '). They were typed, not allocated: the config would collide with them.');
+    DBMS_OUTPUT.PUT_LINE('PROPOSAL for the BOX FE team (sequence owner) - review, run, then run this file again.');
+    DBMS_OUTPUT.PUT_LINE('This file does not run it. Option A - move the sequence past the typed PKs:');
+    DBMS_OUTPUT.PUT_LINE('  ALTER SEQUENCE {{SEQ_OWNER}}.SQ_BOX_FINANENG1 INCREMENT BY '
+      || TO_CHAR(v_max_ahead - TRUNC(v_last_next) + c_margin) || ';');
+    DBMS_OUTPUT.PUT_LINE('  SELECT {{SEQ_OWNER}}.SQ_BOX_FINANENG1.NEXTVAL FROM dual;');
+    DBMS_OUTPUT.PUT_LINE('  ALTER SEQUENCE {{SEQ_OWNER}}.SQ_BOX_FINANENG1 INCREMENT BY '
+      || NVL(TO_CHAR(v_incr), '<its INCREMENT_BY from ALL_SEQUENCES, usually 1>') || ';');
+    DBMS_OUTPUT.PUT_LINE('  (or, on 19c: ALTER SEQUENCE {{SEQ_OWNER}}.SQ_BOX_FINANENG1 RESTART START WITH '
+      || TO_CHAR(v_max_ahead + c_margin) || ';)');
+    DBMS_OUTPUT.PUT_LINE('Option B - if the typed rows themselves are wrong, correct them (a BOX FE team decision).');
+    DBMS_OUTPUT.PUT_LINE('The sequence is shared by every BOX FE table: whichever option, agree it with the BOX FE team first.');
+  END IF;
+END;
+/

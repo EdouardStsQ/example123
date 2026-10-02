@@ -1,0 +1,35 @@
+{
+  "_readme": [
+    "Skill set-up-book-labels - see skills/set-up-book-labels/SKILL.md. <...> = not decided yet."
+  ],
+  "branch_code": "NY_SCH",
+  "env": "Tier 2 PRE",
+  "branch_pk": {
+    "value": "20007.4",
+    "source": "Q-G1 (FE runs; cst_pk_bra_nysch in PGT_NY)"
+  },
+  "country_code": {
+    "value": "NY",
+    "source": "[stated: operator, BOX onboarding, 2026-09-30] first NY label is XNY01"
+  },
+  "dummy": {
+    "mode": "<existing | create - the operator's dummy card, after Q-10d; create proposes NYDUM / NY EMPTY>",
+    "code": "<CODE>",
+    "source": "decision <N>; Q-10d"
+  },
+  "pk_rule": {
+    "mode": "screen",
+    "source": "Q-10g - SIGOM Label Config DB trace, Tier 2, operator 2026-10-02"
+  },
+  "model_columns": [
+    {
+      "name": "FK_OWNER_OBJ",
+      "value": "17910.4",
+      "source": "04-add-book-procedure.md 2.4 [stated: operator, 2026-09-30]"
+    }
+  ],
+  "auth_code": {
+    "value": "44",
+    "source": "Q-G3c (FE runs: Tier 2 auth code 44); Q-10g (trace PK 24044.44)"
+  }
+}

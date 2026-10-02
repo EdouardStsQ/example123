@@ -1,0 +1,46 @@
+{
+  "_readme": [
+    "runs/<BRANCH>/<env>/fe-jobs/<instrument>/fe-jobs-inputs.json - read by scripts/build_fe_jobs.py.",
+    "Every <...> is a question the agent asks the operator, one at a time. Paths may be relative to the repo root."
+  ],
+  "reference": {
+    "env_folder": "runs/_reference/tier1-prod",
+    "controlm_json": "<the reference branch's FE folder JSON, e.g. ../cib-boxfin-t1mdslbfe/projects/cib-boxfin-t1mdslbfe.json>",
+    "token": "<e.g. LB>",
+    "branch_const": "<e.g. CST_PK_BRANC_LND>",
+    "wrapper_owner": "<e.g. PGT_ES>",
+    "display": "<how the reference branch appears in job descriptions, e.g. SLB>",
+    "books_csv": "<J-R3b: the reference books' CODE + DESCRIPTION, e.g. runs/<BRANCH>/<env>/fe-jobs/01-evidence/J-R3b-reference-books.csv>",
+    "template_book": "<optional - the reference book whose chain is copied, e.g. 15; empty = the first one>"
+  },
+  "instrument": "<depos | irs | ccs | cfm | fra | otc | cap | commodities>",
+  "target": {
+    "branch_code": "<e.g. NY_SCH>",
+    "token": "<e.g. NY>",
+    "display": "<e.g. NY>",
+    "wrapper_owner": "<J-E1 in the target, e.g. PGT_NY>",
+    "wrapper_args": "<J-E4 in the target: 5 or 7>",
+    "branch_const": "<J-E4 in the target, e.g. CST_PK_BRA_NYSCH>",
+    "books_register": "runs/<BRANCH>/<env>/books/books-register.csv",
+    "constants": {
+      "_comment": "every other CST_ constant the reference lines use -> its name in the target wrapper (J-E4), or SAME"
+    }
+  },
+  "controlm": {
+    "folder_name": "<ask>",
+    "ControlmServer": "<ask>",
+    "SiteStandard": "<ask>",
+    "OrderMethod": "<ask - the reference uses Manual>",
+    "Host": "<ask>",
+    "RunAs": "<ask - the reference uses gm>",
+    "Application": "<ask>",
+    "MonthDaysCalendar": "<ask - the reference uses LVM25Y1-VS>",
+    "CreatedBy": "<an ID, or omit>"
+  },
+  "renames": {
+    "_comment": "old-named reference jobs the chain needs -> the target's new-convention name (the script lists them)"
+  },
+  "external_events": {
+    "_comment": "events the chain waits for that no job of the reference folder emits -> the target's event, KEEP or DROP"
+  }
+}

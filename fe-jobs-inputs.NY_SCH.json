@@ -1,0 +1,45 @@
+{
+  "_readme": [
+    "NY_SCH - Tier 2 PRE. Copy into fe-jobs/<instrument>/ and set `instrument`; the agent asks every <ask>."
+  ],
+  "reference": {
+    "env_folder": "runs/_reference/tier1-prod",
+    "controlm_json": "<path to cib-boxfin-t1mdslbfe/projects/cib-boxfin-t1mdslbfe.json in this session>",
+    "token": "LB",
+    "branch_const": "CST_PK_BRANC_LND",
+    "wrapper_owner": "PGT_ES",
+    "display": "SLB",
+    "books_csv": "01-evidence/J-R3b-reference-books.csv",
+    "template_book": "<confirm - first SLB book with the full chain>"
+  },
+  "instrument": "<depos | irs | ccs | cfm | fra | otc | cap | commodities>",
+  "target": {
+    "branch_code": "NY_SCH",
+    "token": "NY",
+    "display": "NY",
+    "wrapper_owner": "PGT_NY",
+    "wrapper_args": 5,
+    "branch_const": "CST_PK_BRA_NYSCH",
+    "books_register": "runs/NY_SCH/tier2-pre/books/books-register.csv",
+    "constants": {
+      "_comment": "every other CST_ constant the reference lines use -> its name in the target wrapper (J-E4), or SAME"
+    }
+  },
+  "controlm": {
+    "folder_name": "<ask>",
+    "ControlmServer": "<ask>",
+    "SiteStandard": "<ask>",
+    "OrderMethod": "<ask - the reference uses Manual>",
+    "Host": "<ask>",
+    "RunAs": "<ask - the reference uses gm>",
+    "Application": "<ask>",
+    "MonthDaysCalendar": "<ask - the reference uses LVM25Y1-VS>",
+    "CreatedBy": "<an ID, or omit>"
+  },
+  "renames": {
+    "_comment": "old-named reference jobs the chain needs -> the target's new-convention name (the script lists them)"
+  },
+  "external_events": {
+    "_comment": "events the chain waits for that no job of the reference folder emits -> the target's event, KEEP or DROP"
+  }
+}

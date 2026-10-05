@@ -1,4 +1,0 @@
-branch,aliases,env,token,dbconf_branch_const,wrapper_owner,fe_controlm_repo,acc_controlm_repo,status,source
-MADRID,mad|es|madrid real,Tier 1,ES,CST_PK_BRANC_MAD,PGT_ES,cib-boxfin-t1mdesfe,cib-boxacc-t1mdesac,in BOX,jobs inventory Tier 1 PROD 2026-10-01; operator 2026-10-02
-SLB,lnd|lb|london|lnd branch,Tier 1,LB,CST_PK_BRANC_LND,PGT_ES,cib-boxfin-t1mdslbfe,cib-boxacc-t1mdslbac,in BOX,jobs inventory Tier 1 PROD 2026-10-01; operator 2026-10-02
-NY_SCH,ny|nysch,Tier 2 PRE,NY,CST_PK_BRA_NYSCH,PGT_NY,,,onboarding (not in BOX),J-E4 Tier 2 2026-09-29; token stated by operator 2026-09-30

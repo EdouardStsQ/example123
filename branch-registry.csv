@@ -1,0 +1,4 @@
+branch,aliases,env,token,dbconf_branch_const,wrapper_owner,display,instruments,fe_controlm_repo,acc_controlm_repo,prereq_controlm_repos,env_descriptor_repo,status,source
+MADRID,mad|es|madrid real,Tier 1,ES,CST_PK_BRANC_MAD,PGT_ES,Madrid,,cib-boxfin-t1mdesfe,cib-boxacc-t1mdesac,cib-boxfin-t1mdloadprices,cib-auki-aukicnfgsrvc,in BOX,jobs inventory Tier 1 PROD 2026-10-01; operator 2026-10-02
+SLB,lnd|lb|london|lnd branch,Tier 1,LB,CST_PK_BRANC_LND,PGT_ES,SLB,,cib-boxfin-t1mdslbfe,cib-boxacc-t1mdslbac,cib-boxfin-t1mdloadprices,cib-auki-aukicnfgsrvc,in BOX,jobs inventory Tier 1 PROD 2026-10-01; operator 2026-10-02
+NY_SCH,ny|nysch,Tier 2 PRE,NY,CST_PK_BRA_NYSCH,PGT_NY,NY,irs|depos|ccs|otc|cap|cds,,,,,onboarding (not in BOX),J-E4 Tier 2 2026-09-29; token stated by operator 2026-09-30; instruments: gate 0c 2026-09-21 (sigom-box-fe-configs-agent APPROVED_INSTRUMENTS)

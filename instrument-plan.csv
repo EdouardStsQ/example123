@@ -1,0 +1,7 @@
+instrument,status,reference,reason,source
+depos,in progress,SLB,,operator 2026-10-06 (first run)
+irs,to build,,,registry instruments (gate 0c 2026-09-21)
+ccs,to build,,,registry instruments (gate 0c 2026-09-21)
+otc,to build,,,registry instruments (gate 0c 2026-09-21)
+cap,to build,,,registry instruments (gate 0c 2026-09-21)
+cds,skip,,"not in BOX yet for Madrid / SLB: no BOX FE jobs to copy (Tier 1 inventory: only GBO jobs with CST_PK_CDS)","operator 2026-10-06; confirm with find_jobs.py --product cds --references"

@@ -1,0 +1,130 @@
+{
+  "_readme": [
+    "runs/<BRANCH>/<env>/fe-jobs/<instrument>/fe-jobs-inputs.json - read by scripts/build_fe_jobs.py.",
+    "Every <...> is a question the agent asks the operator, one at a time. Paths may be relative to the repo root."
+  ],
+  "reference": {
+    "env_folder": "<the reference environment folder, e.g. runs/_reference/tier1-prod>",
+    "controlm_json": "<the reference branch's FE folder JSON, e.g. ../cib-boxfin-t1mdslbfe/projects/cib-boxfin-t1mdslbfe.json>",
+    "token": "<e.g. LB>",
+    "branch_const": "<e.g. CST_PK_BRANC_LND>",
+    "wrapper_owner": "<e.g. PGT_ES>",
+    "display": "<how the reference branch appears in job descriptions, e.g. SLB>",
+    "books_csv": "<J-R3b: the reference books' CODE + DESCRIPTION, e.g. runs/<BRANCH>/<env>/fe-jobs/01-evidence/J-R3b-reference-books.csv>",
+    "template_book": "<optional - the reference book whose chain is copied, e.g. 15, or {instrument: book}; empty = the first one>",
+    "controlm_other": [
+      "<optional - more Control-M folder repos / JSONs to find who emits an external event: the reference branch's ACC folder repo, GBO / shared folders>"
+    ],
+    "dml_repos": [
+      "<optional - cib-boxfin-dbboxfe and cib-boxacc-dbboxacc checkouts: group names in pending-questions.md>"
+    ],
+    "mbj_csv": "<optional - J-R2 export (.csv) of the reference branch's MBJ rows: an ACC job's group>",
+    "descriptor_dir": "<optional - the environment config repo's folder for the reference FE repo (registry env_descriptor_repo), e.g. ../cib-auki-aukicnfgsrvc/cib-boxfin-t1mdslbfe - holds pro.json>",
+    "constant_values": {
+      "_comment": "optional - CST_ constants -> their values in the reference wrapper package (all_source query): ranks a GBO wait's look-alike by argument, e.g. CST_CURR_PAIR = 0"
+    }
+  },
+  "datalake": {
+    "_comment": "optional - the Data Lake (AUKI) Control-M JSONs: a reference book job waiting for its book's Data Lake job becomes, per target book, a wait for that book's own Data Lake job (book label description = book_vr)",
+    "reference_json": [
+      "<the reference branch's Data Lake Control-M JSON>"
+    ],
+    "target_json": [
+      "<the target's Data Lake Control-M JSON>"
+    ],
+    "book_map": {
+      "_comment": "optional - target book code -> its book_vr, or DROP"
+    }
+  },
+  "prerequisites": [
+    {
+      "_comment": "a folder the FE chain waits for (registry prereq_controlm_repos, e.g. the load prices) - remove the entry if the reference has none",
+      "controlm_json": "<the reference prerequisite folder JSON, e.g. ../cib-boxfin-t1mdloadprices/projects/cib-boxfin-t1mdloadprices.json>",
+      "folder_name": "<ask - the target's folder name for it>",
+      "descriptor_dir": "<optional - its folder in the environment config repo, if any>",
+      "controlm": {
+        "_comment": "optional - values that differ from the FE folder's (default: the same, env included)"
+      },
+      "jobs": [
+        "<optional - only when no copied job waits for it in a file given: the reference jobs to copy>"
+      ]
+    }
+  ],
+  "instrument": "<depos | irs | ccs | cfm | fra | otc | cap | commodities - or a list of them: one run, one set of outputs>",
+  "target": {
+    "branch_code": "<e.g. NY_SCH>",
+    "token": "<e.g. NY>",
+    "display": "<e.g. NY>",
+    "wrapper_owner": "<J-E1 in the target, e.g. PGT_NY>",
+    "wrapper_args": "<J-E4 in the target: 5 or 7>",
+    "branch_const": "<J-E4 in the target, e.g. CST_PK_BRA_NYSCH>",
+    "books_register": "runs/<BRANCH>/<env>/books/books-register.csv",
+    "env_folder": "<optional - the target environment's job confs folder (db.conf / shell.conf + jobs-inventory.csv): its GBO look-alikes>",
+    "instruments": [
+      "<optional - every instrument approved for the target (a wait on another approved instrument's job is suggested as its target name, the others as DROP); empty = this instrument only>"
+    ],
+    "constants": {
+      "_comment": "every other CST_ constant the reference lines use -> its name in the target wrapper (J-E4), or SAME"
+    },
+    "instrument_plan": "<optional - the run's instrument-plan.csv (default: ../instrument-plan.csv): an instrument `built` / `done` keeps another instrument's waits on it; the others' waits are inherited>",
+    "dbconf_format": "<wrapper (default: the reference line, owner swapped) | pgt_prg (every group line as the core call, T:P, 8 arguments)>",
+    "core_call": "<optional - default PGT_PRG.Pkg_BatchProcess.p_ExecuteGroup>",
+    "branch_pk": "<pgt_prg only - the target branch PK (value of the branch constant, J-E4), passed on every line>",
+    "core_time": "<optional - P_TIME; default to_char(sysdate,'RRRR-mm-DD HH24:MI:SS')>",
+    "constant_values": {
+      "_comment": "optional - CST_ constants -> their values in the target wrapper package (all_source query)"
+    }
+  },
+  "controlm": {
+    "folder_name": "<ask>",
+    "ControlmServer": "<ask>",
+    "SiteStandard": "<ask>",
+    "OrderMethod": "<ask - the reference uses Manual>",
+    "Host": "<ask - the DEV host: the folder file is the DEV definition; PRE / PRO hosts go in env>",
+    "FilePath": "<ask - the reference uses /appl/gm/scripts>",
+    "RunAs": "<ask - the reference uses gm>",
+    "Application": "<ask>",
+    "MonthDaysCalendar": "<ask - the reference's calendar>",
+    "CreatedBy": "<ask: a job-owner ID, or omit>",
+    "DocumentationFile": {
+      "_comment": "optional - set on every job when given; otherwise the reference's is kept"
+    },
+    "host_config_repo": "<optional - the repo that applies the host per environment>",
+    "host_by_env": "<optional>",
+    "env": {
+      "_comment": "per environment file of the descriptors: values written into the target's descriptors (Host is never guessed; another property not given keeps the reference's value and is listed to confirm); StartDate = an activation date the reference adds",
+      "pre.json": {
+        "Host": "<ask>",
+        "ControlmServer": "<optional>",
+        "OrderMethod": "<optional>"
+      },
+      "pro.json": {
+        "Host": "<ask>",
+        "ControlmServer": "<optional>",
+        "OrderMethod": "<optional>",
+        "StartDate": "<optional - when the reference descriptor adds one>"
+      }
+    }
+  },
+  "renames": {
+    "_comment": "old-named reference jobs the chain needs -> the target's new-convention name (the script lists them)"
+  },
+  "external_events": {
+    "_comment": "events the chain waits for that no job of the reference folder emits -> the target's event, KEEP or DROP (pending-questions.md suggests one per event)"
+  },
+  "initial_accounting": {
+    "_comment": "optional - the ACC group the FE chain waits for (one job per instrument, run from db.conf): its db.conf lines are written here and the jobs handed to box-acc-jobs-agent",
+    "group": "<e.g. 2409.65>",
+    "name": "<e.g. BOX - Initial accounting (PP, Recla, Reval)>",
+    "events": []
+  },
+  "acc": {
+    "folder_name": "<optional - the target's ACC Control-M folder (hand-off)>",
+    "Application": "<optional - its Application>"
+  },
+  "unix": {
+    "scripts_dir": "<optional - default controlm.FilePath>",
+    "templates_dir": "<optional - default <scripts_dir>/templates>",
+    "etc_dir": "<ask - the folder holding add_new_jobs.ksh; without it the line is OPEN>"
+  }
+}

@@ -1,0 +1,7 @@
+instrument,status,reference,reason,source
+depos,in progress,SLB,"first run depos/ (2026-10-06/07); now in fe-jobs/all/",operator 2026-10-08
+irs,in progress,SLB,"one run with every instrument (fe-jobs/all/)",operator 2026-10-08
+ccs,in progress,SLB,"one run with every instrument (fe-jobs/all/)",operator 2026-10-08
+otc,in progress,SLB,"one run with every instrument (fe-jobs/all/)",operator 2026-10-08
+cap,in progress,SLB,"one run with every instrument (fe-jobs/all/)",operator 2026-10-08
+cds,skip,,"not in BOX yet for Madrid / SLB: no BOX FE jobs to copy (Tier 1 inventory: only GBO jobs with CST_PK_CDS)","operator 2026-10-06; confirm with find_jobs.py --product cds --references"

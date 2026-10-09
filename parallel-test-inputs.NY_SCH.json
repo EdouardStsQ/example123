@@ -1,0 +1,19 @@
+{
+  "_readme": "NY_SCH inputs of the parallel test in PRE Paralelo [operator, 2026-10-09]. Copy to the run folder as parallel-test-inputs.json. Every <...> is an OPEN point.",
+  "branch": "NY_SCH",
+  "product": "depos",
+  "gbo_environment": "<ask - the GBO environment running in parallel>",
+  "box_environment": "IGBOUSIB",
+  "dates": [
+    "<ask - every business day of the period, YYYY-MM-DD>"
+  ],
+  "areas": [
+    "deal",
+    "financial",
+    "mtm"
+  ],
+  "field_map": "docs/reference/gbo-box-fe-field-map.csv",
+  "gbo_filter": "<ask - the branch's rows in GBO (SQL condition)>",
+  "box_filter": "<ask - the branch's rows in BOX (SQL condition)>",
+  "signoff": "<ask - the sign-off criteria (e.g. no OPEN break for N days in a row)>"
+}

@@ -1,0 +1,19 @@
+{
+  "_readme": "runs/<BRANCH>/<tier>-<env>/tests/parallel/<run>/parallel-test-inputs.json - read by scripts/fe_reconcile.py. Every <...> is an OPEN point the skill asks.",
+  "branch": "NY_SCH",
+  "product": "depos",
+  "gbo_environment": "<ask - the GBO environment running in parallel>",
+  "box_environment": "<ask - the BOX PRE Paralelo environment (NY_SCH: IGBOUSIB)>",
+  "dates": [
+    "<ask - every business day of the period, YYYY-MM-DD>"
+  ],
+  "areas": [
+    "deal",
+    "financial",
+    "mtm"
+  ],
+  "field_map": "docs/reference/gbo-box-fe-field-map.csv",
+  "gbo_filter": "<ask - the branch's rows in GBO (SQL condition)>",
+  "box_filter": "<ask - the branch's rows in BOX (SQL condition)>",
+  "signoff": "<ask - the sign-off criteria (e.g. no OPEN break for N days in a row)>"
+}

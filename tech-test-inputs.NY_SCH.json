@@ -1,0 +1,32 @@
+{
+  "_readme": "NY_SCH inputs of the FE technical test in DGBOUS [operator, 2026-10-09]. Copy to the run folder as tech-test-inputs.json (scripts/new_run.py --branch NY_SCH --tier tier2 --env dev --area tests/technical --name depos). Every <...> is an OPEN point.",
+  "branch": "NY_SCH",
+  "environment": "DGBOUS",
+  "test_date": "2026-09-24",
+  "branch_pk": "20007.4",
+  "branch_group_pk": "21447.4",
+  "reference_group_pk": "21462.4",
+  "instrument": "depos",
+  "trades": [
+    {
+      "front_id": "72376416",
+      "label": "XNY02"
+    },
+    {
+      "front_id": "73542359",
+      "label": "XNY02"
+    }
+  ],
+  "raw_in_dev": true,
+  "fe_jobs_run": "<optional - the box-fe-jobs-agent deposits run, for the jobs on the run card>",
+  "quote_prices_date_column": "PUBLISHDATE",
+  "quote_prices_in_dev": true,
+  "bypass": {
+    "join": "already-left",
+    "portprop_scope": "any",
+    "fk_portprop": "<ask - proposed by the agent from sql/50 query 2d (no NY portfolio property in BOX_ACC yet; FE does not read it)>",
+    "reference_accounting": "<ask - proposed by the agent from sql/50 queries 3a-3d (PROD and DGBOUS)>",
+    "extra_fields": {},
+    "extra_fields_decided": false
+  }
+}

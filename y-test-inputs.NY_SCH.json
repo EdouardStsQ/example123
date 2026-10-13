@@ -1,0 +1,22 @@
+{
+  "_readme": "NY_SCH Y test - the products the operator chooses (add e.g. \"irs\" with its trades); deposits = the technical test's trades and date. Copy to the run folder as y-test-inputs.json. Every <...> is an OPEN point.",
+  "branch": "NY_SCH",
+  "gbo_environment": "PROD",
+  "box_environment": "DGBOUS",
+  "dates": [
+    "2026-09-24"
+  ],
+  "areas": [
+    "financial"
+  ],
+  "field_map": "docs/reference/gbo-box-fe-field-map.csv",
+  "products": [
+    "depos"
+  ],
+  "trades": {
+    "depos": [
+      "72376416",
+      "73542359"
+    ]
+  }
+}

@@ -1,0 +1,50 @@
+READ-ONLY TASK. Repos: cib-boxacc-dbboxacc (main), cib-boxfin-dbboxfe (only to locate F___SEQUENCE if it is not in
+the ACC repo). No commit, branch, push, pull request, draft PR, suggested diff or file edit in any repo. Answer in
+this chat only. Cite every answer as file:line. Do not quote author names, user IDs or personal data. If something
+is not in the code, say "not found" - do not infer.
+
+Context (from the database metamodel, confirmed against the rows):
+- BOX - Config LOC Property = FK_OWNER_OBJ 35000194.65, arrays in T_BOX_LINK_ARRAY_X by FK_EXTENSION:
+  apLocalTopicArray 35001814.65, apGlobalTopicArray 35003724.65, apInternalTopicArray 35003725.65,
+  apCondArray 35001818.65.
+- BOX - Acct Port Property = 35000170.65. Its lists carry FK_OWNER_OBJ 35000170.65 and FK_EXTENSION:
+  T_BOX_ACCT_LIST_TOPIC_S amAcctList 35001510.65, amAcctList1 35001513.65, amAcctList2 35001518.65;
+  T_BOX_ACCT_LIST_COND_S amCondList 35001514.65.
+- The database has no foreign keys; only PK constraints, plus unique keys on T_BOX_CONF_LO_PROP_S
+  (FK_INSTRUMENT, FK_BRANCH, INIVALPCDATE) and T_BOX_CONDPAR_PROP_S (FK_PARAMFIELD).
+
+Questions:
+
+1. PKG_ACCTPROP.f_GenTopicCond (and p_ClearList):
+   a) Which local-property array feeds which list? Give the exact mapping
+      array FK_EXTENSION -> list FK_EXTENSION, as the code writes it.
+   b) What it writes in PK, FK_OWNER_OBJ, FK_EXTENSION, FK_PARENT, FK_TOPIC / FK_CONDITION, FK_GLTA of each list row.
+      Does it ever set FK_GLTA, or is the account always filled afterwards?
+   c) How it picks the local property (instrument, branch group, latest INIVALPCDATE <= ?).
+   d) What p_ClearList deletes, and whether either routine COMMITs.
+
+2. The ACC PK rule. For each of T_BOX_ACCT_PORT_PROP_S, T_BOX_CONF_LO_PROP_S, T_BOX_LINK_ARRAY_X,
+   T_BOX_CROSS_ACCTCONF_S, T_BOX_ACCT_GLTA_S, T_BOX_ACCT_PARENT_DATE_S, T_BOX_ACCT_LIST_TOPIC_S,
+   T_BOX_ACCT_LIST_COND_S: how a new PK is generated (a sequence, F___SEQUENCE / T___SEQUENCE, the PK_NAME
+   used, and how the ".65" fraction is added). Where F___SEQUENCE lives and what it does.
+
+3. PKG_ACCTPRECOMMIT.p_StatusPortFolio: every condition that sets STATUS to an invalid value, with its MESSAGE
+   text. We will use it as the validation check after inserting a portfolio property.
+
+4. PKG_ACCTPRECOMMIT.p_AccountPrecommit: what it reads from T_BOX_ACCT_PARENT_DATE_S, T_BOX_GLTA_LOCAL_S and
+   T_PGT_OBJ_SOURCE_S; whether a new account needs a PARENT_DATE row or an Object x Source row to be valid;
+   the parent-balance check.
+
+5. ACC_TYPE in T_BOX_CROSS_ACCTCONF_S: where the code reads it, the values it expects and what each means
+   (live position / matured position / balance of live position?). Is it a literal or a domain PK?
+
+6. Liquibase: how configuration DATA (not DDL) is delivered in this repo - folder, file naming, contexts or
+   labels per environment, rollback blocks. Is there any existing changeset that inserts portfolio properties,
+   local properties, cross account config or accounts for a branch? Give one as the template.
+
+7. Triggers on the ACC configuration tables, as defined in the repo (we already know
+   G_T_BOX_ACCT_PORT_PROP_S_BIU) - list any others and what they set.
+
+8. Rows with a negative FK_OWNER_OBJ (test / deleted): does any code filter them out or create them?
+
+Answer per question number, with file:line. End with a list of what was not found.

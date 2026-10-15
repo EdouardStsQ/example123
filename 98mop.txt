@@ -1,31 +1,16 @@
-READ-ONLY ANALYSIS. Repo: cib-box-auki-nbranch (automation/). Do not edit, commit, push or open a PR - answer in
-this chat only, as tables. Cite file:line for every value. Do not guess: write "not found". Do not show CreatedBy
-values, user IDs or host names.
+READ-ONLY. Repo cib-box-auki-nbranch (automation/). Do not edit, commit, push or open a PR - answer in this chat
+only, as tables, file:line on every value. "not found" when absent. No CreatedBy values, user IDs or host names.
+Sources: SLB Tier 1 FE folder cib-boxfin-t1mdslbfe.json and its pre.json / pro.json, the Tier 1 db.conf, J-R3b of
+runs/NY_SCH/tier2-pre/fe-jobs/irs_20261013_1/01-evidence/, and the irs run's datalake.book_map / Data Lake table.
 
-Sources: the SLB (Tier 1) reference files under runs/_reference/ (FE folder cib-boxfin-t1mdslbfe.json, its
-pre.json / pro.json descriptors, the Tier 1 db.conf), the load-prices and scheduling-monitor folder files, and the
-SLB books evidence (J-R3b) of runs/NY_SCH/tier2-pre/fe-jobs/irs_20261013_1/01-evidence/.
-
-Goal: decide, from the files, which SLB book's generic per-book jobs (groups 2628.65 / 2629.65 / 2630.65 - new names
-GMBX0LB<bk>D01-D03, old names GMBOX00nn D01-D03) should be the single source of NY's shared per-book jobs.
-
-Table A - one row per SLB book (every label XLB.. of J-R3b, incl. 99) x generic step (2628 / 2629 / 2630):
-book | label | job name | old or new name | db.conf line + group | EndDate in the folder file (date or none) |
-descriptor entries PRE / PRO touching it (Delete EndDate, Add wait, ...) | active in DEV / PRE / PRO (Y/N each) |
-waits (In conditions) NORMALISED: replace the book number / label by <bk>, a Data Lake desk name by <desk>, keep
-everything else | events it emits | FromTime
-
-Table B - one row per instrument family (GMBX1..GMBX8; name the instrument from the db.conf instrument constant)
-x SLB book: does its D04 exist | active in PRE / PRO | which job its D04 waits for (exact name) | does that job
-belong to the same book (Y/N)
-
-Table C - group Table A's books by IDENTICAL normalised definition (same groups, same normalised waits, same emitted
-events): form id | books sharing it | how this form differs from the others (exact waits / groups that differ).
-
-Table D - every cross-book wait in the FE folder: job | its book | waits for | that job's book | file:line.
-
-Then, in full (In conditions, Out events, every descriptor entry, db.conf line): GMBOX0031D01, GMBOX0031D02,
-GMBOX0031D03, GMBOX0033D01, GMBX0LB15D01, GMBX0LB15D02, GMBX0LB15D03.
-
-End with: which book's generic set is active in all environments, uses new names, has no cross-book wait, and is
-waited for by the most instrument families - and anything that prevents choosing it.
+1. For every ACTIVE SLB book (XLB03-12, XLB14, XLB15): the Data Lake events PRO adds to its generic D01 (all of
+   them, exact names) and the Data Lake events its instrument D04 jobs wait for (each family GMBX1/3/4/5/6/7/8).
+   Columns: book | D01 events | D04 events per family | the desk token in each event name | same token in all? (Y/N)
+2. GMBX0LB14D01-D03 vs GMBX0LB15D01-D03, field by field (In conditions, Out events, If/Action blocks, run
+   parameters, FromTime, every pre.json / pro.json entry, db.conf line): every difference other than the book number,
+   the label and the desk token. "none" if identical.
+3. For each NY book of the irs run's Data Lake table: the MD job it was mapped to, and whether a DD<desk>001D,
+   DD<desk>OTC001D and FD<desk>001D job with the same desk token exists in any Data Lake / Control-M file in the repo
+   (file:line) - else "not found in the repo".
+4. Every SLB per-book D02 (books XLB03-12, 14, 15): its exact wait list. Is it always own D01 + the same set of
+   branch Initial Accounting jobs (GMBOX0028D01, GMBX3..9LB00D02)? List any book that differs.

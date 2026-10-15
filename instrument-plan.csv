@@ -1,7 +1,0 @@
-instrument,status,reference,reason,source
-depos,in progress,SLB,"built alone (depos-v2/, 2026-10-09) - not to deploy: its shared per-book jobs were overwritten by the separate irs run; rebuild with irs in one run, then BOX expert review","operator 2026-10-08; review 2026-10-15"
-irs,in progress,SLB,"built alone (irs_20261013_1, PR #72 not merged) - not to deploy: rebuild with depos in one run, then BOX expert review","operator 2026-10-08; review 2026-10-15"
-ccs,in progress,SLB,"one run with every instrument (fe-jobs/all/)",operator 2026-10-08
-otc,in progress,SLB,"one run with every instrument (fe-jobs/all/)",operator 2026-10-08
-cap,in progress,SLB,"one run with every instrument (fe-jobs/all/)",operator 2026-10-08
-cds,skip,,"not in BOX yet for Madrid / SLB: no BOX FE jobs to copy (Tier 1 inventory: only GBO jobs with CST_PK_CDS)","operator 2026-10-06; confirm with find_jobs.py --product cds --references"

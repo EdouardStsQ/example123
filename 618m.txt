@@ -1,3 +1,50 @@
-Run automation/agents/box-fe-jobs-agent/prompts/build-ny-sch-tier2.md. Demo run from zero: carry over no answers from earlier runs (copy only the J-R3b / J-E4 CSVs and say so). Run name demo-depos-irs. Work on a branch demo/fe-jobs-<date>, never main. At Step 7 stop at pr-summary.md — I’ll answer no.
+-- q1
+SELECT 'CONF_LO_PROP' t, FK_BRANCH, COUNT(*) n FROM BOX_ACC.T_BOX_CONF_LO_PROP_S
+ WHERE FK_BRANCH IN (&&TARGET_GROUP_PK, &&TARGET_BRANCH_PK) AND FK_OWNER_OBJ > 0 GROUP BY FK_BRANCH
+UNION ALL
+SELECT 'PORT_PROP', FK_BRANCH, COUNT(*) FROM BOX_ACC.T_BOX_ACCT_PORT_PROP_S
+ WHERE FK_BRANCH IN (&&TARGET_GROUP_PK, &&TARGET_BRANCH_PK) AND FK_OWNER_OBJ > 0 GROUP BY FK_BRANCH
+UNION ALL
+SELECT 'CROSS_ACCTCONF', FK_BRANCH, COUNT(*) FROM BOX_ACC.T_BOX_CROSS_ACCTCONF_S
+ WHERE FK_BRANCH IN (&&GROUP_BRANCH_PKS) GROUP BY FK_BRANCH;   -- the 25 PKs of A-G1b
 
-Run automation/agents/sigom-box-acc-configs-agent/prompts/tier2-gap-run.md. Stop after Step 5: commit the run folder with 01-evidence/ and a short 00-prechecks-summary.md (pass / fail per check + the usage summary).
+-- q2
+WITH ny AS (SELECT DISTINCT FK_PROPERTIES, FK_TOPIC FROM PGT_ACT.T_PGT_ACCT_MOV_S
+            WHERE FK_BRANCH IN (&&TARGET_BRANCH_PK, &&TARGET_GROUP_PK)
+              AND REGDATE >= DATE '&&USAGE_FROM' AND REGDATE < DATE '&&USAGE_TO'),
+     oth AS (SELECT DISTINCT FK_PROPERTIES, FK_TOPIC FROM PGT_ACT.T_PGT_ACCT_MOV_S
+            WHERE FK_BRANCH IN (SELECT PK FROM PGT_STC.T_PGT_BRANCH_S WHERE FK_LOCALGROUP = &&TARGET_GROUP_PK)
+              AND FK_BRANCH <> &&TARGET_BRANCH_PK
+              AND REGDATE >= DATE '&&USAGE_FROM' AND REGDATE < DATE '&&USAGE_TO'),
+     conf AS (SELECT pp.PK prop_pk, pp.FK_INSTRUMENT, lt.FK_EXTENSION list_ext, lt.FK_TOPIC
+              FROM PGT_ACT.T_PGT_ACCT_PORT_PROP_S pp
+              JOIN PGT_ACT.T_PGT_ACCT_LIST_TOPIC_S lt ON lt.FK_PARENT = pp.PK AND lt.FK_OWNER_OBJ = 12646.4
+                   AND lt.FK_EXTENSION IN (38249.4, 38329.4, 38422.4)
+              WHERE pp.FK_OWNER_OBJ = 12646.4 AND pp.FK_BRANCH IN (&&TARGET_GROUP_PK, &&TARGET_BRANCH_PK))
+SELECT c.FK_INSTRUMENT, sp.DESCRIPTION instrument, c.list_ext,
+       CASE WHEN n.FK_PROPERTIES IS NOT NULL THEN '1 NY SCH' WHEN o.FK_PROPERTIES IS NOT NULL THEN '2 other group branches only'
+            ELSE '3 nobody' END used_by, COUNT(*) combinations
+FROM conf c
+LEFT JOIN ny  n ON n.FK_PROPERTIES = c.prop_pk AND n.FK_TOPIC = c.FK_TOPIC
+LEFT JOIN oth o ON o.FK_PROPERTIES = c.prop_pk AND o.FK_TOPIC = c.FK_TOPIC
+LEFT JOIN PGT_SYS.T_PGT_SUB_PRODUCT_S sp ON sp.PK = c.FK_INSTRUMENT
+GROUP BY c.FK_INSTRUMENT, sp.DESCRIPTION, c.list_ext,
+       CASE WHEN n.FK_PROPERTIES IS NOT NULL THEN '1 NY SCH' WHEN o.FK_PROPERTIES IS NOT NULL THEN '2 other group branches only' ELSE '3 nobody' END
+ORDER BY 2, 3, 4;
+
+--q3
+WITH used AS (SELECT FK_INSTRUMENT, FK_PROPERTIES, FK_TOPIC, COUNT(*) n FROM PGT_ACT.T_PGT_ACCT_MOV_S
+              WHERE FK_BRANCH IN (&&TARGET_BRANCH_PK, &&TARGET_GROUP_PK)
+                AND REGDATE >= DATE '&&USAGE_FROM' AND REGDATE < DATE '&&USAGE_TO'
+              GROUP BY FK_INSTRUMENT, FK_PROPERTIES, FK_TOPIC),
+     nc AS (SELECT u.*,
+              CASE WHEN NVL(u.FK_PROPERTIES, 0) = 0 THEN 'no portfolio property' ELSE 'topic not in its lists' END kind,
+              CASE WHEN EXISTS (SELECT 1 FROM PGT_SYS.T_PGT_CROSS_ACCTCONF_S x
+                                WHERE x.BRANCH = &&TARGET_BRANCH_PK AND x.TOPIC = u.FK_TOPIC) THEN 'Y' ELSE 'N' END in_cross_conf
+            FROM used u
+            WHERE NOT EXISTS (SELECT 1 FROM PGT_ACT.T_PGT_ACCT_LIST_TOPIC_S lt
+                              WHERE lt.FK_PARENT = u.FK_PROPERTIES AND lt.FK_TOPIC = u.FK_TOPIC AND lt.FK_OWNER_OBJ = 12646.4))
+SELECT nc.FK_INSTRUMENT, sp.DESCRIPTION instrument, kind, in_cross_conf, COUNT(*) combinations, SUM(n) movements
+FROM nc LEFT JOIN PGT_SYS.T_PGT_SUB_PRODUCT_S sp ON sp.PK = nc.FK_INSTRUMENT
+GROUP BY nc.FK_INSTRUMENT, sp.DESCRIPTION, kind, in_cross_conf ORDER BY 2, 3, 4;
+

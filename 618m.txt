@@ -1,0 +1,7 @@
+On runs/NY_SCH/tier2-pre/fe-jobs/depos-irs_20261015_1/out/, read-only, screenshot each answer:
+
+grep -rnE "GMBX[0-9]LB|GMBOX00|LB[0-9]{2}D" out/ --include=*.json --include=*.proposal --include=*.txt --include=*.sh — expected: nothing (your summary says “FRA/OTC D11 → GMBX0LB15D02”: show where that NY wait landed, for book 05).
+descriptors/*/pro.json: the StartDate value — must be the <ask> review line, not SLB’s 20241120.
+Waits of GMBX0NY03D01, GMBX0NY05D01 (each its own book’s DD / DDOTC / FD events, different desks) and of GMBX0NY05D02 (expected: its D01 + GMBX1NY00D02 + GMBX3NY00D02 only).
+The dbconf-only warnings: the job lists (39 depos, 49 irs).
+git diff main -- automation/scripts/ — restoring irs_20261013_1 must have brought back only its run folder, nothing from PR #72’s script.

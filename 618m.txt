@@ -189,13 +189,18 @@ WHERE  FK_OWNER_OBJ = 18051.4 AND BRANCH = 20007.4;
 
 
 -- one more
-On A-U2-movements-PREPAR.csv, add to A-U2-extracts-PREPAR.md:
-(a) Does NY SCH post on IRS property 2212.35 (INTERNAL)? Topics and movement counts.
-(b) Does NY SCH post on any NY_IBF depos property 2535.35–2540.35? Expected none.
-(c) The distinct topic codes across the 6 instruments (one list, no duplicates), marked always-INTERNAL or not, with CDS-only topics flagged — this list goes to the BOX dev for the GBO → BOX topic mapping.
-(d) The 6 T… accounts: which properties use them.
-(e) The 10 no-topic accounts as an open question for the BOX dev (not Cross Account Config: GBO’s TOPIC is NOT NULL).
-Then save the screen-4 scope from A-U1f-portprop-branch-PREPAR.csv as 03-screen4-scope.md: 58 NY_SCH properties, IRS 2212.35 pending (a), the 6 CDS properties pending the CDS decision, the 6 NY_IBF left out.
+SELECT m.FK_TOPIC, a.CODE AS account_code, m.FK_INSTRUMENT, COUNT(*) AS n_mov,
+       (SELECT COUNT(*) FROM PGT_SYS.T_PGT_CROSS_ACCTCONF_S x
+         WHERE x.FK_OWNER_OBJ = 18051.4 AND x.BRANCH = 20007.4 AND x.TOPIC = m.FK_TOPIC) AS in_cross_conf
+FROM   PGT_ACT.T_PGT_ACCT_MOV_S m
+LEFT   JOIN PGT_ACT.T_PGT_ACCT_TOPICS_S t ON t.PK = m.FK_TOPIC
+LEFT   JOIN PGT_ACT.T_PGT_ACCT_GLTA_S   a ON a.PK = m.FK_GLTA
+WHERE  m.FK_BRANCH IN (20007.4, 21447.4)
+AND    m.REGDATE >= DATE '2026-07-01' AND m.REGDATE < DATE '2026-08-01'
+AND    m.FK_INSTRUMENT IN (2.4, 20.4, 20092.4, 20111.4, 20213.4, 20313.4)
+AND    t.PK IS NULL
+GROUP  BY m.FK_TOPIC, a.CODE, m.FK_INSTRUMENT
+ORDER  BY n_mov DESC;
 
 
 

@@ -102,3 +102,14 @@ AND    NOT EXISTS (SELECT 1 FROM PGT_ACT.T_PGT_ACCT_LIST_COND_S lc
 GROUP  BY a.CODE
 ORDER  BY 1;
 
+
+
+
+
+--
+Read-only, no commit:
+
+1. In NY’s Data Lake JSON (runs/_reference/external/cib-auki-aukictrlmcntrm/doc/auki ny/control-m_NY.json): for each NY book not excluded, is there an MD<desk>001D job besides the DD / DDOTC / FD triple? Table: book, desk, MD job yes/no.
+2. For CCS, OTC, CAP (SLB, Tier 1): each job D01–D13 per family — executed in db.conf with a job in cib-boxfin-t1mdslbfe / in shell.conf (ACC) / in neither — and where GMBX3LB00D08, GMBX3LB<nn>D08 and GMBX7LB00D08 are defined (search every attached Control-M repo).
+3. Skill explain-box-job with --target runs/_reference/tier2-pre/: what do GMGB4436D02 and GMGB4465D02 run, and NY’s look-alike jobs.
+

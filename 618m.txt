@@ -107,13 +107,9 @@ ORDER  BY 1;
 
 
 --
-Read-only, on the NY GBO folder JSON (+ the other Control-M repos):
+Read-only:
 
-The exact eventsToAdd of GMNY0011D01, GMNY0012D01, GMNY0095D01, GMNY2008D01, GMNY1825D01, GMNY0001D00, GMNY0026D01 (the Control-M job name and every event, character for character), and the folder’s environment (PRO or PRE host).
-GMNY2055D01: scheduled in any Control-M repo, or only a db.conf line?
-The chain upstream of GMNY0011D01 / GMNY0012D01 (GMNY1825D01 → …): does it come after NY’s close-day jobs for every product — swaps (GMNY0001D00), CCS (GMNY0026D01), and those for depos, OTC options, caps? List each product’s close-day job and whether it’s upstream.
-Skill explain-box-job on SLB’s GMBX4LB00D08 (CCS fan-in, group 3557.65): what it runs, and whether it reads the MtM the SwapAgent jobs load. Is GMNY0095D01 (NY_Carga, the Data Lake MtM load) the NY job that plays that role?
-Is there a PRE version of NY’s GBO folder (different jobs)? Our PRE descriptor waits depend on it.
-
-Mark each answer CONFIRMED or INFERRED.
+1. Full Control-M definition of GMNY0011D01_PR and GMNY0012D01_PR in P-GBO-NY-TIER2.json (If / Actions blocks, Event:Add, DoAction): where do GMNY0011D01_PR-OK / GMNY0012D01_PR-OK come from?
+2. ControlmServer of: SLB’s FE folder (cib-boxfin-t1mdslbfe), SLB’s load-prices folder, NY’s Data Lake folder (control-m_NY.json), NY’s GBO folder (GCB.GCB-P-D012), and the descriptors’ PRE / PRO values. Then list the G0…-prefixed events across the repos: who adds them, who waits for them, and on which server. Infer the convention, marked INFERRED. Does any BOX folder wait on a GBO event from another server, and under which name?
+3. Who waits for SLB’s GMBX4LB00D08 (downstream)? Does NY have any clearing-house / SwapAgent / “camara” job or configuration in its job confs?
 

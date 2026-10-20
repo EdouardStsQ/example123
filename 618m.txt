@@ -107,9 +107,13 @@ ORDER  BY 1;
 
 
 --
-Read-only, no commit:
+Read-only, on the NY GBO folder JSON (+ the other Control-M repos):
 
-1. In NY’s Data Lake JSON (runs/_reference/external/cib-auki-aukictrlmcntrm/doc/auki ny/control-m_NY.json): for each NY book not excluded, is there an MD<desk>001D job besides the DD / DDOTC / FD triple? Table: book, desk, MD job yes/no.
-2. For CCS, OTC, CAP (SLB, Tier 1): each job D01–D13 per family — executed in db.conf with a job in cib-boxfin-t1mdslbfe / in shell.conf (ACC) / in neither — and where GMBX3LB00D08, GMBX3LB<nn>D08 and GMBX7LB00D08 are defined (search every attached Control-M repo).
-3. Skill explain-box-job with --target runs/_reference/tier2-pre/: what do GMGB4436D02 and GMGB4465D02 run, and NY’s look-alike jobs.
+The exact eventsToAdd of GMNY0011D01, GMNY0012D01, GMNY0095D01, GMNY2008D01, GMNY1825D01, GMNY0001D00, GMNY0026D01 (the Control-M job name and every event, character for character), and the folder’s environment (PRO or PRE host).
+GMNY2055D01: scheduled in any Control-M repo, or only a db.conf line?
+The chain upstream of GMNY0011D01 / GMNY0012D01 (GMNY1825D01 → …): does it come after NY’s close-day jobs for every product — swaps (GMNY0001D00), CCS (GMNY0026D01), and those for depos, OTC options, caps? List each product’s close-day job and whether it’s upstream.
+Skill explain-box-job on SLB’s GMBX4LB00D08 (CCS fan-in, group 3557.65): what it runs, and whether it reads the MtM the SwapAgent jobs load. Is GMNY0095D01 (NY_Carga, the Data Lake MtM load) the NY job that plays that role?
+Is there a PRE version of NY’s GBO folder (different jobs)? Our PRE descriptor waits depend on it.
+
+Mark each answer CONFIRMED or INFERRED.
 

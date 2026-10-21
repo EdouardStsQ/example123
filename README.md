@@ -1,0 +1,35 @@
+# Agents
+
+An agent owns an end-to-end job — e.g. "onboard a new entity" — by sequencing skills, handling their failures, and knowing when to stop and ask a human. Agents are what Devin (or another runtime) actually executes; skills are the tools they call.
+
+## Convention
+
+```
+agents/<agent-name>/
+  AGENT.md        # goal, definition of done, role, the skills it uses, guardrails, escalation rules
+  prompts/         # system prompt / instructions, if the runtime needs them separate from AGENT.md
+```
+
+## Current agents (BOX onboarding)
+
+| Agent | Does |
+|---|---|
+| `sigom-box-fe-configs-agent` | a branch's BOX FE configuration in SIGOM (rendered SQL) |
+| `box-batch-jobs-agent` | searches and explains BOX batch jobs; GAP for a new branch |
+| `box-fe-jobs-agent` | a new branch's BOX FE jobs: `db.conf` lines + Control-M JSON `[2026-10-02]` |
+| `sigom-box-acc-configs-agent` | a branch's BOX - Accounting SIGOM screens — phase 1: gap run (what to create, from what) `[2026-10-07]`, with structural pre-checks and the branch's GBO-production usage `[2026-10-14]`; phase 2: SQL through SIGOM's own routines (designed, not built) — model: [`box-acc-model.md`](../docs/reference/box-acc-model.md) |
+| *(all agents, 2026-10-09)* | runs are versioned: `scripts/new_run.py` (`runs/<BRANCH>/<tier>-<env>/<area>/<name>_<date>_<n>/`), environment asked first, finished runs frozen — `box-fe-jobs-agent` and skill `box-fe-technical-test` first, the others next |
+| `box-acc-jobs-agent` | a new branch's BOX ACC jobs `[2026-10-21]`: the ACC Control-M folder, `shell.conf` (`mbjbox.sh`) for every per-book step, `db.conf` core calls for the branch-level steps, the MBJ rows as SQL (rehearsal / config / verify / rollback), the Unix package, the PR on the target's ACC repo after a yes. Runs after `box-fe-jobs-agent` (its `out/acc-handoff.json`: the Initial Accounting jobs); skips the books of `books/books-excluded.csv`; MIC end-of-day steps asked every run |
+
+Start one in Devin with `Run automation/agents/<agent>/prompts/<prompt>.md`.
+
+## Rules
+
+- **An `AGENT.md` opens with a goal, not a mechanism.** State the outcome the agent is accountable for before describing what it sequences or calls — "Role"/"Skills it may call" describe *how*; they don't substitute for saying *what for*. An agent whose first line describes its call graph will optimize for running its steps, not for the outcome.
+- **Every `AGENT.md` has a Definition of done** — the concrete, checkable conditions under which the job is actually finished. If "the workflow completed" and "the definition of done is met" can come apart (a phase resolves cleanly but the real-world outcome still isn't there), the definition of done is what's true; the workflow completing without it is a bug in the agent, not a success. Say so explicitly if any criterion is a proposal rather than an agreed one.
+- An agent's `AGENT.md` must list every skill it's allowed to call — no implicit tool access.
+- Define escalation explicitly: what the agent does when a skill fails, when it's unsure, and when a human sign-off is required (see `docs/process/02-target-state.md` for the checkpoints that must stay manual).
+- No real entity/counterparty/portfolio names in prompts or examples.
+- Every agent needs at least one eval case covering a full run, not just its individual skills.
+
+See `example-entity-onboarding-agent/` for the section layout, and `branch-onboarding-orchestrator/AGENT.md` for a filled-in example of Goal + Definition of done done right — it's the worked example these two rules were written from, after an earlier draft of it shipped without either and had to be corrected.

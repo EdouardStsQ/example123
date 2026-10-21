@@ -62,8 +62,5 @@ Cite file:line for everything. No guesses: write "not found" when not found.
 
 ----
 
-None of A/B/C - the script has no input for them; don't change the script, the CSV or out/.
-For this test only: set "instrument" in this run's acc-jobs-inputs.json to "depos irs otc cap" (CCS left out),
-write in RUN.md "TEST: CCS left out - GMBX4<book>D08 has no MBJ row in J-R2 (SLB runs it from db.conf);
-open for the BOX team and a script fix", and re-run.
+(1) Which values did you use for controlm.Host, controlm.Application, controlm.CreatedBy and mbj.auth_code, and where did each come from? (2) Were there any external events (GBO waits) in the reference chain? If so, what did they resolve to? (3) Add ‘TEST — not deliverable’ to this run’s line in RUNS.md.
 

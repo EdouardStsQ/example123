@@ -1,0 +1,84 @@
+{
+  "_readme": [
+    "box-acc-jobs-agent inputs - copy to <run>/acc-jobs-inputs.json; every <...> is asked, one at a time (prompts/build.md)."
+  ],
+  "reference": {
+    "env_folder": "runs/_reference/<tier>-<env>",
+    "controlm_json": "<the reference's ACC Control-M JSON (registry acc_controlm_repo)>",
+    "fe_controlm_json": "<optional - the reference's FE Control-M JSON>",
+    "token": "<registry>",
+    "branch_const": "<registry>",
+    "wrapper_owner": "<registry>",
+    "display": "<registry>",
+    "books_csv": "01-evidence/J-R3b-reference-books.csv",
+    "mbj_csv": "01-evidence/J-R2-mbj-properties-REF.csv",
+    "mbj_source_env": "<ask - the environment J-R2 ran in>",
+    "template_book": {
+      "<instrument>": "<book - optional: the script proposes one>"
+    }
+  },
+  "instrument": [
+    "<every instrument not deployed yet, registry minus skip>"
+  ],
+  "initial_accounting": {
+    "group": [
+      "2409.65"
+    ]
+  },
+  "target": {
+    "branch_code": "<registry>",
+    "token": "<registry>",
+    "display": "<display>",
+    "branch_pk": "<J-E4>",
+    "wrapper_owner": "<registry>",
+    "books_register": "runs/<BRANCH>/<tier>-<env>/books/books-register.csv",
+    "books_excluded": "runs/<BRANCH>/<tier>-<env>/books/books-excluded.csv",
+    "fe_run": "<ask - REQUIRED: the latest frozen fe-jobs run of this environment that built every instrument of this run>",
+    "env_folder": "<optional - runs/_reference/<tier>-<env>>",
+    "core_call": "PGT_PRG.Pkg_BatchProcess.p_ExecuteGroup",
+    "core_time": "to_char(sysdate,'RRRR-mm-DD HH24:MI:SS')",
+    "constants": {
+      "<CST_...>": "<its name in the target wrapper, or SAME>"
+    },
+    "constant_values": {
+      "CST_PK_VACIO": "0",
+      "CST_PK_DINAMIC": "0"
+    }
+  },
+  "controlm": {
+    "folder_name": "<ask>",
+    "target_repo": "<registry acc_controlm_repo>",
+    "ControlmServer": "<ask - DEV>",
+    "SiteStandard": "<ask>",
+    "OrderMethod": "<ask>",
+    "Host": "<ask - DEV>",
+    "FilePath": "<ask>",
+    "RunAs": "<ask>",
+    "Application": "<ask>",
+    "MonthDaysCalendar": "<ask>",
+    "CreatedBy": "<ask, or omit>"
+  },
+  "renames": {},
+  "external_events": {},
+  "mic": {
+    "<instrument>": {
+      "eod_steps": "<ask - keep / drop, or none>",
+      "sender_type": "<ask - reference / lastly / none>"
+    }
+  },
+  "mbj": {
+    "calendar": "<ask - BOX expert>",
+    "pk_call": "<ask - BOX dev, with {table}>",
+    "auth_code": "<ask - Q-G3c>",
+    "group_map": {}
+  },
+  "readiness": {
+    "mbj_engine": "<ask - deployed / not deployed (J-E9, owner BOX_ACC)>"
+  },
+  "unix": {
+    "scripts_dir": "<ask>",
+    "etc_dir": "<ask>",
+    "reference_unix_dir": "runs/_reference/<tier>-<env>/unix",
+    "reference_etc_dir": "<the reference's etc>"
+  }
+}

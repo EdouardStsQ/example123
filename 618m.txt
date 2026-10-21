@@ -62,13 +62,8 @@ Cite file:line for everything. No guesses: write "not found" when not found.
 
 ----
 
-1. controlm.SiteStandard: SCIB-SSJAC_D_GR_ALMNXTGN_CIB-BOXACC (as proposed - BOX team to confirm)
-2. mbj.calendar: 1.21 - TEST VALUE for this run only (open item 4zl, BOX expert decides)
-3. mbj.pk_call: BOX_ACC.F_GetPK('{table}') - TEST VALUE for this run only (open item 4zn, BOX dev confirms); the SQL must not be run
-4. reference.mbj_source_env: <the environment you ran R1 in, e.g. Tier 1 PRE>
-Write "test values" in the run's RUN.md.
+None of A/B/C - the script has no input for them; don't change the script, the CSV or out/.
+For this test only: set "instrument" in this run's acc-jobs-inputs.json to "depos irs otc cap" (CCS left out),
+write in RUN.md "TEST: CCS left out - GMBX4<book>D08 has no MBJ row in J-R2 (SLB runs it from db.conf);
+open for the BOX team and a script fix", and re-run.
 
-
-
---
-SELECT * FROM pgt_stc.t_pgt_calendar_s WHERE pk IN (1.21, 83.4, 84.4);

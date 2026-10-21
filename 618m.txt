@@ -60,11 +60,13 @@ Cite file:line for everything. No guesses: write "not found" when not found.
 
 
 
-   -- A (Tier 1, then Tier 2 PRE): is the MBJ calendar the branch's own calendar? SLB should give 1.21; NY should give 83.4
-   SELECT pk, fk_calendar FROM pgt_stc.t_pgt_branch_s WHERE pk IN (20087.4, 20007.4);
+----
 
-   -- R4 (Tier 2 PRE): NY has no MBJ rows yet (expect 0)
-   SELECT COUNT(*) FROM box_acc.t_box_mbj_properties_s WHERE fk_branch = 20007.4;
+1. controlm.SiteStandard: SCIB-SSJAC_D_GR_ALMNXTGN_CIB-BOXACC (as proposed - BOX team to confirm)
+2. mbj.calendar: 1.21 - TEST VALUE for this run only (open item 4zl, BOX expert decides)
+3. mbj.pk_call: BOX_ACC.F_GetPK('{table}') - TEST VALUE for this run only (open item 4zn, BOX dev confirms); the SQL must not be run
+4. reference.mbj_source_env: <the environment you ran R1 in, e.g. Tier 1 PRE>
+Write "test values" in the run's RUN.md.
 
 
 

@@ -52,3 +52,8 @@ Then: (1) every BOX shell.conf job that is NOT mbjbox.sh (script, what it does);
 (ControlmServer, SiteStandard, OrderMethod, Host, Application, calendar); (3) whether any FE job waits for
 an ACC job; (4) whether the ACC descriptor copies exist under runs/_reference/external/.
 Cite file:line for everything. No guesses: write "not found" when not found.
+   Also, with runs/NY_SCH/tier2-pre/jobs/01-evidence/J-R2-mbj-properties-slb-REF.csv:
+   (a) Is GMBOX0028D01 (and GMBX3..9LB00D02) in shell.conf (mbjbox.sh), in db.conf, or both? Which one runs?
+   (b) Per instrument, list SLB mbjbox.sh jobs in shell.conf with no MBJ row, and MBJ rows with no shell.conf line.
+   (c) What GMBOX0028D04 ("BOX MBJ Update Ruler Group", 2855.65) does, and who waits for it.
+   (d) Who waits for the D12 / D13 (MIC end-of-day) jobs, and what they wait for.

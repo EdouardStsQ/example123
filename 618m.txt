@@ -57,3 +57,11 @@ Cite file:line for everything. No guesses: write "not found" when not found.
    (b) Per instrument, list SLB mbjbox.sh jobs in shell.conf with no MBJ row, and MBJ rows with no shell.conf line.
    (c) What GMBOX0028D04 ("BOX MBJ Update Ruler Group", 2855.65) does, and who waits for it.
    (d) Who waits for the D12 / D13 (MIC end-of-day) jobs, and what they wait for.
+
+
+
+   -- A (Tier 1, then Tier 2 PRE): is the MBJ calendar the branch's own calendar? SLB should give 1.21; NY should give 83.4
+   SELECT pk, fk_calendar FROM pgt_stc.t_pgt_branch_s WHERE pk IN (20087.4, 20007.4);
+
+   -- R4 (Tier 2 PRE): NY has no MBJ rows yet (expect 0)
+   SELECT COUNT(*) FROM box_acc.t_box_mbj_properties_s WHERE fk_branch = 20007.4;

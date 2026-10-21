@@ -1,115 +1,54 @@
--- A-U3
-SELECT k.FK_BRANCH, k.FK_INSTRUMENT, sp.DESCRIPTION AS instrument, k.FK_PROPERTIES, t.CODE AS topic_code,
-       COUNT(*) AS n_keys,
-       SUM(CASE WHEN NVL(k.AMOUNT_LOC, 0) <> 0 OR NVL(k.AMOUNT_CCY, 0) <> 0 THEN 1 ELSE 0 END) AS n_keys_open,
-       MAX(k.MAXDATE) AS last_maxdate
-FROM   PGT_ACT.T_PGT_ACCT_KEY_S k
-LEFT   JOIN PGT_ACT.T_PGT_ACCT_TOPICS_S t  ON t.PK  = k.FK_TOPIC
-LEFT   JOIN PGT_SYS.T_PGT_SUB_PRODUCT_S sp ON sp.PK = k.FK_INSTRUMENT
-WHERE  k.FK_BRANCH IN (20007.4, 21447.4)
-AND    k.FK_INSTRUMENT IN (2.4, 20.4, 20092.4, 20111.4, 20213.4, 20313.4)
-GROUP  BY k.FK_BRANCH, k.FK_INSTRUMENT, sp.DESCRIPTION, k.FK_PROPERTIES, t.CODE
-HAVING SUM(CASE WHEN NVL(k.AMOUNT_LOC, 0) <> 0 OR NVL(k.AMOUNT_CCY, 0) <> 0 THEN 1 ELSE 0 END) > 0
-ORDER  BY 3, 4, 5;
+-- R1: SLB's MBJ rows
+SELECT t1.pk, t2.pk branch_pk, t1.instanze, t1.job_name, t3.pk instr_pk, t3.description instrument,
+       t4.pk group_pk, t4.groupdescrip, t5.pk label_pk, t5.code label_code, t6.pk sublabel_pk, t6.code sublabel_code,
+       t1.concurrent_events, t1.concurrent_events_dependency, t1.workers, t1.tasks_per_worker,
+       t1.workers_by_events, t1.mic_sender_type, t1.mic_file_type, t1.mic_eod, t1.mic_flow_mode,
+       t1.monitor_types, t1.monitor_file_max_days, t1.monitor_file_pattern, t1.fk_parent, t1.fk_owner_obj,
+       t1.fk_extension, t1.return_data, t1.recover_manual_movs, t1.recover_reclassification_movs,
+       t1.recover_regularization_movs, t1.fk_calendar
+FROM   box_acc.t_box_mbj_properties_s t1, pgt_stc.t_pgt_branch_s t2, pgt_sys.t_pgt_sub_product_s t3,
+       pgt_prc.t_pgt_br_eve_s t4, pgt_sys.pgt_domains t5, pgt_sys.pgt_domains t6
+WHERE  t1.fk_branch = t2.pk(+) AND t1.fk_instrument = t3.pk(+) AND t1.fk_group = t4.pk(+)
+AND    t1.fk_label = t5.pk(+) AND t1.fk_sublabel = t6.pk(+)
+AND    t2.pk = 20087.4 AND t1.fk_owner_obj = 35000182.65
+ORDER  BY t1.job_name;
 
--- A-U6
-WITH used AS (
-  SELECT FK_INSTRUMENT, FK_PROPERTIES, FK_TOPIC, FK_GLTA, COUNT(*) AS n
-  FROM   PGT_ACT.T_PGT_ACCT_MOV_S
-  WHERE  FK_BRANCH IN (20007.4, 21447.4)
-  AND    REGDATE >= DATE '2026-07-01' AND REGDATE < DATE '2026-08-01'
-  AND    FK_INSTRUMENT IN (2.4, 20.4, 20092.4, 20111.4, 20213.4, 20313.4)
-  AND    FK_TOPIC <> 0
-  GROUP  BY FK_INSTRUMENT, FK_PROPERTIES, FK_TOPIC, FK_GLTA),
-nc AS (
-  SELECT u.*,
-         CASE WHEN NVL(u.FK_PROPERTIES, 0) = 0 THEN 'no portfolio property' ELSE 'topic not in its lists' END AS kind,
-         CASE WHEN EXISTS (SELECT 1 FROM PGT_SYS.T_PGT_CROSS_ACCTCONF_S x
-                           WHERE x.FK_OWNER_OBJ = 18051.4 AND x.BRANCH = 20007.4 AND x.TOPIC = u.FK_TOPIC)
-              THEN 'Y' ELSE 'N' END AS in_cross_conf
-  FROM   used u
-  WHERE  NOT EXISTS (SELECT 1 FROM PGT_ACT.T_PGT_ACCT_LIST_TOPIC_S lt
-                     WHERE lt.FK_PARENT = u.FK_PROPERTIES AND lt.FK_TOPIC = u.FK_TOPIC AND lt.FK_OWNER_OBJ = 12646.4))
-SELECT sp.DESCRIPTION AS instrument, t.CODE AS topic_code, a.CODE AS account_code,
-       nc.kind, nc.in_cross_conf, COUNT(*) AS combinations, SUM(nc.n) AS movements
-FROM   nc
-LEFT   JOIN PGT_ACT.T_PGT_ACCT_TOPICS_S  t  ON t.PK  = nc.FK_TOPIC
-LEFT   JOIN PGT_ACT.T_PGT_ACCT_GLTA_S    a  ON a.PK  = nc.FK_GLTA
-LEFT   JOIN PGT_SYS.T_PGT_SUB_PRODUCT_S sp ON sp.PK = nc.FK_INSTRUMENT
-WHERE  NVL(a.CODE, '-') NOT IN ('INTERNAL', 'INTERNAL1')
-GROUP  BY sp.DESCRIPTION, t.CODE, a.CODE, nc.kind, nc.in_cross_conf
-ORDER  BY 1, 2, 3;
+-- R2: the flag values SLB uses (what a new row copies)
+SELECT return_data, recover_manual_movs, recover_reclassification_movs, recover_regularization_movs,
+       mic_eod, mic_flow_mode, mic_sender_type, mic_file_type, concurrent_events, workers, tasks_per_worker,
+       COUNT(*) AS n_rows
+FROM   box_acc.t_box_mbj_properties_s WHERE fk_branch = 20087.4
+GROUP  BY return_data, recover_manual_movs, recover_reclassification_movs, recover_regularization_movs,
+       mic_eod, mic_flow_mode, mic_sender_type, mic_file_type, concurrent_events, workers, tasks_per_worker
+ORDER  BY n_rows DESC;
 
--- A-U5
-SELECT 'PORT_PROP' AS item, COUNT(*) AS n
-FROM   PGT_ACT.T_PGT_ACCT_PORT_PROP_S
-WHERE  FK_OWNER_OBJ = 12646.4 AND FK_BRANCH IN (21447.4, 20007.4)
-UNION ALL
-SELECT 'LIST_TOPIC rows', COUNT(*)
-FROM   PGT_ACT.T_PGT_ACCT_LIST_TOPIC_S lt
-JOIN   PGT_ACT.T_PGT_ACCT_PORT_PROP_S pp ON pp.PK = lt.FK_PARENT AND pp.FK_OWNER_OBJ = 12646.4
-WHERE  lt.FK_OWNER_OBJ = 12646.4 AND pp.FK_BRANCH IN (21447.4, 20007.4)
-UNION ALL
-SELECT 'LIST_COND rows', COUNT(*)
-FROM   PGT_ACT.T_PGT_ACCT_LIST_COND_S lc
-JOIN   PGT_ACT.T_PGT_ACCT_PORT_PROP_S pp ON pp.PK = lc.FK_PARENT AND pp.FK_OWNER_OBJ = 12646.4
-WHERE  lc.FK_OWNER_OBJ = 12646.4 AND pp.FK_BRANCH IN (21447.4, 20007.4)
-UNION ALL
-SELECT 'CONF_LO_PROP', COUNT(*)
-FROM   PGT_SYS.T_PGT_CONF_LO_PROP_S
-WHERE  FK_OWNER_OBJ = 12642.4 AND FK_BRANCH IN (21447.4, 20007.4)
-UNION ALL
-SELECT 'CROSS_ACCTCONF NY SCH', COUNT(*)
-FROM   PGT_SYS.T_PGT_CROSS_ACCTCONF_S
-WHERE  FK_OWNER_OBJ = 18051.4 AND BRANCH = 20007.4;
+-- R3: SLB's calendars on MBJ rows
+SELECT fk_calendar, COUNT(*) AS n_rows FROM box_acc.t_box_mbj_properties_s
+WHERE  fk_branch = 20087.4 GROUP BY fk_calendar;
 
 
 
--- more
-SELECT t.CODE AS topic_code, lt.FK_EXTENSION AS list_ext,
-       COUNT(DISTINCT pp.FK_INSTRUMENT) AS n_instruments, COUNT(DISTINCT pp.PK) AS n_port_prop,
-       COUNT(DISTINCT lt.FK_GLTA) AS n_accounts,
-       MAX(CASE WHEN a.CODE IN ('INTERNAL', 'INTERNAL1') THEN 0 ELSE 1 END) AS has_real_account,
-       MAX(CASE WHEN pp.FK_INSTRUMENT = 20313.4 THEN 1 ELSE 0 END) AS used_by_cds,
-       MAX(CASE WHEN pp.FK_INSTRUMENT <> 20313.4 THEN 1 ELSE 0 END) AS used_by_other
-FROM   PGT_ACT.T_PGT_ACCT_PORT_PROP_S pp
-JOIN   PGT_ACT.T_PGT_ACCT_LIST_TOPIC_S lt
-       ON lt.FK_PARENT = pp.PK AND lt.FK_OWNER_OBJ = 12646.4 AND lt.FK_EXTENSION IN (38249.4, 38329.4, 38422.4)
-LEFT   JOIN PGT_ACT.T_PGT_ACCT_TOPICS_S t ON t.PK = lt.FK_TOPIC
-LEFT   JOIN PGT_ACT.T_PGT_ACCT_GLTA_S   a ON a.PK = lt.FK_GLTA
-WHERE  pp.FK_OWNER_OBJ = 12646.4
-AND    pp.FK_BRANCH IN (21447.4, 20007.4)
-AND    pp.FK_INSTRUMENT IN (2.4, 20.4, 20092.4, 20111.4, 20213.4, 20313.4)
-AND    NOT EXISTS (SELECT 1 FROM PGT_ACT.T_PGT_ACCT_LIST_COND_S lc
-                   WHERE lc.FK_PARENT = pp.PK AND lc.FK_OWNER_OBJ = 12646.4 AND lc.FK_EXTENSION = 38335.4
-                   AND lc.FK_CONDITION IN (24.35, 29.35, 33.35, 35.35) AND lc.VALUE_FUNC = 'NY_IBF')
-GROUP  BY t.CODE, lt.FK_EXTENSION
-ORDER  BY 1, 2;
-
-SELECT a.CODE AS account_code, COUNT(DISTINCT pp.PK) AS n_port_prop, COUNT(*) AS n_list_rows,
-       COUNT(DISTINCT pp.FK_INSTRUMENT) AS n_instruments
-FROM   PGT_ACT.T_PGT_ACCT_PORT_PROP_S pp
-JOIN   PGT_ACT.T_PGT_ACCT_LIST_TOPIC_S lt
-       ON lt.FK_PARENT = pp.PK AND lt.FK_OWNER_OBJ = 12646.4 AND lt.FK_EXTENSION IN (38249.4, 38329.4, 38422.4)
-JOIN   PGT_ACT.T_PGT_ACCT_GLTA_S a ON a.PK = lt.FK_GLTA
-WHERE  pp.FK_OWNER_OBJ = 12646.4
-AND    pp.FK_BRANCH IN (21447.4, 20007.4)
-AND    pp.FK_INSTRUMENT IN (2.4, 20.4, 20092.4, 20111.4, 20213.4, 20313.4)
-AND    a.CODE NOT IN ('INTERNAL', 'INTERNAL1')
-AND    NOT EXISTS (SELECT 1 FROM PGT_ACT.T_PGT_ACCT_LIST_COND_S lc
-                   WHERE lc.FK_PARENT = pp.PK AND lc.FK_OWNER_OBJ = 12646.4 AND lc.FK_EXTENSION = 38335.4
-                   AND lc.FK_CONDITION IN (24.35, 29.35, 33.35, 35.35) AND lc.VALUE_FUNC = 'NY_IBF')
-GROUP  BY a.CODE
-ORDER  BY 1;
 
 
+-- second query
+
+-- R4: NY's MBJ rows (expect 0)
+SELECT COUNT(*) FROM box_acc.t_box_mbj_properties_s WHERE fk_branch = 20007.4;
+
+-- R5: the MBJ engine package is there and valid (run in both tiers)
+SELECT owner, object_name, object_type, status, last_ddl_time FROM all_objects
+WHERE  object_name = 'PKG_BATCHPROCESS_MBJ' ORDER BY owner, object_type;
 
 
 
 --
-Read-only:
 
-1. Full Control-M definition of GMNY0011D01_PR and GMNY0012D01_PR in P-GBO-NY-TIER2.json (If / Actions blocks, Event:Add, DoAction): where do GMNY0011D01_PR-OK / GMNY0012D01_PR-OK come from?
-2. ControlmServer of: SLB’s FE folder (cib-boxfin-t1mdslbfe), SLB’s load-prices folder, NY’s Data Lake folder (control-m_NY.json), NY’s GBO folder (GCB.GCB-P-D012), and the descriptors’ PRE / PRO values. Then list the G0…-prefixed events across the repos: who adds them, who waits for them, and on which server. Infer the convention, marked INFERRED. Does any BOX folder wait on a GBO event from another server, and under which name?
-3. Who waits for SLB’s GMBX4LB00D08 (downstream)? Does NY have any clearing-house / SwapAgent / “camara” job or configuration in its job confs?
-
+Read-only. Write nothing except runs/NY_SCH/tier2-pre/acc-jobs/00-discovery.md in the automation repo.
+For SLB and each instrument depos, irs, ccs, otc, cap, run:
+  python3 scripts/find_jobs.py runs/_reference/tier1-prod/ --side ACC --product <i> --branch SLB --controlm <cib-boxacc-t1mdslbac> <cib-boxfin-t1mdslbfe>
+and report per instrument: each ACC job (step, per book or branch level, its shell.conf line), its order,
+what it waits for (FE events, other folders, GBO) and who waits for it, and any legacy db.conf duplicate.
+Then: (1) every BOX shell.conf job that is NOT mbjbox.sh (script, what it does); (2) the ACC folder header
+(ControlmServer, SiteStandard, OrderMethod, Host, Application, calendar); (3) whether any FE job waits for
+an ACC job; (4) whether the ACC descriptor copies exist under runs/_reference/external/.
+Cite file:line for everything. No guesses: write "not found" when not found.

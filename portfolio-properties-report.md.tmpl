@@ -1,0 +1,48 @@
+# Portfolio properties — GBO vs BOX — {{BRANCH}} ({{TARGET_ENV}}), reference {{REFERENCE_BRANCH}} ({{REFERENCE_ENV}})
+
+Run date: {{DATE}} · run folder `{{RUN_FOLDER}}` · group: target `{{TARGET_GROUP_PK}}` · GBO source: {{GBO_SOURCE_ENV}} ·
+agent `sigom-box-acc-configs-agent` phase 1 (no SQL written) · for the users' review with `02-acc-gap-matrix.md`.
+
+**How BOX portfolio properties are built** ([ADR 0014](../../../../../docs/decisions/0014-box-acc-expert-review-1.md)):
+the **shape** (conditions, topics per list) is the reference's BOX property; the **account** of each topic comes from
+the target's **Valid** GBO portfolio properties of the same instrument (`InValid` ones are not read), through the
+GBO → BOX topic mapping; **internal-list** topics take the internal account (`INTERNAL`). BOX consolidates: several
+GBO properties usually end in one BOX property.
+
+**Privacy:** PKs, condition functions and account codes only — no portfolio, counterparty or entity names or values,
+no property descriptions.
+
+## Summary
+
+| Instrument | BOX properties to create | GBO properties read (Valid, in scope) | GBO `InValid` (ignored) | Topic rows | Account found | Internal account | OPEN |
+|---|---|---|---|---|---|---|---|
+
+## 1. Per BOX portfolio property
+
+One section per BOX property to create, by instrument.
+
+### {{INSTRUMENT}} — BOX property {{N}} (shape of reference property `{{REF_PORT_PROP_PK}}`)
+
+Conditions (the reference's): `{{NOM_FUNC}}` = {{VALUE}} · … (a portfolio / counterparty condition: "the target's
+value, asked" — never the value)
+
+| List | BOX topic | Account proposed | How | GBO topic(s) | GBO properties (PKs) | Evidence (file:line) |
+|---|---|---|---|---|---|---|
+
+**How:** `one account` (every GBO property gives the same account) · `matched by conditions` (several accounts: the
+GBO property whose conditions match this BOX property's) · `internal` (the internal account) · `OPEN` (no account, or
+several and none matches — asked; the property would be `InValid`).
+
+## 2. Per GBO portfolio property — where it went
+
+| GBO property PK | Instrument | Branch condition value | Conditions (functions) | → BOX property | Topic rows carried | Not carried (why) |
+|---|---|---|---|---|---|---|
+
+## 3. Not carried
+
+| What | Count | Why / question |
+|---|---|---|
+| GBO properties `InValid` | | not read (ADR 0014) |
+| GBO properties of the group's other branches | | branch condition ≠ the target's |
+| GBO topics with no BOX topic (mapping) | | OPEN — topic mapping |
+| Accounts not in BOX (screen 10) | | created from GBO — gap matrix screen 10 |

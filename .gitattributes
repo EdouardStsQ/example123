@@ -1,0 +1,8 @@
+# Files that run on the Unix servers keep LF line ends on every checkout [2026-10-22].
+# A Windows clone with core.autocrlf=true turned them into CR LF: job_unix.sh then created job files whose names end
+# in a hidden CR, and the conf lines carried it too. These rules win over core.autocrlf.
+*.sh            text eol=lf
+*.ksh           text eol=lf
+*.conf          text eol=lf
+*.proposal      text eol=lf
+**/out/unix/**  text eol=lf

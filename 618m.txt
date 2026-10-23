@@ -1,65 +1,14 @@
-SET SERVEROUTPUT ON
-DECLARE
-  c_commit CONSTANT BOOLEAN      := FALSE;           -- TRUE only after a clean rehearsal
-  c_alias  CONSTANT VARCHAR2(30) := 'TR_AL_AFS_NY';
-  c_folder CONSTANT NUMBER       := 12.22;           -- TRALCOFISC, NY (as PRE)
-  c_owner  CONSTANT NUMBER       := 1453.4;          -- folder alias
-  c_ext    CONSTANT NUMBER       := 10513.4;
-  TYPE t_num IS TABLE OF NUMBER;
-  v_src    t_num := t_num(279.4, 513.4);             -- 279.4 = the import's source; 513.4 as in PRE
-  v_pk NUMBER; v_own NUMBER; v_n PLS_INTEGER; v_d PLS_INTEGER; v_auth NUMBER; v_frac NUMBER;
-BEGIN
-  IF DBMS_TRANSACTION.LOCAL_TRANSACTION_ID IS NOT NULL THEN
-    RAISE_APPLICATION_ERROR(-20000, 'Open transaction in this session: type ROLLBACK; and run again.');
-  END IF;
-  SELECT auth_code INTO v_auth FROM gom_glb_sys.t__core_info_s;
-  v_frac := v_auth / POWER(10, LENGTH(TO_CHAR(v_auth)));
-  DBMS_OUTPUT.PUT_LINE('installation fraction: ' || v_frac || ' (expected .23)');
-
-  SELECT COUNT(*) INTO v_n FROM PGT_STC.T_PGT_FOLDER_S
-  WHERE  PK = c_folder AND CODE = 'TRALCOFISC' AND FK_BRANCH = 20007.4;
-  IF v_n <> 1 THEN RAISE_APPLICATION_ERROR(-20001, 'Folder 12.22 TRALCOFISC (NY) not found. Nothing done.'); END IF;
-
-  FOR i IN 1 .. v_src.COUNT LOOP
-    SELECT COUNT(*) INTO v_n FROM PGT_TRD.T_PGT_OBJ_SOURCE_S
-    WHERE  ALIASCODE = c_alias AND FK_OWNER_OBJ = c_owner AND FK_EXTENSION = c_ext AND FK_SOURCE = v_src(i);
-    IF v_n > 0 THEN
-      DBMS_OUTPUT.PUT_LINE('source ' || v_src(i) || ': alias already there - skipped');
-    ELSE
-      v_pk  := NULL;                    -- IN/OUT: empty, so SIGOM gives a new PK each time
-      v_own := c_owner;                 -- IN/OUT: the folder-alias owner (the table is shared by many objects)
-      PGT_TRD.PKG_SIGOM_COV.P_SETHEADER('T_PGT_OBJ_SOURCE_S', v_pk, v_own);
-      DBMS_OUTPUT.PUT_LINE('P_SETHEADER returned PK ' || v_pk || ', owner ' || v_own);
-      IF v_pk IS NULL OR v_pk - TRUNC(v_pk) <> v_frac THEN
-        RAISE_APPLICATION_ERROR(-20002, 'PK ' || v_pk || ' does not end in ' || v_frac || '. Nothing kept.');
-      END IF;
-      INSERT INTO PGT_TRD.T_PGT_OBJ_SOURCE_S (PK, FK_OWNER_OBJ, FK_PARENT, FK_EXTENSION, ALIASCODE, FK_SOURCE)
-      VALUES (v_pk, c_owner, c_folder, c_ext, c_alias, v_src(i));          -- owner set explicitly
-      DBMS_OUTPUT.PUT_LINE('source ' || v_src(i) || ': inserted PK ' || v_pk);
-    END IF;
-  END LOOP;
-
-  SELECT COUNT(*), COUNT(DISTINCT PK) INTO v_n, v_d FROM PGT_TRD.T_PGT_OBJ_SOURCE_S
-  WHERE  ALIASCODE = c_alias AND FK_OWNER_OBJ = c_owner AND FK_EXTENSION = c_ext
-  AND    FK_PARENT = c_folder AND FK_SOURCE IN (279.4, 513.4);
-  IF v_n <> 2 OR v_d <> 2 THEN
-    RAISE_APPLICATION_ERROR(-20003, v_n || ' alias row(s), ' || v_d || ' distinct PK(s), expected 2 and 2. Nothing kept.');
-  END IF;
-  DBMS_OUTPUT.PUT_LINE('OK - 2 alias rows -> folder 12.22');
-
-  IF c_commit THEN COMMIT; DBMS_OUTPUT.PUT_LINE('COMMITTED');
-  ELSE ROLLBACK; DBMS_OUTPUT.PUT_LINE('REHEARSAL - rolled back, nothing kept'); END IF;
-EXCEPTION WHEN OTHERS THEN ROLLBACK; RAISE;
-END;
-/
+SELECT c.constraint_name, c.constraint_type, cc.position, cc.column_name
+FROM   all_constraints c
+JOIN   all_cons_columns cc ON cc.owner = c.owner AND cc.constraint_name = c.constraint_name
+WHERE  c.owner = 'PGT_TRD' AND c.table_name = 'T_PGT_OBJ_SOURCE_S'
+ORDER  BY c.constraint_name, cc.position;
 
 
 SELECT PK, ALIASCODE, FK_PARENT, FK_OWNER_OBJ, FK_EXTENSION, FK_SOURCE
 FROM   PGT_TRD.T_PGT_OBJ_SOURCE_S
-WHERE  ALIASCODE = 'TR_AL_AFS_NY' AND FK_OWNER_OBJ = 1453.4 AND FK_EXTENSION = 10513.4;
+WHERE  FK_PARENT = 12.22
+ORDER  BY FK_SOURCE, ALIASCODE;
 
 
-DELETE FROM PGT_TRD.T_PGT_OBJ_SOURCE_S
-WHERE  PK IN (<pk 1>, <pk 2>) AND ALIASCODE = 'TR_AL_AFS_NY' AND FK_PARENT = 12.22;
--- expect: 2 rows deleted
-COMMIT;
+SELECT * FROM PGT_TRD.T_PGT_OBJ_SOURCE_S WHERE PK = <the PK printed>;

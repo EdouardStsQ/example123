@@ -1,6 +1,17 @@
-SELECT PK, CODE, DESCRIPTION, FK_BRANCH, FK_OWNER_OBJ
-FROM   PGT_STC.T_PGT_FOLDER_S WHERE PK IN (12.22, 203.35);
+-- 1. the alias table's columns
+SELECT column_id, column_name, data_type, nullable, data_default
+FROM   all_tab_columns WHERE owner = 'PGT_TRD' AND table_name = 'T_PGT_OBJ_SOURCE_S' ORDER BY column_id;
 
-SELECT PK, CODE, DESCRIPTION, FK_BRANCH, FK_OWNER_OBJ
-FROM   PGT_STC.T_PGT_FOLDER_S
-WHERE  DESCRIPTION LIKE '%TR_AL_AFS_NY%' OR CODE = 'TR_AL_FSNY' OR PK IN (12.22, 203.35);
+-- 2. two existing folder aliases for the same source, as templates
+SELECT * FROM PGT_TRD.T_PGT_OBJ_SOURCE_S
+WHERE  FK_OWNER_OBJ = 1453.4 AND FK_EXTENSION = 10513.4 AND FK_SOURCE IN (279.4, 513.4) AND ROWNUM <= 4;
+
+-- 3. how SIGOM allocates PKs here (the function and its arguments)
+SELECT owner, object_name, procedure_name FROM all_procedures
+WHERE  object_name IN ('PKG_SIGOM_COV', 'F_GETPK', 'F___SEQUENCE')
+   OR  procedure_name IN ('P_SETHEADER', 'F_GETPK')
+ORDER  BY 1, 2, 3;
+
+-- PRE
+SELECT * FROM PGT_TRD.T_PGT_OBJ_SOURCE_S WHERE ALIASCODE = 'TR_AL_AFS_NY';
+

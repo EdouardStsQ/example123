@@ -1,17 +1,55 @@
--- 1. the alias table's columns
-SELECT column_id, column_name, data_type, nullable, data_default
-FROM   all_tab_columns WHERE owner = 'PGT_TRD' AND table_name = 'T_PGT_OBJ_SOURCE_S' ORDER BY column_id;
+SELECT position, argument_name, data_type, in_out FROM all_arguments
+WHERE  owner = 'PGT_TRD' AND package_name = 'PKG_SIGOM_COV' AND object_name = 'P_SETHEADER'
+ORDER  BY overload, position;
 
--- 2. two existing folder aliases for the same source, as templates
-SELECT * FROM PGT_TRD.T_PGT_OBJ_SOURCE_S
-WHERE  FK_OWNER_OBJ = 1453.4 AND FK_EXTENSION = 10513.4 AND FK_SOURCE IN (279.4, 513.4) AND ROWNUM <= 4;
 
--- 3. how SIGOM allocates PKs here (the function and its arguments)
-SELECT owner, object_name, procedure_name FROM all_procedures
-WHERE  object_name IN ('PKG_SIGOM_COV', 'F_GETPK', 'F___SEQUENCE')
-   OR  procedure_name IN ('P_SETHEADER', 'F_GETPK')
-ORDER  BY 1, 2, 3;
 
--- PRE
-SELECT * FROM PGT_TRD.T_PGT_OBJ_SOURCE_S WHERE ALIASCODE = 'TR_AL_AFS_NY';
+SET SERVEROUTPUT ON
+DECLARE
+  c_commit CONSTANT BOOLEAN      := FALSE;           -- TRUE only after a clean rehearsal
+  c_alias  CONSTANT VARCHAR2(30) := 'TR_AL_AFS_NY';
+  c_folder CONSTANT NUMBER       := 12.22;           -- TRALCOFISC, NY (as PRE)
+  c_owner  CONSTANT NUMBER       := 1453.4;          -- folder alias
+  c_ext    CONSTANT NUMBER       := 10513.4;
+  TYPE t_num IS TABLE OF NUMBER;
+  v_src    t_num := t_num(279.4, 513.4);             -- 279.4 = the import's source; 513.4 as in PRE
+  v_pk NUMBER; v_own NUMBER; v_n PLS_INTEGER; v_auth NUMBER; v_frac NUMBER;
+BEGIN
+  IF DBMS_TRANSACTION.LOCAL_TRANSACTION_ID IS NOT NULL THEN
+    RAISE_APPLICATION_ERROR(-20000, 'Open transaction in this session: type ROLLBACK; and run again.');
+  END IF;
+  SELECT auth_code INTO v_auth FROM gom_glb_sys.t__core_info_s;
+  v_frac := v_auth / POWER(10, LENGTH(TO_CHAR(v_auth)));
+  DBMS_OUTPUT.PUT_LINE('installation fraction: ' || v_frac || ' (expected .23)');
 
+  SELECT COUNT(*) INTO v_n FROM PGT_STC.T_PGT_FOLDER_S
+  WHERE  PK = c_folder AND CODE = 'TRALCOFISC' AND FK_BRANCH = 20007.4;
+  IF v_n <> 1 THEN RAISE_APPLICATION_ERROR(-20001, 'Folder 12.22 TRALCOFISC (NY) not found. Nothing done.'); END IF;
+
+  FOR i IN 1 .. v_src.COUNT LOOP
+    SELECT COUNT(*) INTO v_n FROM PGT_TRD.T_PGT_OBJ_SOURCE_S
+    WHERE  ALIASCODE = c_alias AND FK_OWNER_OBJ = c_owner AND FK_EXTENSION = c_ext AND FK_SOURCE = v_src(i);
+    IF v_n > 0 THEN
+      DBMS_OUTPUT.PUT_LINE('source ' || v_src(i) || ': alias already there - skipped');
+    ELSE
+      PGT_TRD.PKG_SIGOM_COV.P_SETHEADER('T_PGT_OBJ_SOURCE_S', v_pk, v_own);   -- SIGOM's PK
+      IF v_pk IS NULL OR v_pk - TRUNC(v_pk) <> v_frac THEN
+        RAISE_APPLICATION_ERROR(-20002, 'PK ' || v_pk || ' does not end in ' || v_frac || '. Nothing kept.');
+      END IF;
+      INSERT INTO PGT_TRD.T_PGT_OBJ_SOURCE_S (PK, FK_OWNER_OBJ, FK_PARENT, FK_EXTENSION, ALIASCODE, FK_SOURCE)
+      VALUES (v_pk, c_owner, c_folder, c_ext, c_alias, v_src(i));          -- owner set explicitly (shared table)
+      DBMS_OUTPUT.PUT_LINE('source ' || v_src(i) || ': inserted PK ' || v_pk);
+    END IF;
+  END LOOP;
+
+  SELECT COUNT(*) INTO v_n FROM PGT_TRD.T_PGT_OBJ_SOURCE_S
+  WHERE  ALIASCODE = c_alias AND FK_OWNER_OBJ = c_owner AND FK_EXTENSION = c_ext
+  AND    FK_PARENT = c_folder AND FK_SOURCE IN (279.4, 513.4);
+  IF v_n <> 2 THEN RAISE_APPLICATION_ERROR(-20003, v_n || ' alias row(s), expected 2. Nothing kept.'); END IF;
+  DBMS_OUTPUT.PUT_LINE('OK - 2 alias rows -> folder 12.22');
+
+  IF c_commit THEN COMMIT; DBMS_OUTPUT.PUT_LINE('COMMITTED');
+  ELSE ROLLBACK; DBMS_OUTPUT.PUT_LINE('REHEARSAL - rolled back, nothing kept'); END IF;
+EXCEPTION WHEN OTHERS THEN ROLLBACK; RAISE;
+END;
+/

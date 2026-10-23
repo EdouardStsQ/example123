@@ -1,6 +1,11 @@
-No usage window. Since ADR 0014 the scope is configuration, not usage: the Valid GBO portfolio properties whose branch condition is NY_SCH, with their full lists.
-- Skip A-U0, A-U2, A-U2b, A-U4, A-U4b, A-U6 (windowed diagnostics; NY's July results are already in box-acc-model.md §9).
-- Run A-U1 (a), (f) and A-U7 (a), (b) - no window, Valid only.
-- &&ACCOUNT_CODES = the accounts of A-U7b + those of A-03a.
-- No "configured but unused" question: full lists are copied.
-Write this in RUN.md and in the inputs file (usage: "not used - ADR 0014"), then go on to Step 6.
+( . $APPL_HOME/GM_ENV >/dev/null 2>&1
+  echo "GM_CONFIG_PATH=$GM_CONFIG_PATH"
+  echo "GM_PROFILE_PATH=$GM_PROFILE_PATH"
+  echo "default user: ${ORACLE_CONNECT%%/*}"
+  echo "database:     ${ORACLE_CONNECT##*@}" )
+
+
+( . $APPL_HOME/GM_ENV >/dev/null 2>&1
+  ls -l $GM_PROFILE_PATH/GMBX0NY02D01 $GM_PROFILE_PATH/dynamic/GMBX0NY02D01 2>&1
+  echo "BOX job profiles:"; ls $GM_PROFILE_PATH $GM_PROFILE_PATH/dynamic 2>/dev/null | grep '^GMBX' | head -20
+  echo "all profiles (first 30):"; ls $GM_PROFILE_PATH | head -30 )

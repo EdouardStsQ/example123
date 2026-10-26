@@ -1,7 +1,10 @@
--- what parameter type 367.4 is
-SELECT PK, DESCRIPTION FROM PGT_SYS.PGT_DOMAINS WHERE PK = 367.4;
--- the CCS instrument types and their 367.4 value: which ones the Tier 1 rule nets
-SELECT it.PK, it.DESCRIPTION, NVL(p.PARAMETERVALUE, 'NO') AS p367
-FROM   PGT_SYS.T_PGT_INSTRUMENT_TYPE_S it
-LEFT   JOIN PGT_STC.T_PGT_PARAMETER_S p ON p.FK_PARENT = it.PK AND p.FK_PARAMETERTYPE = 367.4
-WHERE  it.FK_PARENT = 20.4;
+-- 1. the parameter object's fields, and the table each one points to
+SELECT e.PK, e.FIELD, e.FK_OBJECT, o.PK_NAME, o.BASIC_STORAGE
+FROM   GOM_GLB_SYS.T__EXT_DEF_S e
+LEFT   JOIN GOM_GLB_SYS.T__OBJ_DEF_S o ON o.PK = e.FK_OBJECT
+WHERE  e.FK_PARENT = 1677.4 OR e.PK = 118729.4
+ORDER  BY e.PK;
+
+
+-- 2. what 367.4 is
+SELECT * FROM <owner>.<that BASIC_STORAGE> WHERE PK = 367.4;

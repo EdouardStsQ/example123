@@ -1,5 +1,12 @@
--- J-E11 - the sequence (or counter) behind T_BOX_MBJ_PROPERTIES_S, and its highest PK with this installation's fraction
-SELECT SEQUENCE_NAME, LAST_NUMBER, INCREMENT_BY, CACHE_SIZE FROM ALL_SEQUENCES
-WHERE  SEQUENCE_OWNER = 'BOX_ACC' AND SEQUENCE_NAME LIKE '%MBJ%';
-SELECT * FROM BOX_ACC.T___SEQUENCE WHERE PK_NAME = 'T_BOX_MBJ_PROPERTIES_S';
-SELECT MAX(TRUNC(PK)) AS max_pk, COUNT(*) AS n FROM BOX_ACC.T_BOX_MBJ_PROPERTIES_S WHERE PK - TRUNC(PK) = 0.44;
+1–8: OK. For 2: yes, treat fe-jobs/all_20261021_1 as OK.
+
+CreatedBy: <your user ID>
+reference.mbj_source_env: Tier 1 PRE (the J-R2 rows were read there; the conf files are Tier 1 PROD — that is why they disagree, open item 4zk).
+MIC decisions:
+depos: eod_steps = keep, sender_type = reference
+otc: eod_steps = keep, sender_type = reference
+cap: eod_steps = keep, sender_type = reference
+irs: eod_steps = none, sender_type = reference
+ccs: eod_steps = none, sender_type = reference
+
+No test values. Build.

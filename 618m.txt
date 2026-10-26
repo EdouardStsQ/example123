@@ -1,10 +1,6 @@
--- 1. the parameter object's fields, and the table each one points to
+-- the parameter object's fields: which table FK_PARAMETERTYPE points to
 SELECT e.PK, e.FIELD, e.FK_OBJECT, o.PK_NAME, o.BASIC_STORAGE
 FROM   GOM_GLB_SYS.T__EXT_DEF_S e
 LEFT   JOIN GOM_GLB_SYS.T__OBJ_DEF_S o ON o.PK = e.FK_OBJECT
-WHERE  e.FK_PARENT = 1677.4 OR e.PK = 118729.4
+WHERE  e.FK_PARENT = 13990.4
 ORDER  BY e.PK;
-
-
--- 2. what 367.4 is
-SELECT * FROM <owner>.<that BASIC_STORAGE> WHERE PK = 367.4;

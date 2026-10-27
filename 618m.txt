@@ -1,12 +1,5 @@
-1–8: OK. For 2: yes, treat fe-jobs/all_20261021_1 as OK.
-
-CreatedBy: <your user ID>
-reference.mbj_source_env: Tier 1 PRE (the J-R2 rows were read there; the conf files are Tier 1 PROD — that is why they disagree, open item 4zk).
-MIC decisions:
-depos: eod_steps = keep, sender_type = reference
-otc: eod_steps = keep, sender_type = reference
-cap: eod_steps = keep, sender_type = reference
-irs: eod_steps = none, sender_type = reference
-ccs: eod_steps = none, sender_type = reference
-
-No test values. Build.
+-- the source field's table (object 1344.4 "PGT - Object x Source")
+SELECT e.PK, e.FIELD, e.FK_OBJECT, o.PK_NAME, o.BASIC_STORAGE
+FROM   GOM_GLB_SYS.T__EXT_DEF_S e LEFT JOIN GOM_GLB_SYS.T__OBJ_DEF_S o ON o.PK = e.FK_OBJECT
+WHERE  e.FK_PARENT = 1344.4 ORDER BY e.PK;
+-- then: SELECT * FROM <owner>.<that table> WHERE UPPER(DESCRIPTION) LIKE '%EQUATION%';

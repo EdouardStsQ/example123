@@ -1,0 +1,123 @@
+# BOX ACC gap matrix — {{BRANCH}} ({{TARGET_ENV}}), reference {{REFERENCE_BRANCH}} ({{REFERENCE_ENV}})
+
+Run date: {{DATE}} · run folder `{{RUN_FOLDER}}` · group: target `{{TARGET_GROUP_PK}}`, reference
+`{{REFERENCE_GROUP_PK}}` · instruments: {{INSTRUMENTS}} · GBO source: {{GBO_SOURCE_ENV}} (asked once; no usage window, ADR 0015)
+· agent `sigom-box-acc-configs-agent` phase 1 (no SQL written).
+
+**Actions:** `present` · `create` (from the source named) · `ask` (a question, below) · `N/A` (with the reason: not
+Madrid real / no reference / not used) · `OPEN` (blocked — on what).
+
+## Pre-checks
+
+| Check | Target | Reference | Result / finding | Evidence |
+|---|---|---|---|---|
+| A-P1 readable, live counts | | | | |
+| A-P2 identity values = expected | | | | |
+| A-P3 metamodel | | — | | |
+| A-P4 negative owners (excluded) | | | | |
+| A-P5 PK generation safe (auth code, `F_GetPK` mode, next value vs max PK of this fraction) — a table behind is a **finding** with a proposal for the BOX team (below); it blocks phase 2 for that table | | — | | |
+| A-P6 `PKG_ACCTPROP` version (r0.0.8 expected) | | | | |
+| A-P7 GBO vs BOX columns per copied table (ADR 0014) | | | | |
+
+## The target's GBO configuration in scope (GBO source: {{GBO_SOURCE_ENV}})
+
+| | Value | Evidence |
+|---|---|---|
+| Portfolio properties per instrument: `Valid` / `InValid` | | A-U1 a |
+| In scope (`Valid`, branch value classified **in**) / out (classified **out**, blank or no branch row — out, 2026-10-27) — see *Branch values* | | A-U1 f, g |
+| Topics of the in-scope lists, per list — with a BOX `CODE` twin / without (→ created as global, to review) | | A-U7 a, A-06 |
+| Real accounts of the in-scope lists (→ A-10, with A-03a's) | | A-U7 b |
+| Approved instruments with no in-scope GBO property (asked) | | A-U1 f |
+| The target's rows in `T_MAD_REVAL_ACCOUNTS` | | A-03a |
+
+## Branch values — classified from evidence (A-U1 g), not asked
+
+| Branch value | Properties (Valid) | Instruments | What it is (g1 function / g2 branch / g3) | Class | Evidence |
+|---|---|---|---|---|---|
+
+## PKs met and resolved (A-L1)
+
+| PK | Where seen | What it is | Treatment |
+|---|---|---|---|
+
+## Summary
+
+| # | Screen | present | create | ask | N/A | OPEN |
+|---|---|---|---|---|---|---|
+| 1 | Condition Port Properties | | | | | |
+| 2 | Config. Local Properties | | | | | |
+| 3 | Cross Account Config | | | | | |
+| 4 | Portfolio Properties | | | | | |
+| 5 | Net Contract | | | | | |
+| 6 | Accounting Topics | | | | | |
+| 7 | Standard Historic | | | | | |
+| 8 | Event Grouping | | | | | |
+| 9 | Event Config | | | | | |
+| 10 | Global Accounts | | | | | |
+| 12 | Conf Instru Type (the reference's, as they are) | | | | | |
+| 13 | Net CCS PlanBS — CCS end-of-month netting (applies: yes / no, asked; yes → the reference's rows as they are) | | | | | |
+| 14 | Label aliases for MIC (one per book label with ACC jobs; codes from the GL team; source) | | | | | |
+| A-11 | GLTA Local Dep, Conf Acc By StdHist, … | | | | | |
+
+## Per screen
+
+One table per screen, one row per object (condition, topic, group, event, account) or per instrument (local /
+portfolio properties, cross account); for screen 4, one row per instrument × list (global / local / internal topics,
+conditions):
+
+| Instrument | List / array | Object | Reference (file:line) | Target (file:line) | In scope (A-U7) | Action | Source of the values | Note |
+|---|---|---|---|---|---|---|---|---|
+
+## Global objects to create — TO REVIEW (ADR 0018)
+
+Topics and standard historics are global: created with the **global `.65` PK**, not the installation's. ⚠ A `.65` PK
+created in a lower environment (PRE) may clash with production's — the BOX team agrees the PK range before the SQL
+runs; phase 2 writes them in the main rollback **and** in `global_pk_rollback.sql`.
+
+| Object | `CODE` | Description | Why (used by) | Source | Evidence |
+|---|---|---|---|---|---|
+
+## Fixed by the BOX ACC expert (ADR 0014, 0018) — not asked
+
+| Rule | Applied as |
+|---|---|
+| Conditions: BOX as it is | verify only |
+| Event groups: global | verify only; no branch copy |
+| Local properties' `INIVALPCDATE` | 01/01/1900 |
+| Cross Account Config source | `<GBO schema>.T_MAD_REVAL_ACCOUNTS` (column map below) |
+| Conf Instru Type | the reference's BOX rows, as they are |
+| GBO portfolio properties | `Valid` only |
+| Internal-list topics | the internal account |
+| GBO → BOX topics | by `CODE`; no twin → created as global, to review (ADR 0018) |
+| GBO properties with a blank branch condition / no branch row | out |
+| `T_PGT_TOPICS_RR`, GBO ConcMis | out |
+
+## Column maps — GBO → BOX (A-P7)
+
+One table per copied table (Cross Account Config, Global Accounts, …): every BOX column and where its value comes from
+(a GBO column, a fixed value, the reference's pattern, or asked); every GBO column with no BOX counterpart.
+
+| BOX column | From | Note |
+|---|---|---|
+
+## Decisions (from the inputs file)
+
+Only what no query answers. A classification the operator confirmed is listed with its evidence; one given without
+evidence is marked **provisional** until the evidence is in.
+
+| Decision | Value | Evidence | Date / who |
+|---|---|---|---|
+
+## PK proposal for the BOX team (A-P5) — only when a table is behind
+
+| Table | Mode (counter / sequence) | Next value | Max PK (this fraction) | Proposal (run by the BOX team) |
+|---|---|---|---|---|
+
+## Questions for the BOX team
+
+1.
+
+## Not in the checklist (A-11)
+
+| Object | Reference rows | In or out | Why |
+|---|---|---|---|

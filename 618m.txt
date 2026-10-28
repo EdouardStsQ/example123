@@ -1,8 +1,2 @@
-SELECT lt.FK_PARENT AS port_prop_pk, t.CODE AS topic_code, a.CODE AS account_code, lt.PK AS row_pk
-FROM   PGT_ACT.T_PGT_ACCT_LIST_TOPIC_S lt
-LEFT   JOIN PGT_ACT.T_PGT_ACCT_TOPICS_S t ON t.PK = lt.FK_TOPIC
-LEFT   JOIN PGT_ACT.T_PGT_ACCT_GLTA_S   a ON a.PK = lt.FK_GLTA
-WHERE  lt.FK_OWNER_OBJ = 12646.4 AND lt.FK_EXTENSION = 38329.4
-AND    lt.FK_PARENT IN (2485.35, 2487.35)
-AND    t.CODE IN ('FXCONTROL','FXCONTROLNET','FXNETLOSS','FXNETPROF','FXNIVELLOSS','FXNIVELPROF','NIVELNET')
-ORDER  BY 1, 2, 3;
+   Get-ChildItem "C:\path\to\sqldeveloper" -Recurse -Filter sql.exe | Select-Object FullName
+   & "C:\path\to\sqldeveloper\jdk\bin\java.exe" -version

@@ -1,8 +1,8 @@
--- 1. the sequence's next value in Tier 2
-SELECT LAST_NUMBER, CACHE_SIZE FROM ALL_SEQUENCES
-WHERE  SEQUENCE_OWNER = 'BOX_ACC' AND SEQUENCE_NAME = 'SPK_T_BOX_ACCT_PARENT_DATE_S';
--- 2. the rows already there, per PK fraction (compare with Tier 2's auth code fraction)
-SELECT PK - TRUNC(PK) AS fraction, COUNT(*) AS n, MAX(TRUNC(PK)) AS max_pk
-FROM   BOX_ACC.T_BOX_ACCT_PARENT_DATE_S GROUP BY PK - TRUNC(PK);
--- 3. whether SIGOM uses the counter instead of the sequence for this table
-SELECT * FROM BOX_ACC.T___SEQUENCE WHERE PK_NAME = 'T_BOX_ACCT_PARENT_DATE_S';
+1. Do you confirm that the BOX conditions are NY’s local property’s condition array, copied from SLB’s per instrument?
+2. What should happen to a BOX condition with no GBO twin (the Subyacente one above)? BOX marks the property InValid if any condition has no value. The options are:
+(a) you give the value once per instrument;
+(b) drop that condition from NY’s local property;
+(c) something else.
+3. If clashing properties have identical topic → account lists, can the agent create just one without asking? Nothing would be lost.
+4. For a clash, what should the agent recommend? Options: nothing, so you decide alone; or the property with more topics / accounts; or, optionally, the one with more postings (a usage query, off by default per ADR 0015).
+5. BOX property description: copy the GBO property’s description as it is? It would stay in the run folder only.

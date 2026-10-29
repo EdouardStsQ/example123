@@ -1,8 +1,8 @@
 A-04h result for f_IsBuyReverse (BOX_ACC.PKG_PGTUTILITY, lines 645-694): one leg → leg direction LOAN = 0, BORROWER = 1; several legs → EXSIDE BUYER → BORROWER = 1, SELLER → LOAN = 0; otherwise -1. So 1 = buy, 0 = sell: your translation was inverted. Use PUR → 1, SAL → 0 (still proposed, not in the map yet).
 Before I confirm:
 
-Show the A-01-TGT description of 22.65 and of 11.65 f_IsBuy, plus A-04h for f_IsBuy.
-Run A-02b in Tier 1: which of the two do SLB’s OTC and Caps local properties use (by function name)?
-A-04h for GBO f_GetDirectionOTC and F_GETDIRECTIONCF: every value they can return, and how many in-scope properties carry each value. Any value other than PUR / SAL → list it, don’t translate it.
+1. Show the A-01-TGT description of 22.65 and of 11.65 f_IsBuy, plus A-04h for f_IsBuy.
+2. Run A-02b in Tier 1: which of the two do SLB’s OTC and Caps local properties use (by function name)?
+3. A-04h for GBO f_GetDirectionOTC and F_GETDIRECTIONCF: every value they can return, and how many in-scope properties carry each value. Any value other than PUR / SAL → list it, don’t translate it.
 
 Then carry on with the other pairs the same way (code lines, full value list, translation), plus the corrected scope and clash counts from my previous message.

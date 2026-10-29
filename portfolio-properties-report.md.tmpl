@@ -1,0 +1,106 @@
+# Portfolio properties — GBO → BOX — {{BRANCH}} ({{TARGET_ENV}}), reference {{REFERENCE_BRANCH}} ({{REFERENCE_ENV}})
+
+Run date: {{DATE}} · run folder `{{RUN_FOLDER}}` · group: target `{{TARGET_GROUP_PK}}` · GBO source: {{GBO_SOURCE_ENV}} ·
+clash mode: {{PP_CLASH_MODE}} · agent `sigom-box-acc-configs-agent` phase 1 (no SQL written) · for the users' review
+with `02-acc-gap-matrix.md`.
+
+**How BOX portfolio properties are built** ([ADR 0020](../../../../../docs/decisions/0020-portfolio-properties-imported-from-gbo.md)):
+**one BOX property per `Valid` in-scope GBO property** (`InValid` ones are not read, ADR 0014) — its description as
+GBO's, its conditions that have a BOX twin (the condition map below; the others dropped), its own topic → account rows
+(topics by `CODE`, ADR 0018; internal-list topics → the internal account `INTERNAL`, ADR 0014). The instrument's
+local property holds those topics and conditions (built from GBO, not from the reference). Properties whose kept
+conditions are identical **clash** — BOX refuses two `Valid` ones (section 3).
+
+**Privacy:** PKs, condition functions, condition values and account codes; property descriptions (run folder only); a
+value naming a portfolio, a counterparty or an entity is shown as its hash (`H…`), never the value.
+
+## Summary
+
+| Instrument | GBO properties (Valid, in scope) | BOX properties to create | Held only (mode a) / `InValid` (mode b) | OPEN only | Held and OPEN | Conditions kept / dropped | Topic rows | Account from its GBO property | Internal account |
+|---|---|---|---|---|---|---|---|---|---|
+
+Each in-scope property is counted once: to create + held only + OPEN only + held and OPEN = in scope (ADR 0023).
+GBO source: {{GBO_SOURCE_ENV}} — the counts, the clashes and the multi-account cases are this source's.
+
+## 1. The condition map — GBO → BOX
+
+Kept in `runs/{{BRANCH}}/branch/acc-configs/condition-map.csv` (the same in every environment). **How:** `same field`
+(the same field domain) · `same text` (the same description) · `confirmed` (proposed from both functions — A-04h —
+and confirmed by the operator, date) · `none` (no BOX twin: dropped).
+
+| Instrument(s) | GBO condition (PK · function / field · description) | BOX condition (PK in {{TARGET_ENV}} · function / field · description) | Value translation (GBO → BOX) | How | Evidence |
+|---|---|---|---|---|---|
+
+## 2. Per GBO portfolio property — the BOX property it becomes
+
+One section per `Valid` in-scope GBO property, by instrument.
+
+### {{INSTRUMENT}} — GBO `{{GBO_PORT_PROP_PK}}` "{{GBO_DESCRIPTION}}" → {{STATUS}}
+
+`STATUS`: `to create` · `held — clash group {{K}}` (mode a) · `created InValid — clash group {{K}}` (mode b) ·
+`chosen in clash group {{K}}` / `not carried — clash group {{K}}` (from `pp_clash_choices`) · **`OPEN — {{WHY}}`**
+(a kept condition value with no BOX value; an account no source has — not carried, a question, ADR 0023) — a
+property can be both held and OPEN.
+
+| GBO condition | GBO value | → BOX condition | BOX value | Kept / dropped (why) |
+|---|---|---|---|---|
+
+| List | Topic (`CODE`) | Account (from this GBO property) | How | Evidence (file:line) |
+|---|---|---|---|---|
+
+**How:** `own` (this GBO property's account) · `internal` (the internal account) · `decided` (several accounts for
+this topic in this GBO property — the operator's answer, `decisions.multi_account_topics`; the other account shown) ·
+`OPEN` (no account, or several and no answer yet — BOX holds one; the property would be `InValid`).
+
+## 3. Clashes — for the accounting user's choice
+
+A **clash group** = in-scope properties of one instrument (same group, same start date) whose **kept** condition values
+are identical (or with no kept condition while another exists): BOX refuses two `Valid` ones (`p_StatusPortFolio`).
+The agent recommends none. **Answer:** per group, the GBO property to keep → `decisions.pp_clash_choices` in the
+inputs file; the next run (`--from`) creates it.
+
+### Clash group {{K}} — {{INSTRUMENT}} — {{N}} properties
+
+Shared BOX condition values: `{{BOX_CONDITION}}` = {{VALUE}} · …
+
+| GBO property | Description | Its GBO conditions and values (all) | Dropped conditions that told it apart (why it clashes) |
+|---|---|---|---|
+
+**Duplicates?** Two properties are duplicates only when every GBO condition value (hashes included) and every topic
+→ account row are identical — say so per pair, with that evidence. A rule keeping one is a proposal for the BOX
+expert (section 6), never applied before the operator answers (ADR 0023).
+
+What choosing one leaves out — topic → account rows that differ between them:
+
+| List | Topic (`CODE`) | GBO `{{PK_1}}` | GBO `{{PK_2}}` | … |
+|---|---|---|---|---|
+
+## 4. Topics with several accounts in one GBO property (A-04i) — the operator's decision
+
+BOX holds one account per topic and list. Answers: `decisions.multi_account_topics` (`internal_plus_one` for every
+`INTERNAL` + one real account case; `cases` for the others).
+
+| GBO property | List | Topic | Accounts in GBO (older → newer row) | Pattern | Kept in BOX | Decision (date) |
+|---|---|---|---|---|---|---|
+
+## 5. Not carried
+
+| What | Count | Why / question |
+|---|---|---|
+| GBO properties `InValid` | | not read (ADR 0014) |
+| GBO properties out of scope (branch value classified out, blank or no branch row) | | A-U1 (g) |
+| GBO properties not chosen in a clash group | | `pp_clash_choices` |
+| GBO conditions with no BOX twin (dropped) | | condition map: `none` |
+| The account not kept for a topic with several accounts in one GBO property | | the operator's decision (section 4) |
+| GBO topics with no BOX `CODE` twin | | created as global topics, to review (ADR 0018) |
+| Accounts not in BOX (screen 10) | | created from GBO — gap matrix screen 10 (only those the carried configuration uses) |
+| GBO properties OPEN — a kept condition value with no BOX value | | section 6 |
+| GBO properties OPEN — an account no source has | | section 6 |
+
+## 6. Questions for the BOX expert / the accounting user
+
+Each with its evidence; the agent's proposal marked *proposal* (e.g. a rule keeping one of two duplicates); never
+recorded as a decision until answered (ADR 0023).
+
+| # | Question | Properties concerned | Evidence | Proposal |
+|---|---|---|---|---|

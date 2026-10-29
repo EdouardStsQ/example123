@@ -1,3 +1,11 @@
-A-02c-loprop-TGT: 0 rows. No local properties for group 21447.4 in DEV, so they’re created from GBO (ADR 0020). Save the empty result as evidence.
-Decisions: Swap 2212 (INTERNAL) out for this run, listed in the expert questions. Add to the expert section: (1) the three identical OTC pairs (2485 / 133252, 2489 / 133254, 2487 / 133253) as GBO duplicates, with the proposed rule “keep the .44”; (2) folder / risk participation (36.35 f_GetFolder) separates accountings in OTC, Caps and CCS (INTERNAL1 / T-accounts), so how does BOX handle it?; (3) 2628 has 5 topics without an account (InValid in BOX whatever is chosen).
-Continue with the next screens.
+Review of 02-acc-gap-matrix.md. Fix these before part B:
+
+1. Clash counts: the groups listed add up to 38 properties (CCS 6 + DL 19 + DL 2 + Swap 3 + Caps 2×2 + OTC 2×2), not 24 held. In OTC, the earlier pass found 3 identical pairs (2485/133252, 2489/133254, 2487/133253), 2483/133251 (4 VAL* accounts differ) and the 2496/2497 pairs (folder). List every clash group with its GBO PKs, and reconcile it with the summary and the screen 4 counts.
+2. “Keep the .44” is not an operator decision yet. It’s a proposal for the BOX expert. Take it out of “Decisions” and “Fixed by the BOX ACC expert”, add it to the questions, and keep those groups held (mode a). Apply it only to pairs that are identical in GBO: every condition value (including A-04f hashes) and every topic → account row. Show that evidence per pair. The Caps pairs differ by 36.35 folder, so they’re a clash, not duplicates; check. 2483/133251 is not a duplicate either: add it to the questions.
+3. A-04i: 0 cases now, but ADR 0020 records 14 cases on OTC 2485.35/2487.35 (7 FX netting/level topics of the local list, INTERNAL + one real account). Is it the same GBO source? Re-run A-04i and explain the difference.
+4. A-P5 GLTA: compare within the .44 fraction only (ADR 0018 point 7). Run A-P5(b) and A-P5(d) for T_BOX_ACCT_GLTA_S. If no .44 row is ≥ 16368, there’s no collision: drop the finding, the PK proposal and question 8. Either way it belongs to screen 10, not screen 4.
+5. Screen 10: create only the accounts the in-scope config uses. Show the union of the in-scope PP lists, the 309 Cross Account Config rows and the 11 Net CCS rows. List the rest as not carried (used only by out-of-scope properties). Date rules only for the accounts created.
+6. Question 1 (13.65 SWAP/Accrual/Touch2): until it’s answered, those properties are OPEN, not “to create”. Fix the counts.
+7. Condition map: it shows 17 pairs, I count 18. Kept: 102.4, 122.4, 21.35, 533.35, 25.35, 23.35, 1.35. Dropped: 24, 27, 28, 29, 30, 33, 35, 36, 38, 45 (.35) and 31.22. Check condition-map.csv.
+
+Then send me the updated 02 and 03-portfolio-properties-report.md (§3 clashes). Don’t start part B.

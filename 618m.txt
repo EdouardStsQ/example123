@@ -1,2 +1,7 @@
-SELECT PK - TRUNC(PK) AS fraction, COUNT(*) AS n, MAX(TRUNC(PK)) AS max_pk
-FROM   BOX_ACC.T_BOX_ACCT_GLTA_S GROUP BY PK - TRUNC(PK);
+A-P5(d) for T_BOX_ACCT_GLTA_S, by fraction (Tier 2 DEV): .44 → n = __, max_pk = __. SEQ_NEXT is 16368: keep the GLTA finding and Q13 only if max_pk ≥ 16368. Save it as A-P5d-glta-fractions-TGT.csv.
+
+1. Counts: moving the 8 OTC properties to “to create” must change the held count, but 58 = 14 + 34 + 6 + 4 still uses 38 held. Give one table: each clash group with its instrument, its GBO PKs and the shared BOX values, then the recount (create / held-only / OPEN-only / held∩OPEN). C5 and C6 were the Caps + OTC .35/.44 pairs; now they hold 2496/2497 and 133194/133195. Say which is right.
+2. FFM: does SLB’s T_BOX_ACCT_GLTA_S have it? If yes, it’s copied like the 11 Net CCS accounts (the reference’s row, as it is). If no, it’s a question for the BOX expert.
+3. A-04i: the 14 cases came from GBO PRE (operator). Write that instead of “being confirmed”.
+
+Update 02 and 03 and push to the same PR. Don’t start part B.

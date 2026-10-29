@@ -1,16 +1,3 @@
-Good table. Before moving on:
-
-1. 28.35 → 1.65: no twin. SLB’s 60 Deposits properties all carry Instrument Type 10053.4 (one value; not in PGT_DOMAINS), so BOX doesn’t split deposits by type. 28.35 has no twin, and 1.65 isn’t added for NY’s Deposits (not in their GBO conditions). Deposits keep Strategy only.
-2. Why each clash group clashes. For every clash group, show per member the values of the dropped conditions (folder, counterparty hash, EUR leg, customer type, instrument type…) and the topic → account rows that differ between the members. For each .35 / .44 pair (2485 / 133252, 2500 / 133229…), say whether they are identical in GBO (a GBO duplicate) or what tells them apart.
-3. Swap 2212 is the IRS INTERNAL property; its scope was never decided (inputs: “ask”). Keep it out until I decide, and show its evidence (A-U1 g).
-4. Recount the totals: groups per instrument, how many clash and how many are single. Your 31 groups don’t match the lists.
-
-Then:
-
-- write the confirmed pairs to condition-map.csv, each with its evidence (A-04h, A-02b-arrays-REF, SLB’s stored values);
-- put every open question in one “BOX expert questions” section of the matrix:
-(a) OTC: the 13.65 value for SWAP (2496, 2497, 133194, 133195), Accrual (2494, 2495) and Touch2 (2490–2493), or “none”;
-(b) Deposits: 27.35 customer type and 28.35 instrument type have no twin; show both value lists (NY’s per property; SLB’s 8.65 / 9.65 / 10.65 / 1.65) and the groups if they are dropped (19 Trading + 2 HtM). Options: map 27.35 onto 8.65 intragroup + 9.65 sector; NY-specific conditions built by the BOX dev, as for Brazil (PGT_BRL.*, .23 in DEV); or one property per Strategy chosen by the accounting user;
-(c) CCS and Swap: their differentiators (counterparty, EUR leg, folder, quote reference, currency) have no twin, so all 6 CCS and all 4 Swap properties clash;
-(d) the clash groups with the reasons from point 2;
-- move on to the next screens (topics, accounts, cross account config, conf instrument type, net CCS, label aliases). Only the portfolio properties wait for the expert’s answers.
+A-02c-loprop-TGT: 0 rows. No local properties for group 21447.4 in DEV, so they’re created from GBO (ADR 0020). Save the empty result as evidence.
+Decisions: Swap 2212 (INTERNAL) out for this run, listed in the expert questions. Add to the expert section: (1) the three identical OTC pairs (2485 / 133252, 2489 / 133254, 2487 / 133253) as GBO duplicates, with the proposed rule “keep the .44”; (2) folder / risk participation (36.35 f_GetFolder) separates accountings in OTC, Caps and CCS (INTERNAL1 / T-accounts), so how does BOX handle it?; (3) 2628 has 5 topics without an account (InValid in BOX whatever is chosen).
+Continue with the next screens.

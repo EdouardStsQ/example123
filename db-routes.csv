@@ -1,0 +1,7 @@
+env,alias,host,port,sid,service_name,relay_allowed,system,account,note
+tier2-dev,DGBOUS,dgbous.nngg.corp,1528,dgbous,,yes,GBO,pgtadmin,GBO tables (PGT_ACT / PGT_SYS / PGT_NY / PGT_STC / PGT_PRC) [operator 2026-10-28]
+tier2-dev,DGBOUS,dgbous.nngg.corp,1528,dgbous,,yes,DEVENG,deveng,objects owned by DEVENG [operator 2026-10-28]
+tier2-dev,DGBOUS,dgbous.nngg.corp,1528,dgbous,,yes,BOX_ACC,box_acc,BOX_ACC [operator 2026-10-28]
+tier2-dev,DGBOUS,dgbous.nngg.corp,1528,dgbous,,yes,BOX_FE,box_fe,BOX_FE [operator 2026-10-28]
+tier2-dev,DGBOUS,dgbous.nngg.corp,1528,dgbous,,yes,BOX_SYS,box_sys,BOX_SYS [operator 2026-10-28]
+tier2-dev,DGBOUS,dgbous.nngg.corp,1528,dgbous,,yes,BOX_STC,box_stc,BOX_STC [operator 2026-10-28]

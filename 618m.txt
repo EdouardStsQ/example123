@@ -1,2 +1,10 @@
-   Get-ChildItem "C:\path\to\sqldeveloper" -Recurse -Filter sql.exe | Select-Object FullName
-   & "C:\path\to\sqldeveloper\jdk\bin\java.exe" -version
+Don’t write the condition map yet. Confirmed: 102.4→1.65, 122.4→3.65, 21.35→15.65 (identity, incl. 2), branch selectors dropped.
+For every other pair, run A-04h for both functions (GBO in my pgtadmin account, BOX in box_acc, or cib-boxacc-dbboxacc) and show me the lines that return the value, the full list of values each can return, and the translation you derive from the code:
+
+1. 533.35 / 25.35 / 22.35 → 22.65 f_IsBuyReverse: the Tier 1 description of this BOX condition is “buy (1) or sell (0)”, so your PUR→0 looks inverted. Does it apply to OTC, Caps and CDS?
+2. 1.35 → 13.65 f_GetClassOption: can it return anything for SWAP, Accrual, Touch2? Never drop a condition on some properties only: the local property gives every property of the instrument the same conditions.
+3. 23.35 → 12.65: every GBO value seen and its BOX value, not only SW.
+
+CDS: NY’s CDS properties have no branch condition, so they are out under the expert’s 2026-10-27 rule (blank → out). Re-check the scope and show me what changes. Don’t keep CDS in scope unless I tell you so.
+List the BOX conditions of A-01-TGT that are not paired (PK, function, description), so I can check twins for 27.35, 28.35, 36.35 and 45.35.
+Then, before I confirm, show per instrument how many in-scope properties and how many clash groups the pairing gives.

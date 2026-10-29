@@ -1,8 +1,3 @@
-A-04h result for f_IsBuyReverse (BOX_ACC.PKG_PGTUTILITY, lines 645-694): one leg → leg direction LOAN = 0, BORROWER = 1; several legs → EXSIDE BUYER → BORROWER = 1, SELLER → LOAN = 0; otherwise -1. So 1 = buy, 0 = sell: your translation was inverted. Use PUR → 1, SAL → 0 (still proposed, not in the map yet).
-Before I confirm:
-
-1. Show the A-01-TGT description of 22.65 and of 11.65 f_IsBuy, plus A-04h for f_IsBuy.
-2. Run A-02b in Tier 1: which of the two do SLB’s OTC and Caps local properties use (by function name)?
-3. A-04h for GBO f_GetDirectionOTC and F_GETDIRECTIONCF: every value they can return, and how many in-scope properties carry each value. Any value other than PUR / SAL → list it, don’t translate it.
-
-Then carry on with the other pairs the same way (code lines, full value list, translation), plus the corrected scope and clash counts from my previous message.
+A-04h f_IsBuy (lines 448-497): loan leg / SELLER → 1, borrower leg / BUYER → 0. f_IsBuyReverse is its mirror. Both descriptions are correct (buy = loan leg); neither is stale.
+Proposed: 533.35 f_GetDirectionOTC → 11.65 f_IsBuy, PUR → 1, SAL → 0 (the Tier 1 property 266.21 uses “buy (1) or sell (0)” with PUR = 1). Confirm with Tier 1 A-02b: the function of condition 1516.21, and the direction condition of SLB’s Caps local property (for 25.35 F_GETDIRECTIONCF). If SLB’s Caps use f_IsBuy too: same translation. Also show the GBO direction functions’ values (PUR / SAL only?).
+Then continue with the other pairs (call / put, underlying class, EUR leg, customer and instrument type) the same way, and the corrected scope and clash counts.

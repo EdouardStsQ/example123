@@ -1,1 +1,13 @@
-A-02b-condvals-CCS-REF attached. Compare SLB’s 16.65 values with NY’s 31.22 (EURP / EURS / OTHERS): propose a translation only if each NY value has one clear BOX value; otherwise 31.22 has no twin, and 16.65 isn’t added for NY (ADR 0020). 30.35 and 36.35: no twin (not in SLB’s CCS array). Then the per-instrument table (kept / dropped / expert questions / clash groups with members).
+SELECT c.FK_INSTRUMTYPE, d.DESCRIPTION, COUNT(*) AS n_props
+FROM   BOX_ACC.T_BOX_ACCT_LIST_COND_S c
+LEFT   JOIN PGT_SYS.PGT_DOMAINS d ON d.PK = c.FK_INSTRUMTYPE
+WHERE  c.FK_OWNER_OBJ = 35000170.65
+AND    c.FK_EXTENSION = 35001514.65
+AND    c.FK_CONDITION = 1.65
+AND    c.FK_PARENT IN (SELECT p.PK
+                       FROM   BOX_ACC.T_BOX_ACCT_PORT_PROP_S p
+                       WHERE  p.FK_OWNER_OBJ = 35000170.65
+                       AND    p.FK_BRANCH = 21462.4
+                       AND    p.FK_INSTRUMENT = 2.4)
+GROUP  BY c.FK_INSTRUMTYPE, d.DESCRIPTION
+ORDER  BY 2;

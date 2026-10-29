@@ -1,5 +1,8 @@
-Skip A-04h #3: the direction is settled. Corrections:
-
-1. SWAP / Accrual / Touch2 cannot be “ask per row”: every OTC property gets 13.65 from the local property, and a missing value makes it InValid (the SQL step refuses it). Treat it as one question for the BOX expert: the BOX value of 13.65 for SWAP, Accrual, Touch2, or “none” (then those 10 properties can’t be migrated as they are). List them with their PKs.
-2. 23.35: Tier 1 evidence (property 266.21) has GBO SW = BOX Swaption, so not SW → SW.
-To confirm both pairs: (a) A-04h for BOX f_GetClassOption and f_GetUnderlyingTypeOption (Tier 2 DEV, box_acc): every value each can return; (b) Tier 1: the values SLB’s OTC properties store for these two conditions (the A-04b conditions query, SLB’s group), with how many properties carry each; (c) I’m sending you the GBO bodies of f_GetOTCClass and f_GetOTCUndClass. Then propose the full translation for every NY value.
+SELECT cp.NOM_FUNC, c.VALUE_FUNC, COUNT(*) AS n_props
+FROM   BOX_ACC.T_BOX_ACCT_LIST_COND_S c
+JOIN   BOX_ACC.T_BOX_CONDPAR_PROP_S cp ON cp.PK = c.FK_CONDITION
+WHERE  c.FK_OWNER_OBJ = 35000170.65 AND c.FK_EXTENSION = 35001514.65
+AND    UPPER(cp.NOM_FUNC) LIKE ANY ('%GETCLASSOPTION%', '%GETUNDERLYINGTYPEOPTION%')
+AND    c.FK_PARENT IN (SELECT PK FROM BOX_ACC.T_BOX_ACCT_PORT_PROP_S
+                       WHERE FK_OWNER_OBJ = 35000170.65 AND FK_BRANCH = 21462.4 AND FK_INSTRUMENT = 20111.4)
+GROUP  BY cp.NOM_FUNC, c.VALUE_FUNC ORDER BY 1, 2;

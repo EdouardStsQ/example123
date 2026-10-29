@@ -1,5 +1,1 @@
-The rehearsal stopped with ORA-20003: Account 9614600-982058: 0 row(s) in BOX: Cross Account Config row(s) use that account (A-03a). Nothing was kept.
-
-1. Put the attached render_acc_sql.py and test_render_acc_sql.py on your branch only (not main), run the test.
-2. In acc-values.json, move every Cross Account Config row using 9614600-982058 to _not_carried (OPEN, expert question on that account, ADR 0023), and tell me how many rows.
-3. Values changed, so re-render the precheck and send it to me. Its output now prints the values sha256 line itself, so no more hand edit.
+The rehearsal ran with 0 problems, but T_BOX_CONF_INSTRUM_TYPE_S#309 was skipped as PRESENT: its key_columns equal #308’s (just created). Put the attached render_acc_sql.py and test on your branch only, run the test (the renderer now refuses this as key-duplicate). In acc-values.json, give both Conf Instru Type rows the charter’s natural key FK_BRANCH, FK_INSTRUMENT, CODE, TYPE. If those are still equal, add the column that differs, and show me both rows. Re-render the precheck and send it.

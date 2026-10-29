@@ -1,1 +1,5 @@
-Renderer bug: the rehearsal didn’t compile (PLS-00231: function 'TOPIC_PK' may not be used in SQL) because the block’s lookups were called inside SQL statements. Nothing ran. Put the attached render_acc_sql.py into scripts/ and test_render_acc_sql.py into scripts/tests/ on your branch devin/20261029-acc-sql-partB only, not main. Run python3 scripts/tests/test_render_acc_sql.py (it should say all passed), then render the rehearsal again from the same acc-values.json and the same precheck output. Don’t re-render the precheck and don’t change the values. Send me the rehearsal.
+The rehearsal stopped with ORA-20003: Account 9614600-982058: 0 row(s) in BOX: Cross Account Config row(s) use that account (A-03a). Nothing was kept.
+
+1. Put the attached render_acc_sql.py and test_render_acc_sql.py on your branch only (not main), run the test.
+2. In acc-values.json, move every Cross Account Config row using 9614600-982058 to _not_carried (OPEN, expert question on that account, ADR 0023), and tell me how many rows.
+3. Values changed, so re-render the precheck and send it to me. Its output now prints the values sha256 line itself, so no more hand edit.

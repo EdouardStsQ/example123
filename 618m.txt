@@ -1,17 +1,4 @@
-SELECT PK, NOM_FUNC, DESCRIPTION
-FROM   BOX_ACC.T_BOX_CONDPAR_PROP_S
-WHERE  PK IN (12.65, 13.65);
-
-
-SELECT c.FK_CONDITION, c.VALUE_FUNC, COUNT(*) AS n_props
-FROM   BOX_ACC.T_BOX_ACCT_LIST_COND_S c
-WHERE  c.FK_OWNER_OBJ = 35000170.65
-AND    c.FK_EXTENSION = 35001514.65
-AND    c.FK_CONDITION IN (12.65, 13.65)
-AND    c.FK_PARENT IN (SELECT p.PK
-                       FROM   BOX_ACC.T_BOX_ACCT_PORT_PROP_S p
-                       WHERE  p.FK_OWNER_OBJ = 35000170.65
-                       AND    p.FK_BRANCH = 21462.4
-                       AND    p.FK_INSTRUMENT = 20111.4)
-GROUP  BY c.FK_CONDITION, c.VALUE_FUNC
-ORDER  BY c.FK_CONDITION, c.VALUE_FUNC;
+Evidence attached (Tier 1): NOM_FUNC of 12.65 / 13.65 = BOX_TRD.PKG_BOX_DEAL_LITE_DATA_API.f_GetUnderlyingTypeOption / f_GetClassOption (your package was right; box_acc can’t see BOX_TRD’s body). SLB’s 20 OTC properties store 12.65 = FX Option (16) / Swaption (4), and 13.65 = CALL (10) / PUT (10).
+Proposed for the map: 23.35 → 12.65: FX → FX Option, SW → Swaption; 1.35 → 13.65: CAL → CALL, PUT → PUT.
+Open, one BOX-expert question: the 13.65 value for SWAP (2496, 2497, 133194, 133195: swaptions, payer or receiver?), Accrual (2494, 2495) and Touch2 (2490-2493). Until answered, those 10 properties stay out of the SQL.
+Next: Deposits 27.35 / 28.35 vs SLB’s 8.65 / 9.65 / 10.65 / 16.65 (values SLB stores, same query shape, instrument 2.4), and the corrected scope and clash groups.

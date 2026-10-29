@@ -1,13 +1,2 @@
-SELECT c.FK_INSTRUMTYPE, d.DESCRIPTION, COUNT(*) AS n_props
-FROM   BOX_ACC.T_BOX_ACCT_LIST_COND_S c
-LEFT   JOIN PGT_SYS.PGT_DOMAINS d ON d.PK = c.FK_INSTRUMTYPE
-WHERE  c.FK_OWNER_OBJ = 35000170.65
-AND    c.FK_EXTENSION = 35001514.65
-AND    c.FK_CONDITION = 1.65
-AND    c.FK_PARENT IN (SELECT p.PK
-                       FROM   BOX_ACC.T_BOX_ACCT_PORT_PROP_S p
-                       WHERE  p.FK_OWNER_OBJ = 35000170.65
-                       AND    p.FK_BRANCH = 21462.4
-                       AND    p.FK_INSTRUMENT = 2.4)
-GROUP  BY c.FK_INSTRUMTYPE, d.DESCRIPTION
-ORDER  BY 2;
+1.65 on SLB’s Deposits: all 60 properties = 10053.4 (one value; not in PGT_DOMAINS). So 28.35 → 1.65 is not a twin: 28.35 has no twin; 1.65 isn’t added for NY Deposits (not in their GBO conditions). Deposits keep Strategy only. Record it with this evidence in the expert-questions section (Deposits: 27.35 / 28.35, the 19 + 2 groups, the options: map 27.35 onto 8.65 / 9.65, NY-specific conditions as for Brazil, or one property per Strategy chosen by the accounting user).
+Then points 2–4 of my previous message (why each clash group clashes, Swap 2212 INTERNAL out until decided, recount), the condition map, and the next screens.

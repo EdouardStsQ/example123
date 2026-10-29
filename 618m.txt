@@ -1,11 +1,3 @@
-SELECT lt.FK_PARENT AS port_prop_pk, lt.FK_EXTENSION AS list_ext, t.CODE AS topic_code,
-       COUNT(*) AS n_rows, COUNT(DISTINCT lt.FK_TOPIC) AS n_topic_pks,
-       COUNT(DISTINCT lt.FK_GLTA) AS n_accounts, COUNT(*) - COUNT(lt.FK_GLTA) AS n_no_account,
-       MIN(a.CODE) AS acc_min, MAX(a.CODE) AS acc_max
-FROM   PGT_ACT.T_PGT_ACCT_LIST_TOPIC_S lt
-LEFT   JOIN PGT_ACT.T_PGT_ACCT_TOPICS_S t ON t.PK = lt.FK_TOPIC
-LEFT   JOIN PGT_ACT.T_PGT_ACCT_GLTA_S   a ON a.PK = lt.FK_GLTA
-WHERE  lt.FK_OWNER_OBJ = 12646.4 AND lt.FK_PARENT IN (2485.35, 2487.35)
-GROUP  BY lt.FK_PARENT, lt.FK_EXTENSION, t.CODE
-HAVING COUNT(*) > 1
-ORDER  BY 1, 2, 3;
+A-04i: your re-run failed (ORA-00942: PGT_ACT.T_PGT_TOPICS_S doesn’t exist; the topics table is T_PGT_ACCT_TOPICS_S). Use catalogue queries only, unless you say why one has to change. The catalogue A-04i returns 0 rows in PRE PARALELO. A direct check on 2485.35 / 2487.35 (any topic CODE with more than one row, NULL accounts counted) also returns 0 rows. Record it in the matrix and the 03 report: “A-04i: 0 cases in PRE PARALELO (2026-10-29); ADR 0020 recorded 14 cases on 2485/2487 on 2026-10-28, source being confirmed by the operator”. No multi_account_topics decision this run. Save both results as evidence (A-04i-multi-GBO-2.csv, A-04i-check-2485-2487-GBO.csv, both empty).
+Then: (1) GLTA from A-P5(d), attached: a finding only if the .44 max is ≥ 16368. (2) OTC pairs differing in 102.4: show their 1.65 value after translation; if it differs, they don’t clash, so move them to “to create” and recount. (3) Show the held ∩ OPEN overlap behind “to create = 14”. (4) Say where each of the 11 Net CCS accounts comes from, and whether FFM is inside the 464 or OPEN.
+Send the updated 02 and 03 when done. Don’t start part B.

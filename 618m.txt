@@ -1,7 +1,7 @@
-A-P5(d) for T_BOX_ACCT_GLTA_S, by fraction (Tier 2 DEV): .44 → n = __, max_pk = __. SEQ_NEXT is 16368: keep the GLTA finding and Q13 only if max_pk ≥ 16368. Save it as A-P5d-glta-fractions-TGT.csv.
+Part 1 accepted (PR #111). Start part B: Run automation/agents/sigom-box-acc-configs-agent/prompts/tier2-sql.md on runs/NY_SCH/tier2-dev/acc-configs/gap_20261029_1/, same PR branch.
 
-1. Counts: moving the 8 OTC properties to “to create” must change the held count, but 58 = 14 + 34 + 6 + 4 still uses 38 held. Give one table: each clash group with its instrument, its GBO PKs and the shared BOX values, then the recount (create / held-only / OPEN-only / held∩OPEN). C5 and C6 were the Caps + OTC .35/.44 pairs; now they hold 2496/2497 and 133194/133195. Say which is right.
-2. FFM: does SLB’s T_BOX_ACCT_GLTA_S have it? If yes, it’s copied like the 11 Net CCS accounts (the reference’s row, as it is). If no, it’s a question for the BOX expert.
-3. A-04i: the 14 cases came from GBO PRE (operator). Write that instead of “being confirmed”.
-
-Update 02 and 03 and push to the same PR. Don’t start part B.
+- Clash mode (a): pp_clash_choices empty means the 8 groups are held and not carried this run. Don’t stop at Step 2 for it.
+- Not carried this run: the 38 held, the 10 OPEN on 13.65, any property whose lists use 9614600-982058 (list them), and Net CCS rows that need FFM. The kickoff’s stop rule on clash choices is a known gap; note it in the run’s report.
+- Carried: 5 local properties, 14 portfolio properties, 54 global topics (global_pk = next-free, DEV), 464 accounts + 268 date rules, 309 Cross Account Config rows, 2 Conf Instru Type rows, the Net CCS rows without FFM.
+- Accounts: leave out LOC_CODE, HOSTINTERFIND and the other columns the renderer calls computed; p_AccountPrecommit and the triggers set them. If a refusal names a column, report it; don’t work around it.
+- Give me the precheck SQL first. I run it and send you the output. Don’t render the rehearsal until it says ACC PRECHECK OK.

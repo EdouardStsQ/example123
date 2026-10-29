@@ -1,8 +1,1 @@
-Pull main (it now has ADR 0023 and the renderer fix). Continue the SQL step on the same run, runs/NY_SCH/tier2-dev/acc-configs/gap_20261029_1/, per prompts/tier2-sql.md. Continue it, don’t restart it, and don’t ask for any CSV already in 01-evidence/.
-Apply ADR 0023 to acc-values.json:
-
-- list everything not carried under _not_carried, with its reason: the 8 held clash groups, the OPEN properties (13.65 values, 2214.35), and Net CCS rows that need FFM;
-- take the 11 Net CCS accounts from A-13a (SLB’s BOX rows) and the others from A-10a;
-- supply no computed columns (LOC_CODE, HOSTINTERFIND…).
-
-Re-render --precheck and send me the file.
+Precheck OK, output attached. Known renderer gap (fixed at the end): SQL Developer doesn’t echo the script’s -- header, so I added the precheck file’s -- values sha256 line at the top of the output by hand, from the same file I ran. Commit the output as it is and render the rehearsal. Don’t change acc-values.json.

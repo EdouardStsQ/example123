@@ -1,10 +1,1 @@
-Don’t run anything else. Open a PR from devin/20261029-acc-sql-partB to main for review by the BOX expert. Do not merge. PR title: “NY_SCH DGBOUS ACC config: SQL for review before running (gap_20261029_1)”. In the description, for the reviewer:
-
-1. What the config creates in DGBOUS: 54 global topics (.65, next free from 1237), 464 accounts + 268 date rules, 5 local properties with their arrays, 13 portfolio properties (all expected Valid), 308 Cross Account Config rows, 2 Conf Instru Type rows, 11 Net CCS rows (1,903 CREATED| lines in the rehearsal).
-2. What is NOT carried and why: the _not_carried list, grouped: 8 clash groups held, 11 OPEN properties, the cross-account row on 9614600-982058.
-3. Evidence: the precheck output (ACC PRECHECK OK, sha), and the rehearsal output (0 problems, no PRESENT, 13 STATUS Valid, rolled back).
-4. The questions for the expert: open item 4zz / the matrix’s questions.
-5. How it runs and is undone: config (one block, COMMIT only with 0 problems), verify, then the rollback rendered from the config’s output (global_pk_rollback.sql for the .65 topics only).
-6. The renderer fixes made during this run: files in scripts/; they will also come in the final repo update.
-
-List the files in the PR.
+What does 03-sql/build_acc_values.py do? Confirm it only reads 01-evidence/ and the inputs and writes acc-values.json, and writes no SQL. Also, B-01 / B-02 are catalogue query A-10e (and A-10a’s codes); B-02-topicdesc-GBO.csv sounds like topic descriptions instead. Say what each file holds.

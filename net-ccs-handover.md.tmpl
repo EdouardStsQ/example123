@@ -1,0 +1,56 @@
+# Handover for UAT — CCS end-of-month netting (BOX Net CCS PlanBS) — {{BRANCH}}
+
+Run `{{RUN_FOLDER}}` · {{DATE}} · target {{TARGET_ENV}} · agent `sigom-box-acc-configs-agent` · **for the operations /
+accounting user** ([ADR 0025](../../../../../docs/decisions/0025-acc-configs-net-ccs-left-to-operations.md)).
+
+**Nothing was configured on this screen.** The accounts BOX nets at month end for CCS are the operations user's to
+define — not copied from another branch. This page says what is needed so it can be decided at UAT.
+
+## 1. What the screen does
+
+SIGOM *BOX - Accounting › Config. › Net EOM to CCS* (`T_BOX_NETCCS_BSPLAN_S`): each row names an **account** whose
+CCS balance BOX nets at the end of the month, for an instrument, an instrument type and a strategy; one switch row
+(`EOM_CCS_ACTIVE`) turns the netting on. The month-end events `5210.65` (netting) / `5211.65` (undo) post it. Details:
+`docs/reference/box-acc-model.md` §8.1.
+
+## 2. What the operations user decides
+
+| # | Instrument | Instrument type | Strategy | Account to net (`CODE`) | Why (which balance) |
+|---|---|---|---|---|---|
+| 1 | CCS `{{CCS_INSTRUMENT_PK}}` | | | | |
+
+And: is the netting switched on for {{BRANCH}} (`EOM_CCS_ACTIVE`)? Trading only, or Hedging too?
+
+## 3. What {{TARGET_ENV}} already has (checked by the run — A-13c, verify only)
+
+| Object | Expected | Found | Evidence |
+|---|---|---|---|
+| Events `5210.65` / `5211.65` | present | | A-13c (3) |
+| Netting standard historics | present | | A-13c (3) |
+| Netting internal topics, `NIVELACION` | present | | A-13c (3) |
+| Account `INTERNAL` | present | | A-13c (3) |
+| Account `FFM` (used by the netting postings) | present | | A-13c (3) |
+
+## 4. For information
+
+**The reference's rows ({{REFERENCE_BRANCH}}) — an example of the shape, not to copy** (A-13a): instrument types,
+strategies, the switch row, account **codes** (their accounts are {{REFERENCE_BRANCH}}'s):
+
+| Instrument type | Strategy | Account `CODE` | Note |
+|---|---|---|---|
+
+**{{BRANCH}}'s CCS portfolio properties: accounts on netting topics** (from the run's report, by topic) — candidates
+the user may recognise:
+
+| Topic (`CODE`) | Account (`CODE`) | GBO properties using it |
+|---|---|---|
+
+## 5. Open questions
+
+1.
+
+## 6. How it will be configured
+
+The operations user's rows go into the run's inputs (`decisions.net_ccs`: the rows, who decided, the date). The next
+run of `sigom-box-acc-configs-agent` (SQL step) creates them — each account by code, present in BOX or created on
+screen 10 from {{BRANCH}}'s GBO, never from another branch — through the same precheck → rehearsal → config.

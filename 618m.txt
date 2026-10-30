@@ -1,1 +1,1 @@
-Rehearsal OK: 0 problems, 39 STATUS-CLASH InValid, 9 DROPPED, no PRESENT. Output attached: commit it. Confirm that the branch has, from the same values as this rehearsal: the 02 matrix, the 03 report, 03-sql/ summary, config and verify. Give me the latest commit hash.
+Your commits since 055bb1e are not on GitHub (latest there: 055bb1e, Oct 29). Push devin/20261029-acc-sql-partB to origin, then confirm with git log origin/devin/20261029-acc-sql-partB -1 --oneline: it must show 1c8a900.

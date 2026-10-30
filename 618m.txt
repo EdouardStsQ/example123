@@ -1,1 +1,1 @@
-133231.44: keep it not carried (OPEN), with the question for the expert: accounts for its 8 missing local topics, or leave it out. Same for 2628.35
+The rehearsal didn’t compile: PLS-00123: program too large (one block of ~68,700 lines; nothing ran). The attached renderer splits the rehearsal and config into several blocks in one transaction. Put both files on your branch only, run the test, and re-render the rehearsal, config, verify and summary from the same values (no precheck needed: the values haven’t changed). Send me the rehearsal.

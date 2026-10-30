@@ -1,6 +1,1 @@
-The BOX ACC expert reviewed the run (ADR 0024, in the final repo update). Put the attached render_acc_sql.py and test_render_acc_sql.py on your branch only and run the test. Then continue the same run, no new queries:
-
-1. Clash groups: no longer held. Every property of a clash group is carried with expect_invalid: true (all end InValid; the accounting user picks one in SIGOM).
-2. 13.65: where the GBO value is Touch2, Accrual or SWAP (2490–2497.35, 133194/133195.44), drop the condition for that property only: drop_conditions: [<13.65's PK>], no value. CAL/PUT keep it. Record it in condition-map.csv as “drop on that property”.
-3. Recompute the clash groups with those drops (some of the 10 may now clash). 2214.35 and 2497.35 stay not carried (account 9614600-982058). Check that 2497.35’s partner in C5 still clashes with another property; if not, it is created Valid (the renderer refuses expect_invalid without a twin).
-4. Re-derive 02-acc-gap-matrix.md and 03-portfolio-properties-report.md under these rules (counts: created Valid + created InValid + OPEN = 58), rebuild acc-values.json, render the precheck and send it. After the rehearsal, also send <base>-summary.md: it’s for the expert.
+133231.44: keep it not carried (OPEN), with the question for the expert: accounts for its 8 missing local topics, or leave it out. Same for 2628.35

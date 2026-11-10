@@ -1,1 +1,11 @@
-Verify OK, thanks. Confirm the config output has no CREATED|T_BOX_NETCCS_BSPLAN_S line. Then update PR #113’s description: what was created (54 properties: 15 Valid + 39 InValid; 54 topics .65 to review; accounts; 5 local properties; cross-account and conf instrument type rows), what wasn’t carried and why, the handover, the rollback files, and the questions for the expert. Push and give me the hash.
+The BOX ACC expert reviewed the DGBOUS config (ADR 0026). Pull main first: the renderer, the charter, the SQL prompt and the templates changed.
+
+1. The operator first runs the existing NY_SCH-tier2-dev-acc-rollback.sql, rendered from the config output. It also removes the .65 topics, so don’t run global_pk_rollback.sql as well. Then run the verify to confirm nothing is left.
+2. Re-derive acc-values.json from the run’s evidence (no new queries):
+- Conf Instru Type: only SLB’s .65 row, with ref_pk.
+- Each local property: description = “Conditions Portfolio Properties - <IR|MM|CCS|OTC|CF> NY_SCH”.
+- Each portfolio property: gbo_pk.
+- 13.65 → empty_conditions (not drop_conditions) on the Touch2 / Accrual / SWAP properties, each with expect_invalid: true.
+- Cross Account Config rows with TIPO not in 0/1/2 → _not_carried, and drop from accounts any account only those rows use.
+3. Update the condition map (“empty on that property”), the matrix and the report.
+4. Precheck → rehearsal → config → verify, with the operator running the SQL. Expect EMPTY| lines and more InValid properties than last time. Push after every commit and give the hash from origin.

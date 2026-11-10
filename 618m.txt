@@ -1,11 +1,7 @@
-The BOX ACC expert reviewed the DGBOUS config (ADR 0026). Pull main first: the renderer, the charter, the SQL prompt and the templates changed.
+Before the operator runs the precheck:
 
-1. The operator first runs the existing NY_SCH-tier2-dev-acc-rollback.sql, rendered from the config output. It also removes the .65 topics, so don’t run global_pk_rollback.sql as well. Then run the verify to confirm nothing is left.
-2. Re-derive acc-values.json from the run’s evidence (no new queries):
-- Conf Instru Type: only SLB’s .65 row, with ref_pk.
-- Each local property: description = “Conditions Portfolio Properties - <IR|MM|CCS|OTC|CF> NY_SCH”.
-- Each portfolio property: gbo_pk.
-- 13.65 → empty_conditions (not drop_conditions) on the Touch2 / Accrual / SWAP properties, each with expect_invalid: true.
-- Cross Account Config rows with TIPO not in 0/1/2 → _not_carried, and drop from accounts any account only those rows use.
-3. Update the condition map (“empty on that property”), the matrix and the report.
-4. Precheck → rehearsal → config → verify, with the operator running the SQL. Expect EMPTY| lines and more InValid properties than last time. Push after every commit and give the hash from origin.
+1. ref_pk 107.65 is the placeholder value from acc-values.example.json. Give the real PK of SLB’s Conf Instru Type .65 row from the A-12a evidence (file:line), and its CODE / VALUE. If it differs, fix it and re-render the precheck.
+2. List the 9 properties with empty_conditions (GBO PK, the 13.65 GBO value). Confirm 327.44 is one of them, since it’s the expert’s example. If it isn’t, explain why 327.44 had 5 conditions while 345.44 had 6.
+3. Show the 5 local property descriptions exactly as written (one per instrument, e.g. “Conditions Portfolio Properties - IR NY_SCH” for Swap).
+4. Give the TIPO values of the 146 rows not carried, with a count per value. Confirm that none of the 143 accounts removed is used by a portfolio property list.
+5. The operator runs the rollback and the verify first, then the precheck. If the values’ .65 start was taken while the old topics 1237.65–1290.65 still existed, re-derive it after the rollback.

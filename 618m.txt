@@ -1,7 +1,5 @@
-Before the operator runs the precheck:
+Thanks, all confirmed. Two things before the precheck:
 
-1. ref_pk 107.65 is the placeholder value from acc-values.example.json. Give the real PK of SLB’s Conf Instru Type .65 row from the A-12a evidence (file:line), and its CODE / VALUE. If it differs, fix it and re-render the precheck.
-2. List the 9 properties with empty_conditions (GBO PK, the 13.65 GBO value). Confirm 327.44 is one of them, since it’s the expert’s example. If it isn’t, explain why 327.44 had 5 conditions while 345.44 had 6.
-3. Show the 5 local property descriptions exactly as written (one per instrument, e.g. “Conditions Portfolio Properties - IR NY_SCH” for Swap).
-4. Give the TIPO values of the 146 rows not carried, with a count per value. Confirm that none of the 143 accounts removed is used by a portfolio property list.
-5. The operator runs the rollback and the verify first, then the precheck. If the values’ .65 start was taken while the old topics 1237.65–1290.65 still existed, re-derive it after the rollback.
+1. Reconcile the accounts: the October rehearsal had 464 accounts / 268 date rules; the values now have 321 / 181. You say the TIPO rule removed 5 and Net CCS 10. Show where the other ~130 went (e.g. how many accounts the committed DGBOUS config created, per its summary), with evidence.
+2. SLB’s Conf Instru Type row 107.65 has FK_INSTRUMENT_TYPE = 69.21, a Tier 1 local PK. Check that 69.21 exists in DGBOUS (PGT_SYS.T_PGT_INSTRUMENT_TYPE_S, catalogue A-13 query (1)), with the account and environment per the catalogue. If it doesn’t exist, don’t insert the row: put it in the questions for the BOX ACC expert (“which instrument type for NY?”).
+3. FYI for the expert’s report: 146 of the 309 Cross Account Config rows are now excluded, 105 of them TIPO 11. Put that count in the matrix, so the expert sees how much the rule removes.

@@ -1,7 +1,7 @@
-Stop asking queries for a moment. Most of the results you’re missing are already in this session’s chat: I pasted them during the first pass. Do this first:
+Good inventory. Before the next query:
 
-1. List every query the gap run needs (from the kickoff and the catalogue) with its CSV name, and mark each as: saved (in 01-evidence/), in the chat (I pasted it earlier — save it now from the chat, exactly as pasted, under its CSV name), or never run.
-2. Commit and push the CSVs recovered from the chat.
-3. Show me the list. Then ask me only the “never run” queries, one at a time. If a recovered result looks incomplete (cut off, no header), say which one and I’ll rerun it.
+1. Which branch are this run’s earlier commits on? Keep the whole run (evidence, matrix, report) on one branch; we’ll open one PR at the end. Move the recovered CSVs there if they aren’t.
+2. Tier 1 (REF) queries: copy each CSV from gap_20261029_1/01-evidence/ when its query text and parameters are identical to this run’s, and note in the run where it came from (run, date). That should cover A-04a, A-04b, A-06 (reference), A-07 (reference), and others you find. Run again only the ones whose parameters depend on PRE-PARALELO’s data (e.g. A-10c if NY’s account list differs from DGBOUS’s). Then show me the remaining “never run” list.
+3. A-01’s ORA-00942: which table can’t BOX_ADMIN read? Put it in the questions for the BOX team as a grant BOX_ADMIN needs.
 
-From now on, save each result to 01-evidence/ as soon as I paste it, before saying anything else, and name the file in your reply.
+Then continue with the remaining queries, one at a time. Commit and push after each step, and give me the hash from origin.

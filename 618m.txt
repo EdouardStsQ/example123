@@ -1,6 +1,1 @@
-Thanks: screen 3, 4187.65 and Net Contract are fine. Two points are still open:
-
-1. Show the comparison as a table in the report: every property whose status differs from DGBOUS (Valid there, InValid here, or the reverse), with its kept BOX condition values here and in DGBOUS (gap_20261029_1 report and config output), and the reason for the difference. 14 → 8 Valid means at least 6 such properties. If the reason is that Instrument Type (102.4 → 1.65) or another kept pair is missing from your comparison, fix it and recount. If GBO’s rows changed, show the rows (old CSV vs new CSV).
-2. Account 9614600-982058: give the file:line in A-10a (PGT_ACT.T_PGT_ACCT_GLTA_S, the GBO account table) or in the BOX account table. A-U7b doesn’t count: it only shows the lists use it. In DGBOUS, the same GBO showed it in no account table. If it isn’t in A-10a, 2214.35 and 2497.35 are OPEN and not carried.
-
-Commit, push, and give me the hash and the corrected scope line.
+Add to the report a reconciliation line: DGBOUS carried 54 (14 Valid / 40 InValid), this run 58 (14 / 44). Name the 4 properties carried here and not in DGBOUS, and why each one wasn’t carried there (2214.35 / 2497.35: account 9614600-982058 now in A-10a). Confirm all 4 are InValid and in which group or empty condition. Commit, push, and give me the hash; then I’ll merge #120.

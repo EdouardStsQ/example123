@@ -1,10 +1,7 @@
-Open a PR from devin/20261030-acc-adr0026 to the default branch. The earlier PR from this branch is already merged; this one carries only the commits after it.
-Title: NY_SCH DGBOUS ACC: Conf Instru Type delta (ADR 0026 point 1 corrected).
-Description:
+Thanks. Before the PR:
 
-- The delta_20261112_1 run: values (1 row: SLB 42.21, FlexBlockTag → INF_CVX_PD, instrument type 11071.4), precheck / rehearsal / config / verify outputs, rollback.
-- Created in DGBOUS: 23.44, confirmed by a read-only query (CODE, VALUE, FK_INSTRUMENT_TYPE 11071.4, FK_BRANCH 20007.4).
-- The 69.21 question marked answered (expert, 2026-11-12) in the main run’s matrix and report.
-- The main run’s values and outputs untouched.
+1. List the 23 labels created (24038.44–24060.44) by code. Which one is the dummy label used in step 11? Was it created by this run or did it already exist and is it shared? (Run 6’s rule: the dummy must be a label other branches use.)
+2. Confirm the run 7 decisions applied (steps 6, 11, 12, 14a): which were confirmed as they were and which changed.
+3. In the run folder, record how V4 and V10 were split per side (both queries, both results), so the repo can render them that way next time.
 
-Push nothing else. Give me the PR link and the head hash from origin.
+Then open a PR from devin/1794476851-ny-sch-preparalelo-fe to the default branch, and give me the link and the hash from origin.

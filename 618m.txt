@@ -1,1 +1,19 @@
-A: 2214.35 is Valid, by the evidence. Then complete the reconciliation, because the arithmetic needs one more line. DGBOUS 14 Valid + 2214.35 = 15, but this run has 14. So one property that was Valid in DGBOUS is InValid here. Name it and say why (most likely a newly carried property now clashes with it, e.g. 2628.35). Also check the clash group table: earlier it showed C4 = 2554.35/2558.35 and C5 = 2628.35/2631.35, but now you say 2628.35 is with 2558.35. Correct the groups so the table, the reconciliation and the counts agree. Commit, push, and give me the hash.
+Here are the two questions in plain terms.
+
+1. The 54 global topics: yes, this was raised for DGBOUS too, but only answered for DEV.
+
+What the config does: it creates them as new topics. Topics are global (shared by every branch and installation), so they get PKs ending in .65, not the installation’s .44.
+History: this was open item 4zx (2026-10-27, ADR 0018): “which .65 range is safe in PRE / PROD?” For DGBOUS, the renderer took the next free numbers (1237.65–1290.65), which is allowed in DEV only. For PRE and PROD the question stayed open.
+Why it matters now: PRE-PARALELO is the first non-DEV environment. If each environment picks its own numbers, the same topic can end up with different PKs in different environments, or clash with topics the BOX team creates or promotes. So the expert decides: reuse DGBOUS’s numbers (free in PRE-PARALELO, according to Devin), use another range, or have the BOX team create the topics.
+In DGBOUS, the expert reviewed the config and called it very good. The 54 topics were in it, marked “global, to review”, and no objection came back. But nobody approved the numbering scheme for other environments.
+
+2. The account PK sequence: this one is new in PRE-PARALELO.
+
+What the config does: it creates about 453 accounts. Each account’s PK comes from BOX_ACC’s sequence for the accounts table, SPK_T_BOX_ACCT_GLTA_S.
+Why it’s new: in DGBOUS you ran everything as BOX_ACC, the owner, so the precheck saw that sequence and passed. In PRE-PARALELO you run as BOX_ADMIN, and BOX_ADMIN sees no sequence for that table. That usually means BOX_ADMIN hasn’t been granted access, not that the sequence is missing. Either way, the config would fail on the first account.
+What to ask: this is more for the BOX team or DBA than for the expert. Grant BOX_ADMIN access to that sequence (and any other BOX_ACC sequence the config uses; the precheck checks all of them), or tell us how account PKs are generated there.
+
+Short version you can send:
+
+BOX ACC expert: NY’s ACC config creates 54 global accounting topics with no CODE twin in BOX. In DGBOUS they were 1237.65–1290.65 (next free, DEV only). For PRE-PARALELO, and later PROD: do we reuse those PKs (free in PRE-PARALELO), use another range, or will you create the topics?
+BOX team / DBA: in PRE-PARALELO we run the config as BOX_ADMIN, which can’t see BOX_ACC.SPK_T_BOX_ACCT_GLTA_S (the account PK sequence). Can you grant BOX_ADMIN SELECT on it and on the other BOX_ACC sequences, or tell us how account PKs are generated in this environment?

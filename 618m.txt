@@ -1,7 +1,1 @@
-Good inventory. Before the next query:
-
-1. Which branch are this run’s earlier commits on? Keep the whole run (evidence, matrix, report) on one branch; we’ll open one PR at the end. Move the recovered CSVs there if they aren’t.
-2. Tier 1 (REF) queries: copy each CSV from gap_20261029_1/01-evidence/ when its query text and parameters are identical to this run’s, and note in the run where it came from (run, date). That should cover A-04a, A-04b, A-06 (reference), A-07 (reference), and others you find. Run again only the ones whose parameters depend on PRE-PARALELO’s data (e.g. A-10c if NY’s account list differs from DGBOUS’s). Then show me the remaining “never run” list.
-3. A-01’s ORA-00942: which table can’t BOX_ADMIN read? Put it in the questions for the BOX team as a grant BOX_ADMIN needs.
-
-Then continue with the remaining queries, one at a time. Commit and push after each step, and give me the hash from origin.
+A-04c attached. On A-01: don’t wait for the T_PGT_DOMAINS grant. Split the query: the domain descriptions as pgtadmin (a GBO table, readable there), joined in the run with the BOX part already saved, as the FE run did for V4/V10. Keep the grant request as low priority. For the 11071.4 check, run it as BOX_ADMIN, because the ACC precheck reads PGT_SYS.T_PGT_INSTRUMENT_TYPE_S with that account. If it fails with ORA-00942, that grant is needed before the SQL step.

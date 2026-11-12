@@ -1,8 +1,17 @@
-B. Classification for this run, the same as the DGBOUS run (gap_20261029_1):
+The gap run isn’t finished. Continue the same run gap_20261112_1 (don’t start a new one), as the kickoff says for continuing a run, using tier2-gap-run.md and AGENT.md as they stand, and ADR 0020 and 0023–0026.
 
-- NY_SCH → in (the target branch).
-- NY_IBF → out: another branch of the group (NY IBF), with its 6 Depos properties.
-- INTERNAL → out for this run: Swap 2212.35, kept as the open question it was in DGBOUS.
-- OLD / NULL (blank, or no branch row) → out: a blank branch condition or no branch row is out, ruled by the BOX ACC expert on 2026-10-27.
+1. Evidence: every query’s CSV goes in 01-evidence/. Ask me again only for the ones not saved (A-G2, A-U1 (a)/(b), A-01, A-08 (b), and any other), one at a time.
+2. Rewrite 02-acc-gap-matrix.md and 03-portfolio-properties-report.md from their templates, every section, as in the DGBOUS run gap_20261029_1. That means: pre-checks, per-screen tables, column maps, global objects, clash groups, the condition map (reuse runs/NY_SCH/branch/acc-configs/condition-map.csv; read only the BOX PKs here), one section per property, the empty 13.65 conditions, A-04i, OPEN, and questions/decisions. Also write 04-net-ccs-handover.md.
+3. Don’t ask what’s ruled:
+Cross Account Config: TIPO 0/1/2 only, TIPO = ACC_TYPE (ADR 0026).
+Conf Instru Type: 1 row, INF_CVX_PD, instrument type 11071.4 (check it exists here).
+Label aliases: codes from runs/NY_SCH/branch/books/label-aliases.csv, source 629.4.
+Accounts: screen 10 creates from GBO the ones the carried configuration uses. 454 absent is the expected gap, not a blocker.
+4. Explain, with evidence:
+(a) 479 Cross Account Config rows now against 309 on 2026-10-29 from the same GBO (PRE-PARALELO). Same query? New rows? Per TIPO.
+(b) GLTA PK generation: run A-P5 as written. If BOX_ADMIN sees no BOX_ACC sequence, give me a query that tells “no sequence” from “no grant” (e.g. ALL_SEQUENCES vs ALL_OBJECTS as BOX_ADMIN). A missing grant goes to the questions for the BOX team.
+(c) event group 4187.65: what it is (from the reference) and the query that shows it missing.
+(d) Net Contract’s 14 rows: which branch/group they belong to.
+5. Raise the .65 question for the BOX ACC expert: which of the 54 global topics are missing here, with a proposal (e.g. the same PKs as DGBOUS, 1237.65–1290.65, if they’re free here).
 
-So in scope: OTC 24, Depos 21, CCS 6, Caps 4, Swap 3 = 58, as in DGBOUS. If your count differs, show me which properties.
+Commit and push after each step, and give me the hash from origin.

@@ -1,9 +1,6 @@
-Good progress, but before I merge #120:
+Thanks: screen 3, 4187.65 and Net Contract are fine. Two points are still open:
 
-1. Clash groups. This run: 8 Valid / 50 InValid in 13 groups. DGBOUS (gap_20261029_1, same GBO source PRE-PARALELO, same condition map, confirmed by BOX’s own status in the config): 14 Valid / 40 InValid (31 clash, 9 empty). Compare group by group with DGBOUS’s report and config output (STATUS-CLASH|). For every property whose status differs, show its kept BOX condition values on both sides. Check especially that Instrument Type (GBO 102.4 → BOX 1.65) is in the comparison: in DGBOUS it separated OTC .35/.44 pairs that here are in C6–C9. If GBO’s rows really changed, show the evidence.
-2. OPEN means a list account that no source has (ADR 0023), not A-04i. Check account 9614600-982058 (2214.35, 2497.35 in DGBOUS): does it exist in any GBO or BOX account table here? If not, those properties are OPEN and not carried, and the counts change.
-3. Screen 3: the count to create is the TIPO 0/1/2 rows (163 in DGBOUS), not 309. Correct the summary and give the per-TIPO split.
-4. Event group 4187.65 is CDS, and CDS is out of scope for NY. Make it N/A for NY in the matrix, keep it as an observation for the BOX team, and drop the OPEN.
-5. Net Contract: the branch/group of the 14 rows, with the query.
+1. Show the comparison as a table in the report: every property whose status differs from DGBOUS (Valid there, InValid here, or the reverse), with its kept BOX condition values here and in DGBOUS (gap_20261029_1 report and config output), and the reason for the difference. 14 → 8 Valid means at least 6 such properties. If the reason is that Instrument Type (102.4 → 1.65) or another kept pair is missing from your comparison, fix it and recount. If GBO’s rows changed, show the rows (old CSV vs new CSV).
+2. Account 9614600-982058: give the file:line in A-10a (PGT_ACT.T_PGT_ACCT_GLTA_S, the GBO account table) or in the BOX account table. A-U7b doesn’t count: it only shows the lists use it. In DGBOUS, the same GBO showed it in no account table. If it isn’t in A-10a, 2214.35 and 2497.35 are OPEN and not carried.
 
-Correct the matrix and the report, commit, push, and give me the hash and the corrected scope line (Valid / InValid split / OPEN).
+Commit, push, and give me the hash and the corrected scope line.

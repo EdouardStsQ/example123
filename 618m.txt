@@ -1,1 +1,10 @@
-SELECT PK, CODE, VALUE, FK_INSTRUMENT_TYPE, FK_BRANCH FROM BOX_ACC.T_BOX_CONF_INSTRUM_TYPE_S WHERE PK = 23.44;
+Open a PR from devin/20261030-acc-adr0026 to the default branch. The earlier PR from this branch is already merged; this one carries only the commits after it.
+Title: NY_SCH DGBOUS ACC: Conf Instru Type delta (ADR 0026 point 1 corrected).
+Description:
+
+- The delta_20261112_1 run: values (1 row: SLB 42.21, FlexBlockTag → INF_CVX_PD, instrument type 11071.4), precheck / rehearsal / config / verify outputs, rollback.
+- Created in DGBOUS: 23.44, confirmed by a read-only query (CODE, VALUE, FK_INSTRUMENT_TYPE 11071.4, FK_BRANCH 20007.4).
+- The 69.21 question marked answered (expert, 2026-11-12) in the main run’s matrix and report.
+- The main run’s values and outputs untouched.
+
+Push nothing else. Give me the PR link and the head hash from origin.

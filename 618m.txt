@@ -1,1 +1,1 @@
-Delta rehearsal, config and verify outputs attached. Save them in delta_20261112_1/03-sql/ and check that the verify shows NY’s Conf Instru Type row (FlexBlockTag → INF_CVX_PD, instrument type 11071.4, branch 20007.4). Render the delta rollback from the config output. Push, and give the hash from origin. I’ll then open a new PR from devin/20261030-acc-adr0026.
+SELECT PK, CODE, VALUE, FK_INSTRUMENT_TYPE, FK_BRANCH FROM BOX_ACC.T_BOX_CONF_INSTRUM_TYPE_S WHERE PK = 23.44;

@@ -1,1 +1,5 @@
-For NY’s Conf Instru Type, SLB has two rows: FlexBlockTag → INF_CVX_PD (instrument type 11071.4) and FlexBlockTag → #ALL (instrument type 69.21, a Tier 1 local type that doesn’t exist in DGBOUS). Which one should NY have? Is the .65 / .44 / .21 rule about the instrument type the row points to, rather than the row’s own PK?
+Pull main. ADR 0026 point 1 is corrected by the expert (2026-11-12): Conf Instru Type rows are copied when their instrument type is global (.4) or .44, whatever the row’s own PK. NY needs SLB’s row 42.21 (FlexBlockTag → INF_CVX_PD, FK_INSTRUMENT_TYPE 11071.4); the #ALL row (69.21) stays out.
+
+1. Don’t touch the committed run’s values or outputs. Create a separate run folder next to it, e.g. delta_20261112_1, whose 03-sql/acc-values.json holds only that row: ref_pk 42.21, its columns as the reference’s (A-12a, file:line), FK_BRANCH the branch, and every other section empty.
+2. Render the precheck. It must show ok instrument type 11071.4. I run it, then the rehearsal (expect SUMMARY|problems|0, 1 created), the config and the verify. Then render the rollback for this delta only.
+3. In the main run, update the matrix (screen 12: 1 row) and the report, pointing to the delta run. Push, and give the hash from origin.

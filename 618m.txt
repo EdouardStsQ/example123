@@ -1,5 +1,9 @@
-Result attached. Corrections:
+Good progress, but before I merge #120:
 
-1. The A-01 failure was your table name: the catalogue has PGT_SYS.PGT_DOMAINS (A-01, and Where each table lives), not T_PGT_DOMAINS. Remove the BOX_ADMIN grant question for it, and note in the run that it was a typing error, not a grant.
-2. From now on, every query is the catalogue’s text as written, with only its && parameters substituted. A query you change or write yourself must say what changed and why (charter hard rule 24).
-3. Check the first pass the same way: for each finding (the GLTA sequence/counter “not found”, event group 4187.65 missing, Net Contract’s 14 rows), show the query that produced it. Was it the catalogue’s text unchanged? If not, give me the catalogue’s version to run.
+1. Clash groups. This run: 8 Valid / 50 InValid in 13 groups. DGBOUS (gap_20261029_1, same GBO source PRE-PARALELO, same condition map, confirmed by BOX’s own status in the config): 14 Valid / 40 InValid (31 clash, 9 empty). Compare group by group with DGBOUS’s report and config output (STATUS-CLASH|). For every property whose status differs, show its kept BOX condition values on both sides. Check especially that Instrument Type (GBO 102.4 → BOX 1.65) is in the comparison: in DGBOUS it separated OTC .35/.44 pairs that here are in C6–C9. If GBO’s rows really changed, show the evidence.
+2. OPEN means a list account that no source has (ADR 0023), not A-04i. Check account 9614600-982058 (2214.35, 2497.35 in DGBOUS): does it exist in any GBO or BOX account table here? If not, those properties are OPEN and not carried, and the counts change.
+3. Screen 3: the count to create is the TIPO 0/1/2 rows (163 in DGBOUS), not 309. Correct the summary and give the per-TIPO split.
+4. Event group 4187.65 is CDS, and CDS is out of scope for NY. Make it N/A for NY in the matrix, keep it as an observation for the BOX team, and drop the OPEN.
+5. Net Contract: the branch/group of the 14 rows, with the query.
+
+Correct the matrix and the report, commit, push, and give me the hash and the corrected scope line (Valid / InValid split / OPEN).

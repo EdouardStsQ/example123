@@ -1,17 +1,7 @@
-The gap run isn’t finished. Continue the same run gap_20261112_1 (don’t start a new one), as the kickoff says for continuing a run, using tier2-gap-run.md and AGENT.md as they stand, and ADR 0020 and 0023–0026.
+Stop asking queries for a moment. Most of the results you’re missing are already in this session’s chat: I pasted them during the first pass. Do this first:
 
-1. Evidence: every query’s CSV goes in 01-evidence/. Ask me again only for the ones not saved (A-G2, A-U1 (a)/(b), A-01, A-08 (b), and any other), one at a time.
-2. Rewrite 02-acc-gap-matrix.md and 03-portfolio-properties-report.md from their templates, every section, as in the DGBOUS run gap_20261029_1. That means: pre-checks, per-screen tables, column maps, global objects, clash groups, the condition map (reuse runs/NY_SCH/branch/acc-configs/condition-map.csv; read only the BOX PKs here), one section per property, the empty 13.65 conditions, A-04i, OPEN, and questions/decisions. Also write 04-net-ccs-handover.md.
-3. Don’t ask what’s ruled:
-Cross Account Config: TIPO 0/1/2 only, TIPO = ACC_TYPE (ADR 0026).
-Conf Instru Type: 1 row, INF_CVX_PD, instrument type 11071.4 (check it exists here).
-Label aliases: codes from runs/NY_SCH/branch/books/label-aliases.csv, source 629.4.
-Accounts: screen 10 creates from GBO the ones the carried configuration uses. 454 absent is the expected gap, not a blocker.
-4. Explain, with evidence:
-(a) 479 Cross Account Config rows now against 309 on 2026-10-29 from the same GBO (PRE-PARALELO). Same query? New rows? Per TIPO.
-(b) GLTA PK generation: run A-P5 as written. If BOX_ADMIN sees no BOX_ACC sequence, give me a query that tells “no sequence” from “no grant” (e.g. ALL_SEQUENCES vs ALL_OBJECTS as BOX_ADMIN). A missing grant goes to the questions for the BOX team.
-(c) event group 4187.65: what it is (from the reference) and the query that shows it missing.
-(d) Net Contract’s 14 rows: which branch/group they belong to.
-5. Raise the .65 question for the BOX ACC expert: which of the 54 global topics are missing here, with a proposal (e.g. the same PKs as DGBOUS, 1237.65–1290.65, if they’re free here).
+1. List every query the gap run needs (from the kickoff and the catalogue) with its CSV name, and mark each as: saved (in 01-evidence/), in the chat (I pasted it earlier — save it now from the chat, exactly as pasted, under its CSV name), or never run.
+2. Commit and push the CSVs recovered from the chat.
+3. Show me the list. Then ask me only the “never run” queries, one at a time. If a recovered result looks incomplete (cut off, no header), say which one and I’ll rerun it.
 
-Commit and push after each step, and give me the hash from origin.
+From now on, save each result to 01-evidence/ as soon as I paste it, before saying anything else, and name the file in your reply.

@@ -1,7 +1,8 @@
-Thanks. Before the PR:
+B. Classification for this run, the same as the DGBOUS run (gap_20261029_1):
 
-1. List the 23 labels created (24038.44–24060.44) by code. Which one is the dummy label used in step 11? Was it created by this run or did it already exist and is it shared? (Run 6’s rule: the dummy must be a label other branches use.)
-2. Confirm the run 7 decisions applied (steps 6, 11, 12, 14a): which were confirmed as they were and which changed.
-3. In the run folder, record how V4 and V10 were split per side (both queries, both results), so the repo can render them that way next time.
+- NY_SCH → in (the target branch).
+- NY_IBF → out: another branch of the group (NY IBF), with its 6 Depos properties.
+- INTERNAL → out for this run: Swap 2212.35, kept as the open question it was in DGBOUS.
+- OLD / NULL (blank, or no branch row) → out: a blank branch condition or no branch row is out, ruled by the BOX ACC expert on 2026-10-27.
 
-Then open a PR from devin/1794476851-ny-sch-preparalelo-fe to the default branch, and give me the link and the hash from origin.
+So in scope: OTC 24, Depos 21, CCS 6, Caps 4, Swap 3 = 58, as in DGBOUS. If your count differs, show me which properties.

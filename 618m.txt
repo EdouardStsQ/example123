@@ -1,7 +1,16 @@
-SELECT LINE, TRIM(TEXT) AS TEXT
-FROM   ALL_SOURCE
-WHERE  OWNER = 'BOX_ACC' AND NAME = 'PKG_ACCTPRECOMMIT' AND TYPE = 'PACKAGE BODY'
-AND   (UPPER(TEXT) LIKE '%PROCEDURE %' OR UPPER(TEXT) LIKE '%FUNCTION %'
-       OR UPPER(TEXT) LIKE '%INSERT %' OR UPPER(TEXT) LIKE '%UPDATE %'
-       OR UPPER(TEXT) LIKE '%DELETE %' OR UPPER(TEXT) LIKE '%MERGE %')
-ORDER  BY LINE;
+Pull main: it now has ADR 0027, scripts/render_acc_sql.py, the new scripts/check_acc_gap_run.py, and both ACC kickoffs (tier2-gap-run.md, tier2-sql.md). Read ADR 0025, 0026 and 0027 and the kickoffs’ new Working rules and Step 3b before anything else.
+
+1. Finish the gap run gap_20261112_1:
+
+A-P5 is resolved: as BOX_ACC, every SPK_T_BOX_* sequence is visible (SPK_T_BOX_ACCT_GLTA_S at 16758; result already given). Mark it resolved and remove the GLTA question for the BOX team.
+Global topics: replace the 1237.65–1290.65 proposal with ADR 0027. The 54 topics are listed “to create in DGBOBOX”, then imported in IGBOUSIB.
+Run python3 scripts/check_acc_gap_run.py runs/NY_SCH/tier2-preparalelo/acc-configs/gap_20261112_1 and fix every FAIL until it prints OK. Show me the final output.
+Commit, push, open a PR, and give me the link and the hash from origin.
+
+2. Then start the SQL step (tier2-sql.md), Step 3b only:
+
+Create the global run: python3 scripts/new_run.py --branch NY_SCH --tier global --env dgbobox --area acc-configs --name global.
+Its 03-sql/acc-values.json: global_only: true, env: "dgbobox", auth_code: 65, the topics’ owner, global_pk.T_BOX_ACCT_TOPICS_S.start = "sequence", and the 54 topic rows from the gap run, each with its source.
+Render --precheck and give me the file to run in DGBOBOX as BOX_ACC. Stop there and wait for my output.
+
+Save each result I paste to the run folder before replying. Push after every commit.

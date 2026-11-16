@@ -1,4 +1,1 @@
-SELECT FK_INSTRUMENT, DESCRIPTION
-FROM   BOX_ACC.T_BOX_CONF_LO_PROP_S
-WHERE  FK_BRANCH = 21447.4 AND FK_OWNER_OBJ > 0
-ORDER  BY FK_INSTRUMENT;
+For the record (no SQL to render): DGBOUS’s local property descriptions were wrong. As written by the config of 2026-11-10, 2.4 had “IR” and 20.4 had “MM”, not what you reported then. I corrected them by hand in DGBOUS on 2026-11-16, as BOX_ACC, two rows: 2.4 → “Conditions Portfolio Properties - MM NY_SCH”, 20.4 → “Conditions Portfolio Properties - CCS NY_SCH”. Note this in the DGBOUS run (gap_20261029_1 README or run log) and in open item 4zza, with the query result attached as evidence. From now on, report values from the files or the database, not from memory. Push, and give me the hash.

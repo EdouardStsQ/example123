@@ -1,10 +1,23 @@
-In PRE-PARALELO (IGBOUSIB), two BOX_ACC sequences are behind the rows already in their tables:
-
-- BOX_ACC.SPK_T_BOX_CONF_INSTRUM_TYPE_S is at 1, but T_BOX_CONF_INSTRUM_TYPE_S already has .44 rows up to 9.44.
-- BOX_ACC.SPK_T_BOX_CONF_LO_PROP_S is at 1, but T_BOX_CONF_LO_PROP_S already has .44 rows up to 30.44.
-
-NY_SCH’s ACC config takes the next PK from these sequences, so it would collide with existing rows. Our precheck stopped it, and nothing has been run.
-
-1. How were the existing rows created: by a script with explicit PKs? Does SIGOM take new PKs from these sequences in IGBOUSIB? If it does, a user creating a local property or Conf Instru Type row in SIGOM there would hit the same collision.
-2. Can the two sequences be moved above the existing rows (we propose restarting them at 1010 and 1031, or any value you prefer)? Who should do it: your team, or us as BOX_ACC with statements you approve?
-3. Should other BOX_ACC sequences in IGBOUSIB be checked the same way? We only check the tables NY’s config writes to. The others it uses are fine: accounts, portfolio properties and link arrays are ahead of their rows; date rules and Cross Account Config have no .44 rows yet.
+SET SERVEROUTPUT ON
+DECLARE
+  v_max NUMBER;
+  v_s   NUMBER;
+  v_n   PLS_INTEGER;
+  PROCEDURE fix (p_table VARCHAR2, p_seq VARCHAR2) IS
+  BEGIN
+    EXECUTE IMMEDIATE 'SELECT NVL(MAX(TRUNC(PK)), 0) FROM BOX_ACC.' || p_table
+      || ' WHERE PK - TRUNC(PK) = 0.44' INTO v_max;
+    v_n := 0;
+    LOOP
+      EXECUTE IMMEDIATE 'SELECT BOX_ACC.' || p_seq || '.NEXTVAL FROM DUAL' INTO v_s;
+      v_n := v_n + 1;
+      EXIT WHEN v_s >= v_max OR v_n > 100000;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE(p_table || ': highest .44 PK ' || v_max || ', sequence now at ' || v_s
+      || ' (next value ' || (v_s + 1) || ')');
+  END fix;
+BEGIN
+  fix('T_BOX_CONF_INSTRUM_TYPE_S', 'SPK_T_BOX_CONF_INSTRUM_TYPE_S');
+  fix('T_BOX_CONF_LO_PROP_S',      'SPK_T_BOX_CONF_LO_PROP_S');
+END;
+/

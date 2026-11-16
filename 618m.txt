@@ -1,1 +1,7 @@
-confirm from the file: 0 PROBLEM|, 0 PRESENT|, 10 EMPTY|, 15 STATUS|…|Valid, 41 STATUS-CLASH| all InValid, SUMMARY|problems|0. If all match, I’ll run the config.
+Config and verify outputs attached. Save them. Then:
+
+1. Confirm from the config output: ACC CONFIG COMMITTED, 0 problems, the CREATED| counts per table.
+2. Check each verify query against its expected result and list any that differ.
+3. Render the rollback from the config output (keep it, don’t run it).
+4. Update open item 4zzb (NY’s PRE-PARALELO ACC config done) and the run log. Run check_acc_gap_run.py once more.
+5. Push, give me the hash, and tell me when PR #122 is ready to merge.

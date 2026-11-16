@@ -1,7 +1,15 @@
-Config and verify outputs attached. Save them. Then:
+Before I merge #122, fix 99-open-items.md:
 
-1. Confirm from the config output: ACC CONFIG COMMITTED, 0 problems, the CREATED| counts per table.
-2. Check each verify query against its expected result and list any that differ.
-3. Render the rollback from the config output (keep it, don’t run it).
-4. Update open item 4zzb (NY’s PRE-PARALELO ACC config done) and the run log. Run check_acc_gap_run.py once more.
-5. Push, give me the hash, and tell me when PR #122 is ready to merge.
+1. 4zzb: rewrite its first part to the final result: 56 carried = 15 Valid / 41 InValid / 2 OPEN (2628.35, 133231.44), 7 clash groups (39 properties), 10 empty 13.65 (8 also in clash groups). Remove “Await the new target precheck…”: the config is committed and verified. End the row with what’s still open:
+the BOX ACC expert’s review in SIGOM;
+the accounting user’s choice per clash group;
+the operations user for the empty conditions;
+the two OPEN properties;
+Net CCS handover (UAT);
+label aliases (GL team, source 629.4);
+event group 4187.65 FYI;
+“PRO may have the same sequence gaps (the precheck checks them)”.
+2. 4zza (a): mark the 11071.4 row done: DGBOUS 23.44, delta_20261112_1, 2026-11-12.
+3. In #122’s description, list every file the PR changes outside the run folders (scripts/new_run.py, runs/NY_SCH/tier2-pre/jobs/99-open-items.md, any other), with why.
+
+Push, and give me the hash.

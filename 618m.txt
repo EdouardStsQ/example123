@@ -1,1 +1,10 @@
-The BOX ACC expert (2026-11-16): the two sequences are behind because of a reset or rows inserted with static PKs in PRO. The fix is to advance them to the last number used, as they’ve done in PRO with a loop. I ran that loop in IGBOUSIB as BOX_ACC (output attached). Save it in the target run as evidence. Note it in the run log and in open item 4zzb, including “PRO may have the same gaps: the precheck checks them”. Then wait for my new precheck output.
+Precheck output attached: ACC PRECHECK OK after the sequence fix. Save it, then render the rehearsal, config, verify and summary (same values, sha c32b7014…). Before I run anything, give me the summary’s counts:
+
+- 0 topics created (54 imported);
+- 454 accounts / 267 date rules;
+- 5 local properties (MM / CCS / IR / OTC / CF);
+- 56 portfolio properties: 15 Valid / 41 expected InValid (clash vs empty split);
+- 163 Cross Account Config rows;
+- 1 Conf Instru Type row.
+
+Push, and give me the hash.

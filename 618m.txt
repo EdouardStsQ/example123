@@ -1,8 +1,11 @@
-133231.44: OPEN, not carried (ADR 0023). Its lists would get the Swap local property’s eight topics with no account, and we neither invent accounts nor drop topics. First check DGBOUS (gap_20261029_1 values / _not_carried): I expect it was left out there for the same reason. Say what DGBOUS recorded. Then:
+Don’t hand over this precheck: the local property descriptions are wrong. The five must be (instrument → BOX product code, from gbo-box-product-tables.csv, as in DGBOUS):
 
-- Put it under _not_carried with the reason, plus a question for the BOX ACC expert.
-- Expected: 56 carried = 15 Valid / 41 InValid / 2 OPEN. 2498.35/2499.35 still clash with each other. This equals DGBOUS’s 54 (14 / 40) + 2214.35 (Valid) + 2497.35 (InValid). Explain any difference.
-- Correct gap_20261112_1 again: scope line, reconciliation table, clash group C3. Run the checker until it prints OK.
-- Before rendering: check every carried property the same way (each topic of its instrument’s local property has a sourced account in that property) and list any other one that fails. Don’t ask me one property at a time.
+- 2.4 → MM
+- 20.4 → CCS
+- 20092.4 → IR
+- 20111.4 → OTC
+- 20213.4 → CF
 
-Then build the full values, render the precheck, give me the counts against these numbers, push, and give me the hash.
+Each is “Conditions Portfolio Properties - <code> NY_SCH”. Fix them, check each against the product table and DGBOUS’s values, and list the five exactly as written.
+Also name the 8 properties that are both in a clash group and have 13.65 empty (39 + 10 − 8 = 41).
+Then re-render the precheck (new sha), push, and give me the hash and the file.

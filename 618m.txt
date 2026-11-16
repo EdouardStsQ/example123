@@ -1,1 +1,10 @@
-Note in the run: the A-P5a evidence was captured as BOX_ADMIN, which doesn’t see BOX_ACC’s sequences, so its blank SEQ_NEXT isn’t evidence of “no sequence”. The authoritative reading is the precheck as BOX_ACC: both sequences exist at 1. The question is now with the BOX ACC expert. Wait for the answer, and render nothing.
+In PRE-PARALELO (IGBOUSIB), two BOX_ACC sequences are behind the rows already in their tables:
+
+- BOX_ACC.SPK_T_BOX_CONF_INSTRUM_TYPE_S is at 1, but T_BOX_CONF_INSTRUM_TYPE_S already has .44 rows up to 9.44.
+- BOX_ACC.SPK_T_BOX_CONF_LO_PROP_S is at 1, but T_BOX_CONF_LO_PROP_S already has .44 rows up to 30.44.
+
+NY_SCH’s ACC config takes the next PK from these sequences, so it would collide with existing rows. Our precheck stopped it, and nothing has been run.
+
+1. How were the existing rows created: by a script with explicit PKs? Does SIGOM take new PKs from these sequences in IGBOUSIB? If it does, a user creating a local property or Conf Instru Type row in SIGOM there would hit the same collision.
+2. Can the two sequences be moved above the existing rows (we propose restarting them at 1010 and 1031, or any value you prefer)? Who should do it: your team, or us as BOX_ACC with statements you approve?
+3. Should other BOX_ACC sequences in IGBOUSIB be checked the same way? We only check the tables NY’s config writes to. The others it uses are fine: accounts, portfolio properties and link arrays are ahead of their rows; date rules and Cross Account Config have no .44 rows yet.

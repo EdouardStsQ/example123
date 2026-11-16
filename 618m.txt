@@ -1,14 +1,9 @@
-Yes. Expand the same target acc-values.json into the full configuration, as tier2-sql.md Step 3 says, from gap_20261112_1 (matrix, report, condition map, decisions), every value with its source. Keep global_pk.T_BOX_ACCT_TOPICS_S.start = "imported" with the 54 topics as they are. Apply ADR 0026:
+Don’t invent or copy accounts, and don’t drop the topics. 2628.35 is OPEN, not carried (ADR 0023: a list account no source has; blank in GBO counts). This is the same treatment as in DGBOUS (open item 4zz (g)). Put it under _not_carried with that reason, and keep the question for the BOX ACC expert.
+Consequences:
 
-- local property descriptions;
-- gbo_pk on every portfolio property;
-- empty_conditions plus expect_invalid;
-- Cross Account Config TIPO 0/1/2 only;
-- the one Conf Instru Type row with ref_pk 42.21.
+- 2558.35 no longer clashes with it, so it’s Valid again (as in DGBOUS). Expected: 57 carried = 15 Valid / 42 InValid (give the clash vs empty split) / 1 OPEN.
+- The 5 topics (CTRNomDepTom, DepTomado, PREMCOBRADOPRE, PerdPremiPre, PerdPremiTom) go into the local property only if another carried property of that instrument uses them. Tell me which. They’re among the 54 imported topics anyway; an unused imported topic does no harm.
+- Accounts used only by 2628.35: not created.
+- Correct gap_20261112_1 too: the matrix’s scope line (0 OPEN → 1), the report’s reconciliation table and the clash group C5. Run check_acc_gap_run.py until it prints OK.
 
-Use the DGBOUS values (gap_20261029_1 / delta_20261112_1) only as a cross-check, never as a source. Then:
-
-- Render --precheck (new sha) and give it to me to run in IGBOUSIB as BOX_ACC. The import output stays as it is.
-- Show me the counts next to the expected ones, as in my last message: 0 topics created (54 imported), accounts / date rules compared with DGBOUS’s 453 / 267, 5 local properties, 58 properties (14 / 44, with the clash vs empty split), 163 Cross Account Config rows, 1 Conf Instru Type row. Explain any difference.
-
-Push, and give me the hash.
+Then build the full values, render the precheck, give me the counts against these numbers, push, and give me the hash.

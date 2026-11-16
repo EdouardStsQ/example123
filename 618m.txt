@@ -1,11 +1,4 @@
-Don’t hand over this precheck: the local property descriptions are wrong. The five must be (instrument → BOX product code, from gbo-box-product-tables.csv, as in DGBOUS):
-
-- 2.4 → MM
-- 20.4 → CCS
-- 20092.4 → IR
-- 20111.4 → OTC
-- 20213.4 → CF
-
-Each is “Conditions Portfolio Properties - <code> NY_SCH”. Fix them, check each against the product table and DGBOUS’s values, and list the five exactly as written.
-Also name the 8 properties that are both in a clash group and have 13.65 empty (39 + 10 − 8 = 41).
-Then re-render the precheck (new sha), push, and give me the hash and the file.
+SELECT FK_INSTRUMENT, DESCRIPTION
+FROM   BOX_ACC.T_BOX_CONF_LO_PROP_S
+WHERE  FK_BRANCH = 21447.4 AND FK_OWNER_OBJ > 0
+ORDER  BY FK_INSTRUMENT;

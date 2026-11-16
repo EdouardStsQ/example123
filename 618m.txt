@@ -1,6 +1,1 @@
-Config output attached (ACC CONFIG COMMITTED). Save it, then:
-
-1. Confirm from the output: 54 CREATED-GLOBAL lines, their PK range, 0 problems.
-2. Render, from the config output: --rollback (the global run’s undo, which I keep but don’t run) and --export (NY_SCH-dgbobox-acc-global-export.sql). Also give me the verify for DGBOBOX.
-
-Push, and give me the hash. I’ll run the verify and the export in DGBOBOX and send you both outputs.
+Verify and export outputs attached. Save them in the global run: the export output as NY_SCH-dgbobox-acc-global-export-output.txt. Check the export says GLOBAL EXPORT OK|54 row(s) with 54 INS| lines. Then, in the PRE-PARALELO target run (the one for the SQL step, from gap_20261112_1), write its acc-values.json with global_pk.T_BOX_ACCT_TOPICS_S.start = "imported" and the same 54 topics. Render --import <global run>/03-sql/NY_SCH-dgbobox-acc-global-export-output.txt, and give me the import rehearsal and import for IGBOUSIB as BOX_ACC. Push, and give me the hash.

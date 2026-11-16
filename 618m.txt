@@ -1,9 +1,8 @@
-Don’t invent or copy accounts, and don’t drop the topics. 2628.35 is OPEN, not carried (ADR 0023: a list account no source has; blank in GBO counts). This is the same treatment as in DGBOUS (open item 4zz (g)). Put it under _not_carried with that reason, and keep the question for the BOX ACC expert.
-Consequences:
+133231.44: OPEN, not carried (ADR 0023). Its lists would get the Swap local property’s eight topics with no account, and we neither invent accounts nor drop topics. First check DGBOUS (gap_20261029_1 values / _not_carried): I expect it was left out there for the same reason. Say what DGBOUS recorded. Then:
 
-- 2558.35 no longer clashes with it, so it’s Valid again (as in DGBOUS). Expected: 57 carried = 15 Valid / 42 InValid (give the clash vs empty split) / 1 OPEN.
-- The 5 topics (CTRNomDepTom, DepTomado, PREMCOBRADOPRE, PerdPremiPre, PerdPremiTom) go into the local property only if another carried property of that instrument uses them. Tell me which. They’re among the 54 imported topics anyway; an unused imported topic does no harm.
-- Accounts used only by 2628.35: not created.
-- Correct gap_20261112_1 too: the matrix’s scope line (0 OPEN → 1), the report’s reconciliation table and the clash group C5. Run check_acc_gap_run.py until it prints OK.
+- Put it under _not_carried with the reason, plus a question for the BOX ACC expert.
+- Expected: 56 carried = 15 Valid / 41 InValid / 2 OPEN. 2498.35/2499.35 still clash with each other. This equals DGBOUS’s 54 (14 / 40) + 2214.35 (Valid) + 2497.35 (InValid). Explain any difference.
+- Correct gap_20261112_1 again: scope line, reconciliation table, clash group C3. Run the checker until it prints OK.
+- Before rendering: check every carried property the same way (each topic of its instrument’s local property has a sourced account in that property) and list any other one that fails. Don’t ask me one property at a time.
 
 Then build the full values, render the precheck, give me the counts against these numbers, push, and give me the hash.

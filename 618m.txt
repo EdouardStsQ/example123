@@ -1,1 +1,10 @@
-Import rehearsal output attached (54 imported, 0 problems). Save it. I’ll now run NY_SCH-tier2-preparalelo-acc-global-import.sql (the COMMIT one) in IGBOUSIB as BOX_ACC and send you its output. When I do, save it as …-global-import-output.txt, render --import-rollback (keep it, don’t run it), then render the target’s precheck (the 54 topics must show as imported). Push, and give me the hash.
+Precheck OK. Render the target’s rehearsal, config, verify and summary for IGBOUSIB from the same values (sha as in the precheck output). Before I run anything, give me from the summary, next to what we expect:
+
+- Global topics: 0 created (54 imported, looked up by CODE).
+- Accounts and date rules: compare with DGBOUS’s 453 / 267, and explain any difference (e.g. 9614600-982058, now in A-10a).
+- Local properties: 5, with their descriptions.
+- Portfolio properties: 58. 14 Valid, 44 expected InValid, of which 10 have 13.65 left empty and the rest are in clash groups; give the split.
+- Cross Account Config: 163 rows (TIPO 0 = 6, 1 = 6, 2 = 151).
+- Conf Instru Type: 1 row, INF_CVX_PD, instrument type 11071.4.
+
+Anything different: explain it before I run. Push, and give me the hash.

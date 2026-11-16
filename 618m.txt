@@ -1,10 +1,14 @@
-Precheck OK. Render the target’s rehearsal, config, verify and summary for IGBOUSIB from the same values (sha as in the precheck output). Before I run anything, give me from the summary, next to what we expect:
+Yes. Expand the same target acc-values.json into the full configuration, as tier2-sql.md Step 3 says, from gap_20261112_1 (matrix, report, condition map, decisions), every value with its source. Keep global_pk.T_BOX_ACCT_TOPICS_S.start = "imported" with the 54 topics as they are. Apply ADR 0026:
 
-- Global topics: 0 created (54 imported, looked up by CODE).
-- Accounts and date rules: compare with DGBOUS’s 453 / 267, and explain any difference (e.g. 9614600-982058, now in A-10a).
-- Local properties: 5, with their descriptions.
-- Portfolio properties: 58. 14 Valid, 44 expected InValid, of which 10 have 13.65 left empty and the rest are in clash groups; give the split.
-- Cross Account Config: 163 rows (TIPO 0 = 6, 1 = 6, 2 = 151).
-- Conf Instru Type: 1 row, INF_CVX_PD, instrument type 11071.4.
+- local property descriptions;
+- gbo_pk on every portfolio property;
+- empty_conditions plus expect_invalid;
+- Cross Account Config TIPO 0/1/2 only;
+- the one Conf Instru Type row with ref_pk 42.21.
 
-Anything different: explain it before I run. Push, and give me the hash.
+Use the DGBOUS values (gap_20261029_1 / delta_20261112_1) only as a cross-check, never as a source. Then:
+
+- Render --precheck (new sha) and give it to me to run in IGBOUSIB as BOX_ACC. The import output stays as it is.
+- Show me the counts next to the expected ones, as in my last message: 0 topics created (54 imported), accounts / date rules compared with DGBOUS’s 453 / 267, 5 local properties, 58 properties (14 / 44, with the clash vs empty split), 163 Cross Account Config rows, 1 Conf Instru Type row. Explain any difference.
+
+Push, and give me the hash.

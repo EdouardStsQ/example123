@@ -1,10 +1,1 @@
-Precheck output attached: ACC PRECHECK OK after the sequence fix. Save it, then render the rehearsal, config, verify and summary (same values, sha c32b7014…). Before I run anything, give me the summary’s counts:
-
-- 0 topics created (54 imported);
-- 454 accounts / 267 date rules;
-- 5 local properties (MM / CCS / IR / OTC / CF);
-- 56 portfolio properties: 15 Valid / 41 expected InValid (clash vs empty split);
-- 163 Cross Account Config rows;
-- 1 Conf Instru Type row.
-
-Push, and give me the hash.
+confirm from the file: 0 PROBLEM|, 0 PRESENT|, 10 EMPTY|, 15 STATUS|…|Valid, 41 STATUS-CLASH| all InValid, SUMMARY|problems|0. If all match, I’ll run the config.

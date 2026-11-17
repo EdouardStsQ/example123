@@ -1,8 +1,1 @@
-Neither. The authoritative grouping is the one the renderer computed from acc-values.json (properties with identical kept condition values), listed in 03-sql/NY_SCH-tier2-preparalelo-acc-summary.md (the clash groups table, section 4b). Its members are the expect_invalid properties whose STATUS-CLASH| lines are InValid in the config output.
-
-1. Take the groups and members from that table. Give me: the number of groups, the members per group (instrument, properties), and the total members. The total must be 39 if the earlier figures were right.
-2. Check it against the config output: every member has a STATUS-CLASH|…|InValid line.
-3. Then correct the matrix’s Clash groups section, the report’s section 3 and 4zzb to that grouping. Relabel the groups so the labels match: no gap left by C5 (2628.35, now OPEN).
-4. Then write the expert note from it.
-
-Commit, push, and give me the hash and the grouping.
+Attached is the review note for NY_SCH’s ACC configuration in PRE-PARALELO (IGBOUSIB): what was created, what to check in SIGOM, the two properties not carried, and what’s pending. Most clash groups are pairs where the accounting user picks one. But two need your decision first: group 1 (19 Deposit & Loan properties) and group 6 (6 CCS properties) clash because GBO tells them apart with conditions BOX doesn’t have (customer type / deposit class for Depos; counterparty, EUR leg, folder, quote reference, currency for CCS). Choosing one would leave the rest without accounting. Should BOX get equivalent conditions, or is there another treatment?

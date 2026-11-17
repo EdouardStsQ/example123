@@ -1,15 +1,15 @@
-Before I merge #122, fix 99-open-items.md:
+Write runs/NY_SCH/tier2-preparalelo/acc-configs/gap_20261112_1/05-expert-review.md: a one-page note for the BOX ACC expert’s review in SIGOM of NY_SCH’s PRE-PARALELO ACC config. Use only figures from the run’s files (file:line for each). Sections:
 
-1. 4zzb: rewrite its first part to the final result: 56 carried = 15 Valid / 41 InValid / 2 OPEN (2628.35, 133231.44), 7 clash groups (39 properties), 10 empty 13.65 (8 also in clash groups). Remove “Await the new target precheck…”: the config is committed and verified. End the row with what’s still open:
-the BOX ACC expert’s review in SIGOM;
-the accounting user’s choice per clash group;
-the operations user for the empty conditions;
-the two OPEN properties;
-Net CCS handover (UAT);
+1. What was created in IGBOUSIB: the counts from the config output; the 54 global topics created in DGBOBOX (1312.65–1365.65) and imported, not created by the config.
+2. To check in SIGOM: 56 portfolio properties, 15 Valid / 41 InValid.
+The 7 clash groups (list each: instrument, properties) for the accounting user to choose one Valid.
+The 10 properties with 13.65 left empty (property, GBO value) for the operations user.
+The local properties’ descriptions; the Conf Instru Type row.
+3. Not carried: 2628.35 and 133231.44, with the missing accounts and the question for the expert.
+4. Pending, not blocking:
+Net CCS (UAT, see 04-net-ccs-handover.md);
 label aliases (GL team, source 629.4);
-event group 4187.65 FYI;
-“PRO may have the same sequence gaps (the precheck checks them)”.
-2. 4zza (a): mark the 11071.4 row done: DGBOUS 23.44, delta_20261112_1, 2026-11-12.
-3. In #122’s description, list every file the PR changes outside the run folders (scripts/new_run.py, runs/NY_SCH/tier2-pre/jobs/99-open-items.md, any other), with why.
+event group 4187.65 missing in IGBOUSIB (FYI).
+5. For PROD: two sequences were behind in IGBOUSIB and were advanced with the expert’s loop. PRO may have the same gaps, and the precheck will catch them.
 
-Push, and give me the hash.
+Link each point to the report or matrix section with the details. Commit, push, open a small PR, and give me the link.

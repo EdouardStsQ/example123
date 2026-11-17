@@ -1,15 +1,8 @@
-Write runs/NY_SCH/tier2-preparalelo/acc-configs/gap_20261112_1/05-expert-review.md: a one-page note for the BOX ACC expert’s review in SIGOM of NY_SCH’s PRE-PARALELO ACC config. Use only figures from the run’s files (file:line for each). Sections:
+Neither. The authoritative grouping is the one the renderer computed from acc-values.json (properties with identical kept condition values), listed in 03-sql/NY_SCH-tier2-preparalelo-acc-summary.md (the clash groups table, section 4b). Its members are the expect_invalid properties whose STATUS-CLASH| lines are InValid in the config output.
 
-1. What was created in IGBOUSIB: the counts from the config output; the 54 global topics created in DGBOBOX (1312.65–1365.65) and imported, not created by the config.
-2. To check in SIGOM: 56 portfolio properties, 15 Valid / 41 InValid.
-The 7 clash groups (list each: instrument, properties) for the accounting user to choose one Valid.
-The 10 properties with 13.65 left empty (property, GBO value) for the operations user.
-The local properties’ descriptions; the Conf Instru Type row.
-3. Not carried: 2628.35 and 133231.44, with the missing accounts and the question for the expert.
-4. Pending, not blocking:
-Net CCS (UAT, see 04-net-ccs-handover.md);
-label aliases (GL team, source 629.4);
-event group 4187.65 missing in IGBOUSIB (FYI).
-5. For PROD: two sequences were behind in IGBOUSIB and were advanced with the expert’s loop. PRO may have the same gaps, and the precheck will catch them.
+1. Take the groups and members from that table. Give me: the number of groups, the members per group (instrument, properties), and the total members. The total must be 39 if the earlier figures were right.
+2. Check it against the config output: every member has a STATUS-CLASH|…|InValid line.
+3. Then correct the matrix’s Clash groups section, the report’s section 3 and 4zzb to that grouping. Relabel the groups so the labels match: no gap left by C5 (2628.35, now OPEN).
+4. Then write the expert note from it.
 
-Link each point to the report or matrix section with the details. Commit, push, open a small PR, and give me the link.
+Commit, push, and give me the hash and the grouping.

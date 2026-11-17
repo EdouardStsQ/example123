@@ -1,1 +1,5 @@
-Before I run anything: PRE-PARALELO (IGBOUSIB) was refreshed on the GBO and BOX_FE side, and the FE configuration and NY’s 23 labels were re-applied (FE run 2, PR #125, merged). BOX_ACC was not affected; SPK_T_BOX_MBJ_PROPERTIES_S is still at 1, so the MBJ precheck still holds. Merge main into your branch and note this in RUN.md. I’m now running the calendar check (BOX_ADMIN), then the rehearsal, config and verify (BOX_ACC), and will paste each output: save each one as it arrives.
+Thanks. Before closing:
+
+1. Confirm V4 explicitly: every row’s label_code is its job’s book (GMBX<n>NY<book>… → XNY<book>), with the count of rows checked. Also confirm the branch-level rows (book 00) have the label the reference had.
+2. Update open item 4zzb (MBJ done in IGBOUSIB: 275 rows, engine valid; the refresh and FE run 2) and RUN.md. Freeze the run (new_run.py --freeze).
+3. Open the PR. List in the description any file outside runs/NY_SCH/tier2-preparalelo/ with the reason (none expected). Give me the link and the hash.

@@ -1,25 +1,6 @@
-Hi. NY_SCH’s ACC configuration is now in PRE-PARALELO (IGBOUSIB), applied and verified:
+New task: NY_SCH’s MBJ rows (BOX_ACC.T_BOX_MBJ_PROPERTIES_S) in PRE-PARALELO, with exactly the configuration approved for Tier 2 PRE.
 
-454 accounts, 267 date rules, 5 local properties, 56 portfolio properties, 163 Cross Account Config rows and 1 Conf Instru Type row.
-The 54 global topics were created in DGBOBOX (1312.65–1365.65) with its sequence, and imported as they are into IGBOUSIB, as you asked.
-
-Attached is a one-page note (05-expert-review.md) with what to check in SIGOM. The details are in the portfolio properties report, the summary of what was inserted, and the gap matrix.
-
-Points for you:
-
-15 properties are Valid and 41 InValid: 9 clash groups (39 properties), and 10 properties with the 13.65 condition left empty (Touch2 / Accrual / SWAP), 8 of which are also in a clash group.
-Two groups need your decision before the accounting user’s:
-group 1 (19 Deposit & Loan properties);
-group 6 (6 CCS properties).
-They clash because GBO tells them apart with conditions BOX doesn’t have: customer type and deposit class for Depos; counterparty, EUR leg, folder, quote reference and currency for CCS. Choosing one would leave the rest without accounting. Should BOX get equivalent conditions, or is there another treatment?
-Two properties were not loaded:
-2628.35: 5 topics with no account in GBO;
-133231.44: 8 topics of its local property with no account in its lists.
-How should we treat them?
-Pending, not blocking:
-Net CCS (handover to operations at UAT);
-label aliases with the GL team (source 629.4);
-event group 4187.65 (CDS) doesn’t exist in IGBOUSIB, for information only.
-Sequences: two BOX_ACC sequences were behind their tables in IGBOUSIB, and we advanced them with your loop. PRO may have the same gaps; our precheck catches them before anything runs.
-
-Thanks.
+1. Create the run: python3 scripts/new_run.py --branch NY_SCH --tier tier2 --env preparalelo --area acc-jobs --name mbj.
+2. Copy the four MBJ SQL files (precheck, rehearsal, config, verify) and the rollback from the approved Tier 2 PRE acc-jobs run unchanged: same content, same names. In RUN.md record the source run and the files’ sha256.
+3. Confirm from the files: no TEST values (no -20098 line); the auth code check is 44; the number of rows and jobs (by instrument); the calendar(s); the sequence used.
+4. Don’t re-render or edit anything. Give me the precheck to run in IGBOUSIB as BOX_ACC. Push, and give me the hash.

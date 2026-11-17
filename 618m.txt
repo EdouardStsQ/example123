@@ -1,3 +1,12 @@
-SELECT COUNT(*) INTO v_n FROM pgt_stc.t_pgt_calendar_s WHERE pk IN (1.21);
+Pull main (scripts/build_acc_jobs.py: new optional input mbj.calendar_check). In IGBOUSIB, neither account can run the approved MBJ files: BOX_ACC can’t read PGT_STC.T_PGT_CALENDAR_S (ORA-00942 at compile time), and BOX_ADMIN can’t use BOX_ACC’s sequence (PLS-00201). Nothing ran.
+In mbj_20261117_1:
 
-SELECT PK, DESCRIPTION FROM PGT_STC.T_PGT_CALENDAR_S WHERE PK = 1.21;
+1. Copy the inputs of all_20261028_1 (acc-jobs-inputs.json, and the reference files it points to). Change only mbj.calendar_check to "separate", with a source note (IGBOUSIB, 2026-11-17).
+2. Build with build_acc_jobs.py in that run. Keep the byte-identical copies from before in a subfolder (e.g. approved-tier2-pre/) for the record.
+3. Prove the rows are unchanged: diff the new config against the approved Tier 2 PRE config. The only differences allowed are the calendar pre-flight lines and the file and run names. Show me the diff summary, and confirm 275 rows, auth code 44, no TEST values.
+4. Give me, in order:
+the calendar check (run as BOX_ADMIN);
+the precheck (BOX_ACC; OK already, so rerun only if the sequence changed);
+the rehearsal, config and verify (BOX_ACC).
+
+Push, and give me the hash.

@@ -1,6 +1,3 @@
-New task: NY_SCH’s MBJ rows (BOX_ACC.T_BOX_MBJ_PROPERTIES_S) in PRE-PARALELO, with exactly the configuration approved for Tier 2 PRE.
+SELECT COUNT(*) INTO v_n FROM pgt_stc.t_pgt_calendar_s WHERE pk IN (1.21);
 
-1. Create the run: python3 scripts/new_run.py --branch NY_SCH --tier tier2 --env preparalelo --area acc-jobs --name mbj.
-2. Copy the four MBJ SQL files (precheck, rehearsal, config, verify) and the rollback from the approved Tier 2 PRE acc-jobs run unchanged: same content, same names. In RUN.md record the source run and the files’ sha256.
-3. Confirm from the files: no TEST values (no -20098 line); the auth code check is 44; the number of rows and jobs (by instrument); the calendar(s); the sequence used.
-4. Don’t re-render or edit anything. Give me the precheck to run in IGBOUSIB as BOX_ACC. Push, and give me the hash.
+SELECT PK, DESCRIPTION FROM PGT_STC.T_PGT_CALENDAR_S WHERE PK = 1.21;

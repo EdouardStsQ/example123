@@ -1,12 +1,11 @@
-Pull main (scripts/build_acc_jobs.py: new optional input mbj.calendar_check). In IGBOUSIB, neither account can run the approved MBJ files: BOX_ACC can’t read PGT_STC.T_PGT_CALENDAR_S (ORA-00942 at compile time), and BOX_ADMIN can’t use BOX_ACC’s sequence (PLS-00201). Nothing ran.
-In mbj_20261117_1:
+SELECT AUTH_CODE FROM GOM_GLB_SYS.T__CORE_INFO_S;                       -- still 44?
+SELECT COUNT(*) FROM BOX_ACC.T_BOX_ACCT_TOPICS_S
+WHERE  PK - TRUNC(PK) = 0.65 AND TRUNC(PK) BETWEEN 1312 AND 1365;       -- the 54 imported topics
+SELECT COUNT(*) FROM BOX_ACC.T_BOX_ACCT_PORT_PROP_S WHERE FK_BRANCH = 21447.4 AND FK_OWNER_OBJ > 0;
+SELECT COUNT(*) FROM BOX_ACC.T_BOX_CONF_LO_PROP_S  WHERE FK_BRANCH = 21447.4 AND FK_OWNER_OBJ > 0;
+SELECT COUNT(*) FROM BOX_ACC.T_BOX_MBJ_PROPERTIES_S WHERE FK_BRANCH = 20007.4;
+SELECT SEQUENCE_NAME, LAST_NUMBER FROM ALL_SEQUENCES
+WHERE  SEQUENCE_OWNER = 'BOX_ACC' AND SEQUENCE_NAME LIKE 'SPK_T_BOX_%' ORDER BY 1;
 
-1. Copy the inputs of all_20261028_1 (acc-jobs-inputs.json, and the reference files it points to). Change only mbj.calendar_check to "separate", with a source note (IGBOUSIB, 2026-11-17).
-2. Build with build_acc_jobs.py in that run. Keep the byte-identical copies from before in a subfolder (e.g. approved-tier2-pre/) for the record.
-3. Prove the rows are unchanged: diff the new config against the approved Tier 2 PRE config. The only differences allowed are the calendar pre-flight lines and the file and run names. Show me the diff summary, and confirm 275 rows, auth code 44, no TEST values.
-4. Give me, in order:
-the calendar check (run as BOX_ADMIN);
-the precheck (BOX_ACC; OK already, so rerun only if the sequence changed);
-the rehearsal, config and verify (BOX_ACC).
 
-Push, and give me the hash.
+SELECT PK, CODE FROM PGT_SYS.PGT_DOMAINS WHERE CODE LIKE 'XNY%' OR CODE = 'NYDUM' ORDER BY CODE;

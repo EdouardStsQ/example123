@@ -1,9 +1,2 @@
-PRE-PARALELO (IGBOUSIB) was refreshed: NY’s FE configuration is gone (config 300966176.44 and curve 300966177.44 not found), and so are its 23 book labels in PGT_SYS.PGT_DOMAINS (XNY01–XNY22, NYDUM; PKs 24038.44–24060.44 free). BOX_ACC was not affected. Re-run the FE configuration as run 2, with prompts/preparalelo-run.md:
-
-1. Archive run 1 first: move its outputs (00-inputs.md, 01-evidence/, 02-findings.md, 03-sql/, 04-verify-split.md, 06-run-metrics.md, 99-open-items.md, and the books/ outputs) to runs/NY_SCH/tier2-preparalelo/archive/run-01/, as runs/README.md says. Nothing is overwritten. run.run_no = 2.
-2. Ask every query again, because the database changed. Q-01 must show no NY configuration; if it shows one, stop and tell me. Q-G3c: auth code (expected 44).
-3. Books and labels: the same 22 books and the dummy NYDUM (run 1’s decision, option C: no shared dummy in this environment). The label skill creates them again here, with PKs from this database’s sequence. Check that sequence is ahead of the table’s .44 rows: after the refresh it may be behind, like the BOX_ACC ones were.
-4. The SME decisions: run 1’s five, offered on one card for me to confirm.
-5. P1, render, rehearsal, config, verify (split V4/V10 as run 1 did, from the template), 06-run-metrics.md.
-
-Record the refresh in the run log. Push after every commit, and open a PR at the end.
+I confirm the five decisions as listed (same as run 1). Write 00-decisions.md with them.
+Before you build values.json, one question about the delta “the stale BRPROCCAL row gone”. In run 1, was there a T_BOX_BRPROCCAL_S row for NY (20007.4)? Who created it: run 1’s config, a test set-up, or did it pre-exist? What did “stale” mean (its date)? Does the FE configuration, or the FE batch, need that row for NY to process? If the FE config step should create it, say which step. If it’s set up outside the configuration (by the BOX team or a test skill), say so, and list it as a pending item for after the config. Answer from run 1’s evidence and the charter (file:line). Then build values.json and render.

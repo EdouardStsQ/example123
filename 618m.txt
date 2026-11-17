@@ -1,5 +1,1 @@
-Thanks. Before closing:
-
-1. Confirm V4 explicitly: every row’s label_code is its job’s book (GMBX<n>NY<book>… → XNY<book>), with the count of rows checked. Also confirm the branch-level rows (book 00) have the label the reference had.
-2. Update open item 4zzb (MBJ done in IGBOUSIB: 275 rows, engine valid; the refresh and FE run 2) and RUN.md. Freeze the run (new_run.py --freeze).
-3. Open the PR. List in the description any file outside runs/NY_SCH/tier2-preparalelo/ with the reason (none expected). Give me the link and the hash.
+In runs/NY_SCH/tier2-pre/jobs/99-open-items.md, row 4zz contains line breaks, so GitHub renders it as several broken rows from “the drop widens the property” onwards. Join it back into a single table row, text unchanged. Push, open a small PR, and give me the link.

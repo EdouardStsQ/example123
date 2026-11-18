@@ -1,0 +1,7 @@
+instrument_pk,instrument,box_product_code,source
+2.4,Deposit & Loan,MM,"gbo-box-product-tables.csv (BOX Depo, code MM); BOX ACC expert 2026-11-10 (ADR 0026); DGBOUS corrected 2026-11-16"
+20.4,Cross Currency Swap,CCS,"gbo-box-product-tables.csv (BOX CCS, code CCS); BOX ACC expert 2026-11-10 (ADR 0026)"
+20092.4,Swap,IR,"gbo-box-product-tables.csv (BOX Swap, code IR); ADR 0026"
+20111.4,OTC Option,OTC,"gbo-box-product-tables.csv (BOX OTC, code OTC); ADR 0026"
+20213.4,Caps And Floors,CF,"gbo-box-product-tables.csv (BOX C&F, code CF); ADR 0026"
+20313.4,Credit Derivatives,CDS,"gbo-box-product-tables.csv (BOX CDS, code CDS)"

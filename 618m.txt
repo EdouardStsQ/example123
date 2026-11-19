@@ -1,12 +1,17 @@
-SELECT 'RAW' SRC, r.FRONT_ID, r.DIRECTION, r.CURRENCY,
-       CAST(NULL AS VARCHAR2(30)) CURRENCY2, CAST(NULL AS VARCHAR2(30)) DELIVERY_CURR, COUNT(*) N_ROWS
-FROM   BOX_FE.T_BOX_RAW_DEAL_DATA_S r
-WHERE  r.FRONT_ID IN ('10107111', '10568442', '12662656', '13934404', '14055968')
-AND    TRUNC(r.PROCESSDATE) = DATE '2026-09-25'
-GROUP  BY r.FRONT_ID, r.DIRECTION, r.CURRENCY
-UNION ALL
-SELECT 'DEAL_DATA', d.FRONT_ID, d.DIRECTION, d.CURRENCY, d.CURRENCY2, d.DELIVERY_CURR, COUNT(*)
-FROM   BOX_FE.T_BOX_DEAL_DATA_S d
-WHERE  d.FRONT_ID IN ('10107111', '10568442', '12662656', '13934404', '14055968')
-GROUP  BY d.FRONT_ID, d.DIRECTION, d.CURRENCY, d.CURRENCY2, d.DELIVERY_CURR
-ORDER  BY 2, 1, 3, 4;
+Same files and rules as before (nothing committed; counts; at most 5 example FRONT_IDs per finding; neutral wording).
+
+Finding from RAW / deal data (operator, 25-Sep): the LATAM non-deliverable swaps arrive from the Data Lake with ONE leg
+(one direction, local currency); BOX adds a financial row in the USD settlement currency (DELIVERY_CURR = USD), all amounts 0.
+Those USD rows are BOX modelling, not differences.
+
+Task 6 - re-run the comparison statistics without them:
+1. Exclude a BOX leg when every amount is 0 or blank AND FK_CURRENCY = 159.4 AND the same trade has another BOX leg
+   with the same FK_DIRECTION in another currency. Say how many legs and trades you excluded.
+2. With the exclusion: keys OK / DIFF / ONLY_GBO / ONLY_BOX; trades in both files; trades with every GBO leg present in BOX.
+3. For trades in both files, split them:
+   (a) BOX has every GBO leg;
+   (b) BOX has one direction only (GBO has both) - the one-leg-from-the-Data-Lake case;
+   (c) anything else - describe it.
+   Counts per FK_CURRENCY of the trade (the non-USD currency when there are two).
+4. For group (a) only: per column, legs OK / DIFF, and the columns with any DIFF (with the example values).
+Output: tables in the chat.

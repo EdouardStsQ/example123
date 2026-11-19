@@ -1,0 +1,17 @@
+{
+  "branch": "<BRANCH>",
+  "report": "<report code, lower case - e.g. the file prefix>",
+  "env": "<tier>-<env> of this run",
+  "report_dir": "runs/<BRANCH>/branch/reports/<report> (default; omit unless different)",
+  "accounts": {
+    "box": "<the BOX account the operator runs the BOX queries and the SELECT with - asked>",
+    "gbo": "<the GBO account for the GBO queries - asked>"
+  },
+  "gbo_schema": "<the branch's GBO wrapper owner - branch-registry.csv wrapper_owner>",
+  "scope": {
+    "products": ["<the instruments in this slice - decision D2>"],
+    "compare_filter": "<field>=<values> for compare_fixed_width.py --only"
+  },
+  "dates": ["<process dates of the parallel run - a normal day, a month-end, maturities, a cancellation>"],
+  "source": "<who gave each value, when>"
+}

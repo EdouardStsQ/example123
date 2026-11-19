@@ -1,18 +1,4 @@
-Task 8 - the 81 trades where BOX has every GBO leg (after excluding the BOX USD settlement rows). Same rules
-(nothing committed; neutral wording).
-1. Classify each trade into ONE category, first that applies:
-   (1) clean - only INTERESTPLACC / INTERESTPLACCEXCDIF / PRINCIPALRECPAY / PRINCIPALRECPAYL differ (blank vs 0);
-   (2) notional ratio - NOTIONAL differs;
-   (3) cash 0 in BOX - every other difference is GBO <> 0 and BOX = 0 (interest cash, fees, forward principal,
-       interest rec/pay);
-   (4) other - any other difference (show it).
-   Table: category x trades, with FK_CURRENCY; and inside (3), which column groups (interest / fee / forward principal).
-2. For category (3), the share with FK_FEETYPE 432.4 -> 433.4.
-3. Write (do not run) one BOX query file with the 81 FRONT_IDs quoted, kept in the session:
-   SELECT FRONT_ID, CASE WHEN COUNT(PAYMENTDATE) = 0 THEN 'no dated flows' ELSE 'dated flows' END FLOWS,
-          COUNT(*) N_FLOW_ROWS
-   FROM   BOX_FE.T_BOX_FLOW_DATA_S
-   WHERE  FRONT_ID IN (<81 ids>) AND TRUNC(PROCESSDATE) = DATE '2026-09-25'
-   GROUP  BY FRONT_ID
-   ORDER  BY 2, 1;
-Output: the table in the chat and the query file.
+Task 9 - here is the result of box-flows-81.sql (FRONT_ID, FLOWS, N_FLOW_ROWS). Cross-table for the 81 trades:
+Task 8 category x FLOWS ('dated flows' / 'no dated flows' / no row at all), and inside category (3) the column groups
+(interest / fee / forward principal) x FLOWS. List any category (1) trade with 'no dated flows' and any category (3)
+trade with 'dated flows' (FRONT_ID, currency, the columns that differ, GBO and BOX values).

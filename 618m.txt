@@ -1,42 +1,9 @@
-Context: GBO vs BOX IRS financial status, NY SCH (branch 20007.4), PRE-PARALELO, 25-Sep-2026. You already have
-gbo-irs-financial.csv, box-irs-financial.csv and irs-financial-result.csv (key FRONT_ID, FK_DIRECTION, FK_CURRENCY).
-Your earlier summary showed: 1,556 trades in both files, 2,873 BOX trades not found in GBO (2,760 all-zero legs among
-the BOX-only legs), 1,567 BOX trades with one leg, and INTERESTCASH / FEECASH / PRINCIPALFWD = 0 in BOX on many matched legs.
-
-Rules:
-- Do NOT commit or push any of these CSVs, any output derived from them, or your local fix to scripts/fe_reconcile.py
-  (the fix will come through the repo update). Trade-level data stays in the session.
-- You do not run SQL. You write it; I run it.
-- Report counts. At most 5 example FRONT_IDs per finding, with their values.
-- Neutral wording: "0 in BOX", "not found in GBO" - not "lost", "dropped" or "BOX correct", until the cause is confirmed.
-
-Task 1 - Who is found in GBO, by shape. One row per BOX trade (FRONT_ID). Cross-table:
-legs in BOX (1 / 2 / 4) x found in GBO by FRONT_ID (yes / no) x FK_LABEL. For the found ones, also legs in GBO.
-Also count the BOX legs whose amounts are all 0 or blank (every numeric column except the key and id columns),
-by the same three dimensions.
-
-Task 2 - Is "not found in GBO" a key problem? For the BOX-only trades, compare against GBO:
-- FRONT_ID format on each side: length, leading zeros, non-digit characters, spaces;
-- the FK_DIRECTION and FK_CURRENCY value sets on each side, including the decimal separator (183.4 vs 183,4);
-- how many BOX-only trades match GBO on FRONT_ID alone (ignoring direction and currency), and how many once
-  FRONT_ID is trimmed and leading zeros removed.
-
-Task 3 - The SQL I will run in GBO. Write one file per batch of at most 1,000 BOX-only FRONT_IDs, kept in the
-session (not committed): gbo-lookup-box-only-<n>.sql, with exactly this text and the batch's ids quoted:
-
-SELECT d.FK_BRANCH,
-       CASE WHEN d.FRONT_ID IN (<ids>) THEN 'FRONT_ID' ELSE 'BACK_ID' END MATCHED_ON,
-       COUNT(DISTINCT NVL(d.FRONT_ID, d.BACK_ID)) N_FOUND, MIN(d.DDATE) FIRST_DATE, MAX(d.DDATE) LAST_DATE
-FROM   DEVENG.T_PGT_IRDATAMIS_S d
-WHERE  d.FRONT_ID IN (<ids>) OR d.BACK_ID IN (<ids>)
-GROUP  BY d.FK_BRANCH, CASE WHEN d.FRONT_ID IN (<ids>) THEN 'FRONT_ID' ELSE 'BACK_ID' END;
-
-Tell me how many files there are and give me the first one.
-
-Task 4 - The cash columns on the matched legs. For INTERESTCASH, INTERESTCASHL, INTERESTRECPAY, INTERESTRECPAYL,
-FEECASH, FEECASHL, FEECOLCASH, PRINCIPALFWD, PRINCIPALFWDL, count the legs where:
-(a) BOX = 0 and GBO <> 0; (b) both <> 0 and equal (within 0.01); (c) both <> 0 and different.
-Then: how many trades break on several of these columns at once (same trades or different trades?);
-the FK_FEETYPE pairs GBO -> BOX with counts; and for NOTIONAL, the 5 legs with GBO / BOX ratio and the leg currency.
-
-Output: a short markdown summary in the chat - one table per task, the examples, and the first SQL file.
+Task 5 - the all-zero legs. Same rules as before (nothing committed; counts; at most 5 examples).
+1. For BOX trades with 2 legs found in GBO (754) and with 4 legs where GBO has 2 (37): for each trade, the BOX
+   legs' (FK_DIRECTION, FK_CURRENCY, all-zero yes/no) against the GBO legs' (FK_DIRECTION, FK_CURRENCY). Cross-table
+   the patterns, e.g. "BOX zero leg = GBO missing leg's direction but another currency", with counts.
+2. 5 example trades: every leg on both sides with FK_DIRECTION, FK_CURRENCY, NOTIONAL, PRINCIPALCASH,
+   INTERESTACCRUAL, INTERESTCASH.
+3. The 6 legs where INTERESTCASH is 0 in GBO and non-zero in BOX: FRONT_ID, direction, currency, both values.
+4. For the 244 legs with FK_FEETYPE 432.4 -> 433.4: are they the same trades as the INTERESTCASH breaks? Counts.
+Output: tables and examples in the chat.

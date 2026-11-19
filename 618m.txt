@@ -1,15 +1,18 @@
-Task 7 - write (do not run) GBO lookup files for the 2,634 BOX-only FRONT_IDs NOT found by gbo-lookup-box-only-*.sql
-(leave out the 239 found). Batches of at most 1,000 ids; same rules (kept in the session, nothing committed).
-Text per file, with the batch's ids quoted:
-
-SELECT 'SW' TBL, d.FK_BRANCH, COUNT(DISTINCT d.FRONT_ID) N_FOUND, MIN(d.DDATE) FIRST_DATE, MAX(d.DDATE) LAST_DATE
-FROM   DEVENG.T_PGT_SWDATAMIS_S d WHERE d.FRONT_ID IN (<ids>) GROUP BY d.FK_BRANCH
-UNION ALL
-SELECT 'IF', d.FK_BRANCH, COUNT(DISTINCT d.FRONT_ID), MIN(d.DDATE), MAX(d.DDATE)
-FROM   DEVENG.T_PGT_IFDATAMIS_S d WHERE d.FRONT_ID IN (<ids>) GROUP BY d.FK_BRANCH
-UNION ALL
-SELECT 'FR', d.FK_BRANCH, COUNT(DISTINCT d.FRONT_ID), MIN(d.DDATE), MAX(d.DDATE)
-FROM   DEVENG.T_PGT_FRDATAMIS_S d WHERE d.FRONT_ID IN (<ids>) GROUP BY d.FK_BRANCH;
-
-Also: for the 2,634 and for the 239, the cross-table legs in BOX (after the USD exclusion) x FK_CURRENCY x FK_LABEL.
-Give me the number of files and the first one.
+Task 8 - the 81 trades where BOX has every GBO leg (after excluding the BOX USD settlement rows). Same rules
+(nothing committed; neutral wording).
+1. Classify each trade into ONE category, first that applies:
+   (1) clean - only INTERESTPLACC / INTERESTPLACCEXCDIF / PRINCIPALRECPAY / PRINCIPALRECPAYL differ (blank vs 0);
+   (2) notional ratio - NOTIONAL differs;
+   (3) cash 0 in BOX - every other difference is GBO <> 0 and BOX = 0 (interest cash, fees, forward principal,
+       interest rec/pay);
+   (4) other - any other difference (show it).
+   Table: category x trades, with FK_CURRENCY; and inside (3), which column groups (interest / fee / forward principal).
+2. For category (3), the share with FK_FEETYPE 432.4 -> 433.4.
+3. Write (do not run) one BOX query file with the 81 FRONT_IDs quoted, kept in the session:
+   SELECT FRONT_ID, CASE WHEN COUNT(PAYMENTDATE) = 0 THEN 'no dated flows' ELSE 'dated flows' END FLOWS,
+          COUNT(*) N_FLOW_ROWS
+   FROM   BOX_FE.T_BOX_FLOW_DATA_S
+   WHERE  FRONT_ID IN (<81 ids>) AND TRUNC(PROCESSDATE) = DATE '2026-09-25'
+   GROUP  BY FRONT_ID
+   ORDER  BY 2, 1;
+Output: the table in the chat and the query file.

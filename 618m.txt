@@ -1,7 +1,15 @@
-Widen the cleanup to the whole repo, not only acc-configs:
-- names AND contents, case-insensitive: "x700072", "cUsers", "USRESPRO42263" across automation/ (FE run 8's verify
-  output was attached the same way, and spool/output files may carry the path inside them);
-- renames: the proper name the run expects (e.g. NY_SCH-tier2-pre-verify-output.txt); update any link to the old name;
-- USRESPRO42263 -> "operator's read-only account" everywhere (RUN.md, metrics, findings, decisions, open items);
-- list every file changed, run the tests, push, open the PR, give me the link.
-Don't rewrite git history.
+Two changes to PR #132 before merge:
+1. Revert x700072 -> operator in the Control-M job JSONs and in the fe-jobs / acc-jobs inputs files: CreatedBy is the
+   user ID of the person running the agent, required by the BOX team (B5/B7, scripts/build_fe_jobs.py and
+   build_acc_jobs.py) - it stays x700072. Keep the other replacements (narrative, sigom-reference.md, the account name
+   in RUN.md/metrics/evidence). Where evidence was edited, add one line to that run's RUN.md: "account names redacted
+   in evidence on 2026-11-20". Run the job validators (validate_run_output.py / regress_fe_jobs.py) and the tests.
+2. Fix scripts/tests/test_report_migration.py (the failing case is a test bug: it copies the real gbo-spec/, which
+   now holds John's 4 files). After these two existing lines:
+       shutil.copytree(GBUX, root / "runs/NY_SCH/branch/reports/gbux")
+       rd = root / "runs/NY_SCH/branch/reports/gbux"
+   add exactly:
+       for f in (rd / "gbo-spec").iterdir():  # the copy starts without John's files, whatever the repo holds
+           if f.name != "README.md":
+               f.unlink()
+   All tests must pass. Push, give me the hash.

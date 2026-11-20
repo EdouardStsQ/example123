@@ -1,3 +1,7 @@
-I can't see your branch on GitHub. Push now and give me: the branch name, the last commit hash, and the GitHub link
-to runs/NY_SCH/tier2-pre/acc-configs/sql_20261120_1/03-sql/. Also attach the import rehearsal and import .sql files
-here in the chat. From now on, push after every commit and give me the branch and hash each time.
+Before the config:
+1. A-P6: IGBOUSIB package dates below (BOX_ACC, IGBOUSIB). Compare with IGBOUS's; PKG_ACCTPROP or PKG_ACCTPRECOMMIT
+   different -> stop.
+   <paste the ALL_OBJECTS result from IGBOUSIB>
+2. Same-config proof: diff this run's NY_SCH-tier2-pre-acc-config.sql against the config file PRE-PARALELO committed
+   in IGBOUSIB (gap_20261112_1). List every differing line; only environment labels/headers may differ. Confirm the
+   summary counts (54 topics, 454 accounts, PPs, lists, cross-account rows) equal PRE-PARALELO's.

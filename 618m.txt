@@ -1,13 +1,8 @@
-Before I run P1 - account update for IGBOUS (record all of this in RUN.md):
-1. Labels: book-labels-PROPOSAL.sql failed first as USRESPRO42263 (PLS-00201 'PGT_SYS.PKG_SYSPRECOMMIT' must be
-   declared - no EXECUTE; nothing inserted). It was then run and committed as pgtadmin (sees PGT_SYS.PKG_SYSPRECOMMIT
-   and F___SEQUENCE VALID, INSERT on PGT_SYS.PGT_DOMAINS). If the labels check has not passed yet since the commit,
-   give me it to run (must exit 0).
-2. FE SQL - P1, rehearsal, config, verify: run as BOX_FE (checked: USER = BOX_FE, reads GOM_GLB_SYS.T__CORE_INFO_S,
-   PGT_SYS.PGT_DOMAINS, PGT_MRK.T_PGT_QUOTE_REFERENCE_S). USRESPRO42263 has no EXECUTE on BOX_FE.PKG_ENGPRECOMMIT, so
-   the pre-commits would be skipped; with BOX_FE any pre-commit WARNING is a failure. So P1 runs as BOX_FE, not
-   USRESPRO42263 - re-render it if the account matters to the file.
-3. Read-only queries stay on USRESPRO42263.
-4. Q-04c = B (40, PRE-PARALELO's set), as answered.
-5. Q-06c (59 vs 20): show me NY_SCH's filtered set (FK_BRANCH 20007.4, the approved instruments) next to the
-   source's 20. Same 20 -> continue. Any difference -> stop and show me (rule 3).
+Open the PR for devin/1795167993-ny-sch-fe-run8 into main. Before opening it, add:
+- an open item for the BOX FE team: Days Matured 20111.4 is 5 in IGBOUS vs 2 in IGBOUSIB (shared, not branch-scoped,
+  not changed by us) - which NUM_DAYS is right (PROD value?); any change is theirs, for all branches;
+- in 06-run-metrics.md: whether PRE-PARALELO's run inserted 20111.4 = 2 or found it already present.
+PR description: IGBOUS = Tier 2 PRE, run 8 (run 7 archived); accounts used (USRESPRO42263 read-only, pgtadmin labels,
+BOX_FE SQL) and why; decision 8-1 (Q-04c = 40, IGBOUSIB's set); results: P1 OK, REHEARSAL OK, config 210533032.44 /
+curve 210533033.44, verify passed, comparison 0 configuration differences + the one accepted environment difference.
+Give me the PR link.

@@ -1,4 +1,65 @@
-Task 9 - here is the result of box-flows-81.sql (FRONT_ID, FLOWS, N_FLOW_ROWS). Cross-table for the 81 trades:
-Task 8 category x FLOWS ('dated flows' / 'no dated flows' / no row at all), and inside category (3) the column groups
-(interest / fee / forward principal) x FLOWS. List any category (1) trade with 'no dated flows' and any category (3)
-trade with 'dated flows' (FRONT_ID, currency, the columns that differ, GBO and BOX values).
+Task 10 - the official GBO vs BOX comparison file for the 81 fully covered trades.
+
+Context (from Tasks 1-9, same session and files): NY SCH (branch 20007.4), IRS, process date 25-Sep-2026, PRE-PARALELO
+(IGBOUSIB). GBO DEVENG.T_PGT_IRFINANCST_S vs BOX BOX_FE.T_BOX_IRFINANCST_S, matched per leg on FRONT_ID + FK_DIRECTION
++ FK_CURRENCY, every common column compared, amounts within 0.01. BOX's all-zero USD settlement-currency rows (159.4,
+same direction as another BOX leg) are excluded. The 81 trades = those in both files where BOX holds every GBO leg
+(162 legs). Flow status per trade = the result of box-flows-81.sql I gave you.
+
+Rules:
+- Every number comes from the files, recomputed now - never from earlier messages. Before building, recompute the
+  categories and check them against Tasks 8-9: Match 46 (20 dated flows, 26 none), Cash 0 / no dated flows 29
+  (interest only 16, interest + fees 12, fees + forward principal 1), Fee P&L 0 with flows 3, Notional ratio 3,
+  other 0. If anything differs, STOP and tell me what and why before producing the file.
+- No portfolio or counterparty names (the files have none - keep it so). Do not commit or push the file or the
+  script; attach the file in the chat.
+- Neutral wording ("0 in BOX", "no dated flows received"). Status of the document: "Draft - for review by BOX FE and
+  the Data Lake team".
+
+Classification of every difference (each differing value gets exactly one class):
+- FORM: blank vs 0 (INTERESTPLACC, INTERESTPLACCEXCDIF, PRINCIPALRECPAY, PRINCIPALRECPAYL).
+- CONVENTION: DEAD_DATE (GBO 06-JUN-66 = no dead date) and FK_INSTRUMENT (filled in GBO, blank in BOX), if compared.
+- NO_FLOWS: GBO <> 0, BOX = 0, on a trade with no dated flows in BOX (cash-to-date columns: interest cash, fees,
+  forward principal, interest rec/pay and their L / EXCDIF variants). Owner: Data Lake.
+- FEE_TYPE: fee columns GBO <> 0, BOX = 0 on a trade WITH dated flows, and FK_FEETYPE 432.4 (GBO) vs 433.4 (BOX)
+  itself. Owner: BOX FE.
+- NOTIONAL_RATIO: NOTIONAL / NOTIONALL with BOX = GBO / 1.154412, and the interest cash present only in BOX on the
+  same 3 trades. Owner: BOX FE.
+- UNEXPLAINED: anything else - must be 0; if not, list them and tell me.
+
+Trade category (first that applies): Match (only FORM / CONVENTION) / Notional ratio / Fee P&L 0 with flows /
+Cash 0 - no dated flows / Other.
+Currency codes: 159.4 USD, 172.4 CLP, 173.4 COP, 174.4 MXN, 171.4 "171.4 (to identify)"; directions: 183.4 Loan,
+184.4 Borrower.
+
+The file: GBO-vs-BOX_IRS-financial_NY-SCH_2026-09-25_full-leg-trades_v1.xlsx (openpyxl; if you cannot use it, one CSV
+per sheet with the same names plus the markdown below, and tell me). Sheets:
+1. README - scope, environment, date, the two tables, the accounts (GBO pgtadmin, BOX BOX_ADMIN), key, tolerance, the
+   exclusion rule and how many rows it removed for these 81 trades, columns compared and columns in one table only
+   (not compared), class and category definitions, currency and direction codes, the input files' names, row counts
+   and SHA-256, generation time, document status.
+2. Summary - headline (BOX reproduces GBO wherever it received the trade's cash flows); category x trades x legs x
+   currencies; class x differing values x trades; the actions table (owner, issue, trades, example FRONT_IDs):
+   Data Lake - no dated cash flows (29 trades, and 26 matching today that will break at their first payment);
+   BOX FE - fee type 432.4 -> 433.4 with fee P&L 0 (3 trades); BOX FE - notional / 1.154412 (3 trades);
+   none - FORM / CONVENTION.
+3. Trades - one row per trade (81): FRONT_ID, currency, legs, category, flow status, number of differing columns per
+   class, the columns that differ, largest absolute difference, comment.
+4. Legs - one row per leg (162): FRONT_ID, direction, currency, category, and GBO | BOX | difference side by side for
+   NOTIONAL, PRINCIPALCASH, INTERESTACCRUAL, INTERESTCASH, INTERESTRECPAY, FEECASH, FEEPLACC, FEECOLPLACCL,
+   PRINCIPALFWD, PRINCIPALFWDL, FK_FEETYPE; a column "all compared columns equal (apart from FORM / CONVENTION)".
+5. Differences - one row per differing value (long format): FRONT_ID, direction, currency, column, GBO, BOX,
+   difference, class, owner.
+6. Columns - one row per column of either table: in GBO, in BOX, compared, legs equal, legs differing per class.
+7. Excluded rows - the BOX USD settlement rows of these 81 trades (FRONT_ID, direction, currency, all amounts 0).
+8. Examples - the worked examples, values from the files: 33340980 (match with flows), 18934788 and 37298510 (no dated
+   flows), 37285585 (fees, no flows), 79202042 / 70548358 / 79202068 (fee P&L with flows), 41988376 / 41988388 /
+   43006413 (notional ratio).
+Formatting: frozen header row, autofilter on every sheet, amounts #,##0.00, one fill colour per class (legend in
+README), readable column widths. Values only, no formulas.
+
+Self-check before attaching: categories add up to 81 trades and 162 legs; UNEXPLAINED = 0; every FRONT_ID in sheet 8
+exists in sheet 3 with the category stated there; sheet 2's counts equal the counts in sheets 3 and 5.
+
+Also give me in the chat a markdown version of the Summary sheet (headline, the two tables, the actions), ready to paste
+into an email.

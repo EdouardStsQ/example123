@@ -1,3 +1,7 @@
-Before merge: rename any saved evidence file whose name carries my Windows path (cUsersx700072Downloads...) to its
-proper name (e.g. NY_SCH-tier2-pre-acc-config-output.txt), and replace the personal account name USRESPRO42263 in
-RUN.md / metrics with "operator's read-only account". Push and confirm CI is green.
+Widen the cleanup to the whole repo, not only acc-configs:
+- names AND contents, case-insensitive: "x700072", "cUsers", "USRESPRO42263" across automation/ (FE run 8's verify
+  output was attached the same way, and spool/output files may carry the path inside them);
+- renames: the proper name the run expects (e.g. NY_SCH-tier2-pre-verify-output.txt); update any link to the old name;
+- USRESPRO42263 -> "operator's read-only account" everywhere (RUN.md, metrics, findings, decisions, open items);
+- list every file changed, run the tests, push, open the PR, give me the link.
+Don't rewrite git history.

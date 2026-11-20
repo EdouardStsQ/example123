@@ -1,6 +1,8 @@
-sigom-reference.md: the blind replacement reads wrong. Make these two edits instead:
-- line 36: replace the whole line with
-  "  - Right side: `Local:<user ID>@IGBOMD` (a session identity string — the logged-in user's ID, then `IGBOMD`, the connected environment) and `Last login: <date time>`."
-- line 781: delete the line "- What does `operator` represent precisely (user ID / employee ID / login ID)?" (answered:
-  it is the logged-in user's ID).
-Push and give me the hash.
+Hola João, gracias. Antes de preparar la PR en SCIB Unix:
+1. Tokens: en la PR mbjOnlineConf.sh irá sin tokens. ¿Cómo llegan al servidor - los ponemos a mano tras el despliegue,
+   o hay un mecanismo de secretos (vault / variable del pipeline)?
+2. ¿PRE US y PRE Paralelo US usan el mismo servidor (/appl/gmny/bin) y el mismo mbjOnlineConf.sh, o uno por entorno
+   (endpoint distinto)? Nosotros tenemos NY_SCH configurado en los dos (IGBOUS e IGBOUSIB).
+3. ¿Hace falta algún cambio en SCIB Control-M, o los jobs siguen igual (shell.conf -> mbjbox.sh)?
+4. El mbjbox.sh actual (ruta Unix) ¿lo dejamos en la PR como copia de vuelta atrás (mbjbox.sh_<fecha>) o el rollback
+   es revertir la PR?

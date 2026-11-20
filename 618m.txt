@@ -1,13 +1,37 @@
-sigom-box-fe-configs-agent - REPLICATE NY_SCH's FE configuration from PRE-PARALELO (IGBOUSIB) to PRE (IGBOUS).
-Same configuration (fixing curves, MIS, accruals, error limits, Days Matured, books - everything run 2 created);
-only PKs, label PKs and the auth code are IGBOUS's. No gap analysis, no SME questions, no value re-mined.
-- Source: runs/NY_SCH/tier2-preparalelo/ run 2 - its values.json and books/00-books.csv, used as they are.
-- Run folder: ask me first whether IGBOUS is the "Tier 2 PRE" of runs/NY_SCH/tier2-pre/ (then run 8 there, run 7
-  archived); otherwise ask for the folder.
-- Accounts: USRESPRO42263 for every query and the SQL; anything calling BOX_SYS.PKG_BOXUTILITY -> "run as BOX_ACC".
-- Environment values read in IGBOUS only: auth code (Q-G3c), labels (set-up-book-labels on IGBOUS, same label codes;
-  the dummy = PRE-PARALELO's label code - not found -> stop).
-- Q-01: any NY configuration already in IGBOUS -> stop.
-- Then: P1 -> render + validate -> rehearsal -> config -> verify, as tier2-full-run.md.
-- Done = verify passing + a comparison IGBOUSIB vs IGBOUS (same read-only extract in both, codes not PKs, no audit
-  columns): 0 differences. Commit and push after every commit; give me the hash.
+Replicate NY_SCH's FE configuration from PRE-PARALELO (IGBOUSIB) to PRE (IGBOUS) - same configuration, not a new
+design.
+
+Goal: IGBOUS ends with exactly the FE configuration NY_SCH has in IGBOUSIB (configuration header, fixing curves, MIS,
+accruals, error limits, Days Matured, books + dummy). Only values that belong to the database are new: PKs, book
+label PKs, auth code, identity/owner constants.
+
+Read first: automation/agents/sigom-box-fe-configs-agent/prompts/tier2-full-run.md (the rules, gates, render and
+validator steps - all apply), prompts/preparalelo-run.md (how a run in another environment differs), and
+docs/process/06-reapply-after-refresh.md ("re-apply, not redo").
+
+Source: PRE-PARALELO's latest FE run under runs/NY_SCH/tier2-preparalelo/ (run 2, after the refresh): its
+03-sql/values.json, books/00-books.csv and decisions. Find it and tell me the path before starting.
+
+Rules:
+1. Run folder: first ask me whether IGBOUS is the "Tier 2 PRE" of runs/NY_SCH/tier2-pre/ (run 7). Yes -> this is
+   run 8 there, run 7 archived as runs/README.md says. No -> stop and ask for the folder.
+2. No gap analysis and no SME questions. values.json starts as a copy of the source's. Every business value stays
+   as it is.
+3. Re-read in IGBOUS only what is the database's: auth code (Q-G3c), owners (Q-G3b), identity constants (Q-G7), the
+   book labels (skill set-up-book-labels on IGBOUS, same label codes, same dummy label code as PRE-PARALELO), the
+   expected counts. Any re-read value that is not a PK and differs from the source -> stop, show me both values
+   and the query. Never adopt it silently.
+4. Q-01 must find no NY configuration in IGBOUS (T_BOX_ENGCONF_S has 3 rows today); if it finds one, stop.
+5. Accounts (the only two in IGBOUS): USRESPRO42263 for every query and every SQL file (it has DML on the BOX_FE
+   config tables and PGT_SYS.PGT_DOMAINS, EXECUTE on PGT_SYS.F___SEQUENCE). It has no EXECUTE on
+   BOX_SYS.PKG_BOXUTILITY: any query calling it is given to me "run as BOX_ACC". A grant missing -> name the
+   object and ask; never another schema or account.
+6. You have no database connection: one query or file at a time, I run it and paste the output. Never write or
+   edit a .sql file - render_sql.py renders them from values.json. No password anywhere.
+7. Order: preflight Q-G4 -> gates -> labels -> values.json -> render + validate -> P1 -> rehearsal (REHEARSAL OK)
+   -> config -> verify.
+8. Proof at the end: one read-only extract per FE config table for NY_SCH, business columns only (FKs as codes or
+   labels, no PK, no audit columns), run by me in IGBOUSIB and in IGBOUS; compare them. Done = 0 differences.
+
+Done when: labels created, verify passing, the IGBOUSIB-vs-IGBOUS comparison at 0 differences, 06-run-metrics.md.
+Commit and push after every commit; give me the hash.

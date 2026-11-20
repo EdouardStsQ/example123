@@ -1,19 +1,13 @@
-Run automation/agents/sigom-box-fe-configs-agent/prompts/tier2-full-run.md with the overlay
-automation/agents/sigom-box-fe-configs-agent/prompts/preparalelo-run.md, and these differences - where they
-disagree with the overlay, this message wins:
-- Target and GBO source: PRE (IGBOUS), both. Auth code from Q-G3c (the operator read 44 - confirm it, never assume).
-- First ask me whether IGBOUS is the "Tier 2 PRE" of runs/NY_SCH/tier2-pre/ (run 7). If yes: this is run 8 in
-  runs/NY_SCH/tier2-pre/, run 7 archived as runs/README.md says. If no: stop and ask for the folder.
-- Accounts (the only two in IGBOUS): USRESPRO42263 for every query on both sides (BOX_FE, GOM_GLB_SYS, DEVENG,
-  PGT_*), the P1 precheck, the labels and the FE SQL (it has DML on the BOX_FE config tables and PGT_SYS.PGT_DOMAINS,
-  EXECUTE on PGT_SYS.F___SEQUENCE). It has NO EXECUTE on BOX_SYS.PKG_BOXUTILITY: any query calling it (the technical
-  test's label -> book check) is given to me "run as BOX_ACC". A grant missing -> name the object and ask (it becomes
-  a DBA request); never another schema or account.
-- Books: runs/NY_SCH/tier2-pre/books/00-books.csv (the 22 books, not asked again); skill set-up-book-labels runs on
-  IGBOUS (labels and PKs are this database's). The dummy label is decided again for IGBOUS; PRE-PARALELO's choice is
-  shown as the precedent.
-- SME decisions: propose PRE-PARALELO's answers (runs/NY_SCH/tier2-preparalelo/, run 2: values.json and decisions)
-  on one card with source and date, as the overlay does for run 7.
-- Q-01 must find no NY configuration in IGBOUS (T_BOX_ENGCONF_S has 3 rows today); if it finds one, stop.
-Done when, as the overlay: P1 OK, labels exit 0, SQL rendered and validated, REHEARSAL OK, config committed, verify
-passing, 06-run-metrics.md; commit and push after every commit, give me the hash.
+sigom-box-fe-configs-agent - REPLICATE NY_SCH's FE configuration from PRE-PARALELO (IGBOUSIB) to PRE (IGBOUS).
+Same configuration (fixing curves, MIS, accruals, error limits, Days Matured, books - everything run 2 created);
+only PKs, label PKs and the auth code are IGBOUS's. No gap analysis, no SME questions, no value re-mined.
+- Source: runs/NY_SCH/tier2-preparalelo/ run 2 - its values.json and books/00-books.csv, used as they are.
+- Run folder: ask me first whether IGBOUS is the "Tier 2 PRE" of runs/NY_SCH/tier2-pre/ (then run 8 there, run 7
+  archived); otherwise ask for the folder.
+- Accounts: USRESPRO42263 for every query and the SQL; anything calling BOX_SYS.PKG_BOXUTILITY -> "run as BOX_ACC".
+- Environment values read in IGBOUS only: auth code (Q-G3c), labels (set-up-book-labels on IGBOUS, same label codes;
+  the dummy = PRE-PARALELO's label code - not found -> stop).
+- Q-01: any NY configuration already in IGBOUS -> stop.
+- Then: P1 -> render + validate -> rehearsal -> config -> verify, as tier2-full-run.md.
+- Done = verify passing + a comparison IGBOUSIB vs IGBOUS (same read-only extract in both, codes not PKs, no audit
+  columns): 0 differences. Commit and push after every commit; give me the hash.

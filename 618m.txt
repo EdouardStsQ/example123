@@ -1,7 +1,4 @@
-Before the config:
-1. A-P6: IGBOUSIB package dates below (BOX_ACC, IGBOUSIB). Compare with IGBOUS's; PKG_ACCTPROP or PKG_ACCTPRECOMMIT
-   different -> stop.
-   <paste the ALL_OBJECTS result from IGBOUSIB>
-2. Same-config proof: diff this run's NY_SCH-tier2-pre-acc-config.sql against the config file PRE-PARALELO committed
-   in IGBOUSIB (gap_20261112_1). List every differing line; only environment labels/headers may differ. Confirm the
-   summary counts (54 topics, 454 accounts, PPs, lists, cross-account rows) equal PRE-PARALELO's.
+SELECT OWNER, OBJECT_NAME, OBJECT_TYPE, STATUS, LAST_DDL_TIME
+FROM   ALL_OBJECTS
+WHERE  OBJECT_NAME IN ('PKG_ACCTPROP', 'PKG_ACCTPRECOMMIT', 'PKG_BOXUTILITY', 'PKG_BATCHPROCESS_MBJ')
+ORDER  BY 1, 2, 3;

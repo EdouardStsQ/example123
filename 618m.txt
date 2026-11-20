@@ -1,8 +1,54 @@
-Open the PR for devin/1795167993-ny-sch-fe-run8 into main. Before opening it, add:
-- an open item for the BOX FE team: Days Matured 20111.4 is 5 in IGBOUS vs 2 in IGBOUSIB (shared, not branch-scoped,
-  not changed by us) - which NUM_DAYS is right (PROD value?); any change is theirs, for all branches;
-- in 06-run-metrics.md: whether PRE-PARALELO's run inserted 20111.4 = 2 or found it already present.
-PR description: IGBOUS = Tier 2 PRE, run 8 (run 7 archived); accounts used (USRESPRO42263 read-only, pgtadmin labels,
-BOX_FE SQL) and why; decision 8-1 (Q-04c = 40, IGBOUSIB's set); results: P1 OK, REHEARSAL OK, config 210533032.44 /
-curve 210533033.44, verify passed, comparison 0 configuration differences + the one accepted environment difference.
-Give me the PR link.
+Replicate NY_SCH's ACC configuration from PRE-PARALELO (IGBOUSIB) to PRE (IGBOUS) - same configuration, not a new
+design.
+
+Goal: IGBOUS ends with exactly the ACC objects NY_SCH has in IGBOUSIB: the imported global topics, portfolio
+properties, accounts (GLTA), date rules, cross-account rows, the lists and conditions PKG_ACCTPROP generates, and
+the MBJ rows. Only PKs are new, from IGBOUS's own sequences (the imported global topics keep their .65 PKs).
+
+Context: IGBOUS = Tier 2 PRE (runs/NY_SCH/tier2-pre/). Its FE configuration was replicated in FE run 8 (merged):
+config 210533032.44, the 23 book labels created in IGBOUS (22 books + dummy), comparison with IGBOUSIB at 0
+configuration differences.
+
+Read first: automation/agents/sigom-box-acc-configs-agent/AGENT.md, prompts/tier2-sql.md (Step 3b),
+docs/decisions/0027 (global import), docs/process/06-reapply-after-refresh.md ("re-apply, not redo"),
+automation/agents/box-acc-jobs-agent/AGENT.md.
+
+Sources (find them and tell me the paths before starting): PRE-PARALELO's ACC SQL run under
+runs/NY_SCH/tier2-preparalelo/acc-configs/, its MBJ run under runs/NY_SCH/tier2-preparalelo/acc-jobs/, and the DGBOBOX
+global run with its <base>-global-export-output.txt.
+
+Rules:
+1. Run folders: new runs under runs/NY_SCH/tier2-pre/acc-configs/ and acc-jobs/ (scripts/new_run.py --branch NY_SCH
+   --tier tier2 --env pre --area acc-configs --name sql --from <source SQL run>, the same for acc-jobs).
+2. No gap analysis and no value changed: acc-values.json and the MBJ inputs are the source's, as they are; only env
+   becomes tier2-pre, and every global start stays "imported".
+3. Accounts in IGBOUS:
+   - BOX_ACC: every BOX_ACC query and SQL file (owns PKG_ACCTPROP, PKG_ACCTPRECOMMIT, PKG_BATCHPROCESS_MBJ - all
+     VALID - and has EXECUTE on BOX_SYS.PKG_BOXUTILITY);
+   - USRESPRO42263: read-only GBO queries (PGT_*, DEVENG) and PGT_STC.T_PGT_CALENDAR_S (BOX_ACC cannot read the
+     calendar, so mbj.calendar_check = "separate");
+   - also available: pgtadmin (PGT_SYS, incl. PKG_SYSPRECOMMIT) and BOX_FE.
+   A grant missing -> name the object and ask which account; never another schema.
+4. You have no database connection: one query or file at a time, I run it and paste the output. Never write or
+   edit a .sql file - the scripts render them. No password anywhere. A pre-commit WARNING is a failure.
+5. Prechecks: A-P1..A-P7 as BOX_ACC. A-P6 facts already read (operator, 2026-11-20, IGBOUS): PKG_ACCTPRECOMMIT spec
+   01-APR-25 / body 07-MAY-26; PKG_ACCTPROP 01-APR-25 / 02-APR-25; PKG_BATCHPROCESS_MBJ 22-OCT-26 / 05-NOV-26;
+   BOX_SYS.PKG_BOXUTILITY 10-NOV-26; 30 SPK_T_BOX_* sequences visible. Ask me for the same package dates in
+   IGBOUSIB: a different PKG_ACCTPROP / PKG_ACCTPRECOMMIT -> stop and tell me (the lists come from that package).
+6. GBO check (USRESPRO42263): A-U1 f, A-03a per TIPO, A-U7b, A-10a compared with PRE-PARALELO's evidence. Any
+   difference -> stop and show me, with the rows; never continue on different GBO data.
+7. Order:
+   a. Global topics: render_acc_sql.py <new run> --import <the DGBOBOX export output> -> import rehearsal (must end
+      SUMMARY|problems|0) -> import (output saved as <base>-global-import-output.txt) -> --import-rollback rendered
+      and kept.
+   b. ACC config from the same acc-values.json: precheck -> rehearsal -> config -> verify. An object already
+      present by code -> show me before going on.
+   c. MBJ (the book labels already exist in IGBOUS - check them first): precheck -> rehearsal -> config -> verify;
+      the calendar pre-flight file I run as USRESPRO42263.
+8. Proof at the end: read-only extracts for NY_SCH's global topics, PPs, accounts, date rules, cross-account rows,
+   lists/conditions and MBJ rows - business columns only (FKs as codes or labels, no PK, no audit columns) - run
+   by me in IGBOUSIB and in IGBOUS; compare them. Done = 0 differences. A difference in a shared, non-branch row
+   is shown to me, never changed.
+
+Done when: verify passing for import, config and MBJ, and the IGBOUSIB-vs-IGBOUS comparison at 0 differences.
+Save every output in its run; commit and push after every commit; give me the hash. At the end, open a PR into main.

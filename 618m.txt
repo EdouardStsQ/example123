@@ -1,4 +1,14 @@
-SELECT USER FROM DUAL;
-SELECT COUNT(*) FROM GOM_GLB_SYS.T__CORE_INFO_S;
-SELECT COUNT(*) FROM PGT_SYS.PGT_DOMAINS;
-SELECT COUNT(*) FROM PGT_MRK.T_PGT_QUOTE_REFERENCE_S WHERE PK IN (12229.44, 17643.4);
+Before I run P1 - account update for IGBOUS (record all of this in RUN.md):
+1. Labels: book-labels-PROPOSAL.sql failed as USRESPRO42263 (PLS-00201 'PGT_SYS.PKG_SYSPRECOMMIT' must be declared -
+   no EXECUTE); nothing was inserted. Labels run as pgtadmin (checked: sees PGT_SYS.PKG_SYSPRECOMMIT and
+   F___SEQUENCE VALID, INSERT on PGT_SYS.PGT_DOMAINS, reads GOM_GLB_SYS.T__CORE_INFO_S). Tell me whether the file
+   changes with the account; otherwise I re-run the same file as pgtadmin, then you re-run the labels check (exit 0).
+2. FE SQL - P1, rehearsal, config, verify: run as BOX_FE (checked: USER = BOX_FE, reads T__CORE_INFO_S,
+   PGT_DOMAINS, PGT_MRK.T_PGT_QUOTE_REFERENCE_S). USRESPRO42263 has no EXECUTE on BOX_FE.PKG_ENGPRECOMMIT, so the
+   pre-commits would be skipped; with BOX_FE any pre-commit WARNING is a failure. So P1 runs as BOX_FE, not
+   USRESPRO42263 - re-render it if the account matters to the file.
+3. Read-only queries stay on USRESPRO42263.
+4. Q-04c = B (40, PRE-PARALELO's set), as answered.
+5. Q-06c (59 vs 20): show me NY_SCH's filtered set (FK_BRANCH 20007.4, the approved instruments) next to the
+   source's 20. Same 20 -> continue. Any difference -> stop and show me (rule 3).
+Order: labels first (the config's book rows need them), then P1.

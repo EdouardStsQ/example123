@@ -1,26 +1,19 @@
--- 1. Who am I
-SELECT USER FROM DUAL;
-
--- 2. The 4 packages: deployed, valid, and PKG_BOXUTILITY reachable
-SELECT OWNER, OBJECT_NAME, OBJECT_TYPE, STATUS, LAST_DDL_TIME
-FROM   ALL_OBJECTS
-WHERE  OBJECT_NAME IN ('PKG_ACCTPROP', 'PKG_ACCTPRECOMMIT', 'PKG_BOXUTILITY', 'PKG_BATCHPROCESS_MBJ')
-ORDER  BY 1, 2, 3;
-
--- 3. The sequence the other account couldn't see
-SELECT SEQUENCE_NAME FROM ALL_SEQUENCES
-WHERE  SEQUENCE_OWNER = 'BOX_ACC' AND SEQUENCE_NAME LIKE 'SPK\_T\_BOX\_%' ESCAPE '\'
-AND    SEQUENCE_NAME NOT IN (
-  'SPK_T_BOX_ACCT_BY_STD_HIST_S','SPK_T_BOX_ACCT_DOC_S','SPK_T_BOX_ACCT_GLTA_S','SPK_T_BOX_ACCT_GROUP_S',
-  'SPK_T_BOX_ACCT_HISTSTD','SPK_T_BOX_ACCT_HIST_SOURCE_S','SPK_T_BOX_ACCT_LIST_COND_S','SPK_T_BOX_ACCT_LIST_TOPIC_S',
-  'SPK_T_BOX_ACCT_MOV_S','SPK_T_BOX_ACCT_PARENT_DATE_S','SPK_T_BOX_ACCT_PORT_PROP_S','SPK_T_BOX_ACCT_RULER',
-  'SPK_T_BOX_ACCT_RULER_GROUP','SPK_T_BOX_ACCT_TOPICS_S','SPK_T_BOX_CONDPAR_PROP_S','SPK_T_BOX_CONF_ACCSTDHIST_S',
-  'SPK_T_BOX_CONF_INSTRUM_TYPE_S','SPK_T_BOX_CONF_LO_PROP_S','SPK_T_BOX_CROSS_ACCTCONF_S','SPK_T_BOX_FX_LIQUID_S',
-  'SPK_T_BOX_GLTA_LOCAL_S','SPK_T_BOX_KEY_UPDATE_GROUP_S','SPK_T_BOX_LINK_ARRAY_X','SPK_T_BOX_MBJ_FIELDS_S',
-  'SPK_T_BOX_MBJ_PROPERTIES_S','SPK_T_BOX_NETCCS_BSPLAN_S','SPK_T_BOX_NETCONTRACT_S','SPK_T_BOX_REFERENCEACC_S',
-  'SPK_T_BOX_ST_HIST_GROUP_S','SPK_T_BOX_TOPICS_GROUP_S');
-
--- 4. What BOX_ACC must read (run one by one: an error names the missing grant)
-SELECT COUNT(*) FROM PGT_STC.T_PGT_CALENDAR_S;
-SELECT COUNT(*) FROM GOM_GLB_SYS.T__CORE_INFO_S;
-SELECT COUNT(*) FROM PGT_SYS.PGT_DOMAINS;
+Run automation/agents/sigom-box-fe-configs-agent/prompts/tier2-full-run.md with the overlay
+automation/agents/sigom-box-fe-configs-agent/prompts/preparalelo-run.md, and these differences - where they
+disagree with the overlay, this message wins:
+- Target and GBO source: PRE (IGBOUS), both. Auth code from Q-G3c (the operator read 44 - confirm it, never assume).
+- First ask me whether IGBOUS is the "Tier 2 PRE" of runs/NY_SCH/tier2-pre/ (run 7). If yes: this is run 8 in
+  runs/NY_SCH/tier2-pre/, run 7 archived as runs/README.md says. If no: stop and ask for the folder.
+- Accounts (the only two in IGBOUS): USRESPRO42263 for every query on both sides (BOX_FE, GOM_GLB_SYS, DEVENG,
+  PGT_*), the P1 precheck, the labels and the FE SQL (it has DML on the BOX_FE config tables and PGT_SYS.PGT_DOMAINS,
+  EXECUTE on PGT_SYS.F___SEQUENCE). It has NO EXECUTE on BOX_SYS.PKG_BOXUTILITY: any query calling it (the technical
+  test's label -> book check) is given to me "run as BOX_ACC". A grant missing -> name the object and ask (it becomes
+  a DBA request); never another schema or account.
+- Books: runs/NY_SCH/tier2-pre/books/00-books.csv (the 22 books, not asked again); skill set-up-book-labels runs on
+  IGBOUS (labels and PKs are this database's). The dummy label is decided again for IGBOUS; PRE-PARALELO's choice is
+  shown as the precedent.
+- SME decisions: propose PRE-PARALELO's answers (runs/NY_SCH/tier2-preparalelo/, run 2: values.json and decisions)
+  on one card with source and date, as the overlay does for run 7.
+- Q-01 must find no NY configuration in IGBOUS (T_BOX_ENGCONF_S has 3 rows today); if it finds one, stop.
+Done when, as the overlay: P1 OK, labels exit 0, SQL rendered and validated, REHEARSAL OK, config committed, verify
+passing, 06-run-metrics.md; commit and push after every commit, give me the hash.

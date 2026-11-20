@@ -1,5 +1,9 @@
-After the MBJ verify: the rule 8 comparison - one read-only extract (global topics, PPs, accounts, date rules,
-cross-account rows, lists/conditions, MBJ rows; business columns only, FKs as codes/labels, no PK, no audit
-columns) that I run in IGBOUSIB and in IGBOUS. Done = 0 differences, or each one shown to me. Then open the PR into
-main with the accounts used, the decisions (B on the GBO drift, record-only checks 2-5), the results and the open
-item on IGBOUS's GBO differences; give me the link.
+A - leave them InValid. 1+2 are not a configuration difference: I changed 2498.35 / 2499.35 in IGBOUSIB by hand for
+testing (Valid + strategy condition 142.4 -> 93.4 and the 20798.4 row). IGBOUS has the state the config creates,
+which is the correct one. Record in RUN.md and 06-run-metrics: "comparison: 0 configuration differences; 2498.35 /
+2499.35 differ only by an operator test change in IGBOUSIB, not part of the configuration". No change to
+acc-values.json.
+3: still to handle - find which run inserted GMNY0281D04 / D05 in IGBOUS (search runs/NY_SCH/tier2-pre/acc-jobs/
+outputs). Ours -> render that run's rollback for those 2 rows only, if the script supports it; otherwise show me.
+Not ours -> open item for the BOX team, not touched.
+Then the PR into main.

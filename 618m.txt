@@ -1,12 +1,3 @@
-Correction: RAW 4,935 -> import 4,429 is NOT a clean import - 506 NY IRS deals are dropped by the BOX import
-(PKG_FE_DEAL_CALCULATION.p_Import_Deal_Data). After the import there is no drop.
-1. The 506: why - check the earlier hypothesis (DATA_EXECUTION_TYPE = 'BOOK'; the earlier import drops were all BOOK)
-   and anything else the RAW rows show (instrument text, book, status, maturity). Counts per reason, 3 examples each
-   (GBO_DEAL_ID, BOX FRONT_ID). Give me the query.
-2. The earlier 11,257 RAW / 10,233 deal data were very likely both branches (no crosswalk filter then). Check whether
-   the "5 books without labels, 5,804 deals" (ACPM_OFF, ALM OFF, FLOW_OFF, MM_RATES_OFF, STRUCTURED CREDIT) are the
-   other branch's: how many of those deals have a crosswalk row for 20007.4? If ~0, withdraw that finding everywhere.
-3. ONLY_GBO split, once the GBO deal extract lands: matured before 25-Sep / no crosswalk row / crosswalk row but not in
-   RAW (Data Lake load - expected the bulk, ~41k) / in RAW but dropped by the import (506) - counts adding up to the
-   ONLY_GBO total.
-1a2 rerun: noted, I'll run it with the extracts.
+SELECT COLUMN_NAME, DATA_TYPE FROM ALL_TAB_COLUMNS
+WHERE  OWNER = 'BOX_FE' AND TABLE_NAME = 'T_BOX_RAW_DEAL_DATA_S'
+ORDER  BY COLUMN_ID;

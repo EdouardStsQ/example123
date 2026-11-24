@@ -1,3 +1,2 @@
-SELECT COLUMN_NAME, DATA_TYPE FROM ALL_TAB_COLUMNS
-WHERE  OWNER = 'BOX_FE' AND TABLE_NAME = 'T_BOX_RAW_DEAL_DATA_S'
-ORDER  BY COLUMN_ID;
+Before I run 07: the real columns of BOX_FE.T_BOX_RAW_DEAL_DATA_S are below. Fix 07 from them (no guessed names) and
+save the list as 01-evidence/07-raw-deal-columns.csv.

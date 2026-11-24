@@ -1,6 +1,2 @@
-For the ONLY_GBO split, the "with crosswalk row" side must come from the crosswalk itself, not from the BOX extracts
-(they only hold deals BOX kept). Make the BOX_ADMIN file you mentioned the full crosswalk for the branch:
-SELECT TO_CHAR(REGISTRY, 'TM9', 'NLS_NUMERIC_CHARACTERS=''.,''') GBO_DEAL_ID, FK_AUKI_ID, FK_INSTRUMENT, PROCESS_DATE
-FROM BOX_MIG.T_BOX_AUKI_MIG_DEALS_S WHERE FK_BRANCH_ORIGIN = 20007.4 AND PROCESS_DATE < DATE '2026-09-25' + 1;
-(+ a counts version by FK_INSTRUMENT for the commit). ONLY_GBO then splits into: no crosswalk row (not migrated) /
-crosswalk row but not in BOX's tables (dropped inside BOX) - with counts.
+In the ONLY_GBO split, also separate the GBO deals already matured before 25-Sep (the earlier figure was 46,370 deals,
+44,444 not matured): matured / not migrated / migrated but dropped in BOX - counts for each.

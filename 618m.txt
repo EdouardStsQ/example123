@@ -1,6 +1,10 @@
-"All 506 are BOOK" is a reason only if the 4,429 imported deals are not. Give me one query (BOX_ADMIN), RAW Mx3LT rows
-of 25-Sep for NY's fronts, both groups side by side: IMPORTED (in T_BOX_DEAL_DATA_S) vs DROPPED, by
-DATA_EXECUTION_TYPE, BOOK, DELIVERY_CURR, DATA_STATUS - deal counts. Then say which attribute separates the two
-groups, with numbers (e.g. "every BOOK deal is dropped and none imported" or "LATAM imported 0 / dropped 500").
-Only then write the question for the BOX FE team, and include the DEAD ones (6) separately - a dead deal may be
-skipped on purpose.
+Before a per-column diff, read the import itself:
+1. The source of BOX_FE PKG_FE_DEAL_CALCULATION.p_Import_Deal_Data (repo cib-boxfin-dbboxfe, read-only - as for
+   PKG_ENGPRECOMMIT): list every join and WHERE condition the RAW deal rows pass through, with file and line. Earlier
+   suspicion: an inner join to BOX_TRD.T_BOX_DEAL_S.
+2. One query (BOX_ADMIN) testing each condition on the two groups - IMPORTED (4,429) vs DROPPED (506), NY Mx3LT fronts
+   of 25-Sep: for each join / condition, how many deals of each group pass it. Start with "front present in
+   BOX_TRD.T_BOX_DEAL_S" (say which column links them, from the code).
+3. The condition that fails for the dropped and passes for the imported is the reason - say it with numbers.
+Only if no condition separates them: the per-column diff you proposed.
+If you cannot read the repo, tell me - don't guess the code.

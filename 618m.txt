@@ -1,8 +1,39 @@
-SELECT 'IR' p, COUNT(*) n FROM DEVENG.T_PGT_IRFINANCST_S WHERE DDATE >= DATE '2026-11-12' AND DDATE < DATE '2026-11-13'
-UNION ALL
-SELECT 'MM', COUNT(*) FROM DEVENG.T_PGT_MMFINANCST_S WHERE DDATE >= DATE '2026-11-12' AND DDATE < DATE '2026-11-13';
+FE reconciliation GBO vs BOX, NY_SCH, IRS, 25-Sep-2026, PRE-PARALELO (IGBOUSIB) - redo it with the correct trade key.
 
-SELECT 'IR' p, TRUNC(DDATE) d, COUNT(*) n FROM BOX_FE.T_BOX_IRFINANCST_S WHERE DDATE >= DATE '2026-09-01' GROUP BY TRUNC(DDATE)
-UNION ALL
-SELECT 'MM', TRUNC(DDATE), COUNT(*) FROM BOX_FE.T_BOX_MMFINANCST_S WHERE DDATE >= DATE '2026-09-01' GROUP BY TRUNC(DDATE)
-ORDER  BY 1, 2;
+Read first (pull main): docs/decisions/0029-gbo-box-trade-key-auki-migration-crosswalk.md, skills/box-fe-parallel-test/SKILL.md,
+docs/reference/gbo-box-fe-field-map.csv (irs rows), docs/reference/box-fe-test-lookups.md section 4.
+The key: GBO DEAL_ID. BOX's DEAL_ID maps to it through BOX_MIG.T_BOX_AUKI_MIG_DEALS_S (FK_AUKI_ID = BOX DEAL_ID,
+REGISTRY = GBO DEAL_ID). FRONT_ID differs between GBO and BOX - never use it to pair trades. Every earlier result of
+the 25-Sep IRS test that paired on FRONT_ID is replaced by this run.
+
+Rules: you never run SQL - one file at a time, I run it in IGBOUSIB and give you the output. Say which account each
+file needs (GBO side pgtadmin, BOX side BOX_ADMIN); a query reading both GBO and BOX_MIG may need splitting - if it
+fails on a grant, tell me, don't work around it. Trade-level CSVs (01-evidence/<date>/*.csv, 03-recon/, 04-breaks.csv)
+are never committed: add a .gitignore in the run folder for them; commit only 01-plan.md, sql/, the 05 counts and
+03-results.md (counts).
+
+1. New run: python3 scripts/new_run.py --branch NY_SCH --tier tier2 --env preparalelo --area tests/parallel --name irs
+   Inputs: products ["irs"], dates ["2026-09-25"], areas ["financial", "deal"] (mtm keys are still OPEN),
+   gbo_environment "IGBOUSIB (GBO data = PROD's run of 25-Sep)", box_environment "IGBOUSIB", gbo_branch "20007.4",
+   no gbo_filter / box_filter (the branch comes from gbo_branch and the crosswalk).
+2. python3 scripts/fe_reconcile.py pack <run> -> give me sql/05-crosswalk-checks.sql first. Read its results before
+   anything else: part 1 must be 0 / 0 (one id each way); part 2 = BOX IR deals that map to NY (BOX's 25-Sep table also
+   holds another branch's daily run - those must not map); part 3 = NY's GBO IRS deals and how many have a crosswalk
+   row. Report these counts in one table.
+3. Then 10-GBO-irs-financial, 20-BOX-irs-financial, 10-GBO-irs-deal, 20-BOX-irs-deal: I export each as CSV with header
+   into 01-evidence/2026-09-25/.
+4. fe_reconcile.py compare <run>. Then explain, with counts:
+   - ONLY_GBO: split into "no crosswalk row" (not migrated / not loaded - not a BOX calculation defect) and "crosswalk
+     row but no BOX financial row" (dropped inside BOX - which step: use 30-BOX-trace with the box_front_ids from 05
+     part 4 for 5 examples);
+   - ONLY_BOX: should be ~0 once the crosswalk is used - any left, show 5 with their ids;
+   - DIFF per field: counts per field and 3 examples each. Re-check the earlier hypotheses on the new pairing, each
+     confirmed / not confirmed with numbers: the all-zero USD settlement row in BOX, one leg only in BOX, cash-to-date
+     0 without dated flows, fee type 432.4 vs 433.4, notional / 1.154412;
+   - duplicate keys (03-results.md): the deal area has two rows per IRS deal (legs) - find the column that tells the
+     legs apart on both sides and propose the field map change (key GBO_DEAL_ID,<that column>); re-run compare after I
+     agree.
+5. A short summary (03-results.md "Explanations"): what matches, what doesn't, owner per class (Data Lake load, BOX
+   FE import / calculation, mapping), and what I should ask whom.
+6. Then rebuild the official comparison file (the Excel brief I gave you earlier) from this run's results only.
+Commit and push after each step; give me the branch and hash each time. Open a PR at the end (counts only).

@@ -1,10 +1,17 @@
-Before a per-column diff, read the import itself:
-1. The source of BOX_FE PKG_FE_DEAL_CALCULATION.p_Import_Deal_Data (repo cib-boxfin-dbboxfe, read-only - as for
-   PKG_ENGPRECOMMIT): list every join and WHERE condition the RAW deal rows pass through, with file and line. Earlier
-   suspicion: an inner join to BOX_TRD.T_BOX_DEAL_S.
-2. One query (BOX_ADMIN) testing each condition on the two groups - IMPORTED (4,429) vs DROPPED (506), NY Mx3LT fronts
-   of 25-Sep: for each join / condition, how many deals of each group pass it. Start with "front present in
-   BOX_TRD.T_BOX_DEAL_S" (say which column links them, from the code).
-3. The condition that fails for the dropped and passes for the imported is the reason - say it with numbers.
-Only if no condition separates them: the per-column diff you proposed.
-If you cannot read the repo, tell me - don't guess the code.
+Change of focus: compare only the trades we can compare. Park the rest.
+1. Park, as open items (no more queries now): the 506 import drop (facts so far: all Mx3LT, not explained by
+   DATA_EXECUTION_TYPE / BOOK / DELIVERY_CURR / DATA_STATUS; next step = read p_Import_Deal_Data's joins, e.g.
+   BOX_TRD.T_BOX_DEAL_S) and the ONLY_GBO split (Data Lake load). One line each in 99-open-items via your PR.
+2. When I give you the four extracts: fe_reconcile.py compare, then define the COMPARABLE set on the financial area:
+   a GBO_DEAL_ID whose legs (FK_DIRECTION, FK_CURRENCY keys) are all present on both sides - none of its keys ONLY_GBO
+   or ONLY_BOX. Exclude, and count separately, BOX's all-zero USD settlement rows (a known BOX artefact of
+   DELIVERY_CURR = USD) before deciding a deal is incomplete - say how many deals become comparable thanks to that.
+3. On the comparable deals only:
+   - how many match on every field (within the map's tolerances);
+   - per field: deals with a DIFF, the size of the differences (min / median / max), 3 examples each (GBO_DEAL_ID,
+     GBO and BOX value);
+   - group the DIFFs by cause where the data shows it (e.g. dated flows absent, fee type 432.4 vs 433.4, notional
+     ratio 1.154412), each with its count - a cause only when every deal in the group shows it.
+   Then the same for the deal area on those deals (note the leg duplicates; propose the leg column if you see it).
+4. Write it in 03-results.md "Explanations" (counts only) and rebuild the official comparison file from the comparable
+   deals. Commit, push, give me the hash.

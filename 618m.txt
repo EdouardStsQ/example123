@@ -1,7 +1,6 @@
-1a2 must be read on the mapped deals only, and it decides how RAW is matched:
-1. Rerun 1a2 restricted to the 4,429 deals mapped to 20007.4: DEAL_ID - FRONT_ID and FK_SOURCESYSTEM - expected one
-   value (0.513 / 513.4). Give me the query.
-2. Then match RAW on FRONT_ID AND the source system (RAW's SOURCESYSTEM column - see 07-raw-deal-columns.csv for its
-   name and type; check its values for NY's 4,429 first), and recount 1b and the funnel. If RAW drops below 4,935,
-   the difference were rows of another source system sharing an NY FRONT_ID - the 506 shrinks accordingly.
-3. In 07, add the RAW source system to the breakdown of the dropped deals, so a false match shows at once.
+"All 506 are BOOK" is a reason only if the 4,429 imported deals are not. Give me one query (BOX_ADMIN), RAW Mx3LT rows
+of 25-Sep for NY's fronts, both groups side by side: IMPORTED (in T_BOX_DEAL_DATA_S) vs DROPPED, by
+DATA_EXECUTION_TYPE, BOOK, DELIVERY_CURR, DATA_STATUS - deal counts. Then say which attribute separates the two
+groups, with numbers (e.g. "every BOOK deal is dropped and none imported" or "LATAM imported 0 / dropped 500").
+Only then write the question for the BOX FE team, and include the DEAD ones (6) separately - a dead deal may be
+skipped on purpose.

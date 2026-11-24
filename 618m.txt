@@ -1,6 +1,8 @@
-The crosswalk covers almost all NY IRS deals (48,599 vs 46,370 GBO deals), so "no crosswalk row" will be small. Split
-ONLY_GBO by where each deal stops instead, with counts: (a) matured before 25-Sep; (b) no crosswalk row; (c) crosswalk
-row but not in BOX RAW for 25-Sep (Data Lake load); (d) in RAW but not in BOX deal data (import drop); (e) in deal data
-but no financial row (e.g. books without labels). RAW is keyed by BOX FRONT_ID: check first whether BOX FRONT_ID =
-TRUNC(FK_AUKI_ID) (BOX 1680634.513 -> front 1680634) with one count query (BOX_ADMIN) - if it holds, use it; if not,
-tell me. Reuse the earlier funnel queries, keyed this way.
+Part 1's expected value is wrong: only ~11,257 deals reached BOX RAW on 25-Sep (earlier funnel), so a correct
+relationship gives ~11k, not 48,599 - a low count cannot tell "rule wrong" from "not loaded". Test the rule where both
+ids certainly exist, then use it:
+1a. In BOX_FE.T_BOX_DATADEAL_S for 25-Sep, the 4,429 deals mapped to 20007.4: how many have FRONT_ID = TRUNC(DEAL_ID)?
+    Expected 4,429. Also check the decimal part: DEAL_ID - FRONT_ID per FK_SOURCESYSTEM (expected 0.513 for 513.4) -
+    if it is the source system, RAW must be matched on FRONT_ID + SOURCESYSTEM, not FRONT_ID alone.
+1b. Only then: RAW deals of 25-Sep matching a crosswalk row - expected ~11,257 (the earlier RAW count).
+Fix 06-funnel-checks.sql accordingly and give it back to me.

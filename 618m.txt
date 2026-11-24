@@ -1,2 +1,6 @@
-In the ONLY_GBO split, also separate the GBO deals already matured before 25-Sep (the earlier figure was 46,370 deals,
-44,444 not matured): matured / not migrated / migrated but dropped in BOX - counts for each.
+The crosswalk covers almost all NY IRS deals (48,599 vs 46,370 GBO deals), so "no crosswalk row" will be small. Split
+ONLY_GBO by where each deal stops instead, with counts: (a) matured before 25-Sep; (b) no crosswalk row; (c) crosswalk
+row but not in BOX RAW for 25-Sep (Data Lake load); (d) in RAW but not in BOX deal data (import drop); (e) in deal data
+but no financial row (e.g. books without labels). RAW is keyed by BOX FRONT_ID: check first whether BOX FRONT_ID =
+TRUNC(FK_AUKI_ID) (BOX 1680634.513 -> front 1680634) with one count query (BOX_ADMIN) - if it holds, use it; if not,
+tell me. Reuse the earlier funnel queries, keyed this way.

@@ -1,24 +1,13 @@
-New scope, replacing the tiers: compare only the CLEAN deals - those where everything that should be in BOX is in
-BOX. Ignore missing data for now (the RAW load had job failures; it is being investigated separately).
-
-1. CLEAN set = mapped deals (crosswalk, 20007.4, 25-Sep) where ALL of:
-   a. every GBO leg (FK_DIRECTION x FK_CURRENCY) has its BOX financial row, and BOX has no extra row (BOX's all-zero
-      USD legs excluded, as now);
-   b. every leg has its BOX deal-data row (T_BOX_DATADEAL_S);
-   c. BOX has the leg's dated flows (T_BOX_FLOW_DATA_S: dated rows, not the single undated row) whenever GBO shows
-      cash or accrual for that leg - give me the query (BOX_ADMIN) if you need flow counts per leg;
-   d. no key column empty in BOX that GBO fills (notional, rates, dates).
-   Report the funnel 252 -> a -> b -> c -> d = CLEAN, with counts, and park the excluded deals (count per reason, no
-   further analysis).
-2. On the CLEAN deals only, financial and deal areas, with the normalisation rules (blank = 0, DEAD_DATE sentinel,
-   the decode pairs incl. FK_FEETYPE 432.4->433.4 and FK_INSTRUMENT -> FK_INSTRUMTYPE, id columns out):
-   - deals matching on every field; per field: deals OK / DIFF, size of the differences (min / median / max);
-   - every DIFF grouped by cause, each cause with its count, 2 examples (GBO_DEAL_ID, GBO and BOX values) and a
-     one-line explanation; "unexplained" as its own group - never folded into another.
-3. Deliverables:
-   - 03-results.md: the funnel, the per-field table, the causes, and the questions for the BOX FE team - one per cause,
-     with numbers and examples;
-   - the xlsx rebuilt on the CLEAN deals only: Summary (funnel, match rate, causes), Fields (per field), Deals (one row
-     per deal: status, differing fields), Details (deal x leg x field, GBO / BOX / difference / cause), Rules (the
-     normalisation and decode rules applied). Outside the repo; only counts in the repo.
-Commit, push, give me the hash; then open the PR.
+Hold PR #134 - condition d was too broad (my wording) and must change before merge. It must test only INPUT data,
+not BOX's calculated results: RATECUR, INTERESTCUR and the other financial-table columns are outputs - blank in BOX
+is a comparison result (DIFF), not a reason to exclude.
+1. Redefine d: no input column empty in BOX that GBO fills - deal data (T_BOX_DATADEAL_S: notional, fixed rate,
+   spread, start / maturity dates, currencies) and, for floating legs, the fixing the leg needs on 25-Sep present in
+   BOX's market data - give me the query if you need one (BOX_ADMIN).
+2. The 154 excluded for RATECUR / INTERESTCUR: split by leg type (fixed / floating) and say whether the fixing is in
+   BOX's market data. Missing fixing = missing data (excluded, counted); fixing present but RATECUR blank = a
+   calculation difference (kept, its own cause).
+3. Redo the funnel 252 -> a -> b -> c (flows) -> d (inputs) = CLEAN, the comparison, 03-results.md and the xlsx;
+   update PR #134 and tell me the new CLEAN count.
+Also confirm the PR holds counts only - no CSV with trade ids (01-evidence/<date>/, 11-flow-counts.csv, 03-recon/)
+committed.

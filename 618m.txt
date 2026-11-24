@@ -1,17 +1,20 @@
-Change of focus: compare only the trades we can compare. Park the rest.
-1. Park, as open items (no more queries now): the 506 import drop (facts so far: all Mx3LT, not explained by
-   DATA_EXECUTION_TYPE / BOOK / DELIVERY_CURR / DATA_STATUS; next step = read p_Import_Deal_Data's joins, e.g.
-   BOX_TRD.T_BOX_DEAL_S) and the ONLY_GBO split (Data Lake load). One line each in 99-open-items via your PR.
-2. When I give you the four extracts: fe_reconcile.py compare, then define the COMPARABLE set on the financial area:
-   a GBO_DEAL_ID whose legs (FK_DIRECTION, FK_CURRENCY keys) are all present on both sides - none of its keys ONLY_GBO
-   or ONLY_BOX. Exclude, and count separately, BOX's all-zero USD settlement rows (a known BOX artefact of
-   DELIVERY_CURR = USD) before deciding a deal is incomplete - say how many deals become comparable thanks to that.
-3. On the comparable deals only:
-   - how many match on every field (within the map's tolerances);
-   - per field: deals with a DIFF, the size of the differences (min / median / max), 3 examples each (GBO_DEAL_ID,
-     GBO and BOX value);
-   - group the DIFFs by cause where the data shows it (e.g. dated flows absent, fee type 432.4 vs 433.4, notional
-     ratio 1.154412), each with its count - a cause only when every deal in the group shows it.
-   Then the same for the deal area on those deals (note the leg duplicates; propose the leg column if you see it).
-4. Write it in 03-results.md "Explanations" (counts only) and rebuild the official comparison file from the comparable
-   deals. Commit, push, give me the hash.
+Good first pass. Before any conclusion:
+1. Why only 89 comparable: break the other 4,340 mapped deals down by reason, with counts and 2 examples each - BOX
+   has one direction only (RAW one leg?), GBO has a currency row BOX lacks, BOX has a row GBO lacks, other. And why
+   no USD IRS is comparable at all (2,830 USD deals imported).
+2. Add a second tier: LEG-level comparison for legs present on both sides of deals that are not complete (report it
+   separately from the 89).
+3. Normalise known conventions before counting DIFFs (in your analysis, listed as rules): blank = 0 for amounts;
+   GBO DEAD_DATE 06-JUN-66 = no dead date (count BOX's DEAD_DATE = maturity as one convention difference, not per
+   field); code columns compared through a decode table (FK_INSTRUMENT 10146.4 -> 20092.4, FK_STATUS 220.4 -> 96.4,
+   FK_PORTPROP 2499.35 -> 111.44 - list the pairs you see, count any row breaking them); id columns (PK, DEAL_ID,
+   FRONT_ID, BACK_ID) never compared.
+4. For every field "GBO value vs BOX empty" (INTERESTPLACC, INTERESTPLACCEXCDIF, FK_INSTRUMENT...): search the GBO
+   value in the other columns of the same BOX row before calling it missing - name the BOX column if found.
+5. NDS cash: for the 31 deals, show per deal GBO local cash, GBO USD cash, BOX local cash, BOX USD cash - does BOX carry
+   the settlement cash anywhere?
+6. MATURITYDATE +1 day (48 deals): weekend / holiday? Show the GBO date's weekday for each. And the PRINCIPALFWD deal
+   13657558.44: both sides' values and notionals.
+Apply the deal leg key (GBO_DEAL_ID, FK_DIRECTION, FK_CURRENCY) to the map in your PR - agreed.
+Then: 03-results.md with the normalised counts, and the questions for the BOX FE team (one per real difference, with
+the numbers). Rebuild the xlsx after that.

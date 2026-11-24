@@ -1,8 +1,4 @@
-Part 1's expected value is wrong: only ~11,257 deals reached BOX RAW on 25-Sep (earlier funnel), so a correct
-relationship gives ~11k, not 48,599 - a low count cannot tell "rule wrong" from "not loaded". Test the rule where both
-ids certainly exist, then use it:
-1a. In BOX_FE.T_BOX_DATADEAL_S for 25-Sep, the 4,429 deals mapped to 20007.4: how many have FRONT_ID = TRUNC(DEAL_ID)?
-    Expected 4,429. Also check the decimal part: DEAL_ID - FRONT_ID per FK_SOURCESYSTEM (expected 0.513 for 513.4) -
-    if it is the source system, RAW must be matched on FRONT_ID + SOURCESYSTEM, not FRONT_ID alone.
-1b. Only then: RAW deals of 25-Sep matching a crosswalk row - expected ~11,257 (the earlier RAW count).
-Fix 06-funnel-checks.sql accordingly and give it back to me.
+1a2: FK_SOURCESYSTEM exists in T_BOX_DATADEAL_S (my screenshot: 1680634.513, FK_SOURCESYSTEM 513.4) - keep it.
+Part 2: keep both BOX deal stages - RAW -> T_BOX_DEAL_DATA_S (the import, DEAL_ID = FK_AUKI_ID; earlier 10,233 deals)
+-> T_BOX_DATADEAL_S (4,429) -> T_BOX_IRFINANCST_S - so "dropped by the import" and "stopped after the import"
+(e.g. books without labels) are counted separately. Re-commit and give me the file.

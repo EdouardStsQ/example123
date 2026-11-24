@@ -1,20 +1,24 @@
-Good first pass. Before any conclusion:
-1. Why only 89 comparable: break the other 4,340 mapped deals down by reason, with counts and 2 examples each - BOX
-   has one direction only (RAW one leg?), GBO has a currency row BOX lacks, BOX has a row GBO lacks, other. And why
-   no USD IRS is comparable at all (2,830 USD deals imported).
-2. Add a second tier: LEG-level comparison for legs present on both sides of deals that are not complete (report it
-   separately from the 89).
-3. Normalise known conventions before counting DIFFs (in your analysis, listed as rules): blank = 0 for amounts;
-   GBO DEAD_DATE 06-JUN-66 = no dead date (count BOX's DEAD_DATE = maturity as one convention difference, not per
-   field); code columns compared through a decode table (FK_INSTRUMENT 10146.4 -> 20092.4, FK_STATUS 220.4 -> 96.4,
-   FK_PORTPROP 2499.35 -> 111.44 - list the pairs you see, count any row breaking them); id columns (PK, DEAL_ID,
-   FRONT_ID, BACK_ID) never compared.
-4. For every field "GBO value vs BOX empty" (INTERESTPLACC, INTERESTPLACCEXCDIF, FK_INSTRUMENT...): search the GBO
-   value in the other columns of the same BOX row before calling it missing - name the BOX column if found.
-5. NDS cash: for the 31 deals, show per deal GBO local cash, GBO USD cash, BOX local cash, BOX USD cash - does BOX carry
-   the settlement cash anywhere?
-6. MATURITYDATE +1 day (48 deals): weekend / holiday? Show the GBO date's weekday for each. And the PRINCIPALFWD deal
-   13657558.44: both sides' values and notionals.
-Apply the deal leg key (GBO_DEAL_ID, FK_DIRECTION, FK_CURRENCY) to the map in your PR - agreed.
-Then: 03-results.md with the normalised counts, and the questions for the BOX FE team (one per real difference, with
-the numbers). Rebuild the xlsx after that.
+New scope, replacing the tiers: compare only the CLEAN deals - those where everything that should be in BOX is in
+BOX. Ignore missing data for now (the RAW load had job failures; it is being investigated separately).
+
+1. CLEAN set = mapped deals (crosswalk, 20007.4, 25-Sep) where ALL of:
+   a. every GBO leg (FK_DIRECTION x FK_CURRENCY) has its BOX financial row, and BOX has no extra row (BOX's all-zero
+      USD legs excluded, as now);
+   b. every leg has its BOX deal-data row (T_BOX_DATADEAL_S);
+   c. BOX has the leg's dated flows (T_BOX_FLOW_DATA_S: dated rows, not the single undated row) whenever GBO shows
+      cash or accrual for that leg - give me the query (BOX_ADMIN) if you need flow counts per leg;
+   d. no key column empty in BOX that GBO fills (notional, rates, dates).
+   Report the funnel 252 -> a -> b -> c -> d = CLEAN, with counts, and park the excluded deals (count per reason, no
+   further analysis).
+2. On the CLEAN deals only, financial and deal areas, with the normalisation rules (blank = 0, DEAD_DATE sentinel,
+   the decode pairs incl. FK_FEETYPE 432.4->433.4 and FK_INSTRUMENT -> FK_INSTRUMTYPE, id columns out):
+   - deals matching on every field; per field: deals OK / DIFF, size of the differences (min / median / max);
+   - every DIFF grouped by cause, each cause with its count, 2 examples (GBO_DEAL_ID, GBO and BOX values) and a
+     one-line explanation; "unexplained" as its own group - never folded into another.
+3. Deliverables:
+   - 03-results.md: the funnel, the per-field table, the causes, and the questions for the BOX FE team - one per cause,
+     with numbers and examples;
+   - the xlsx rebuilt on the CLEAN deals only: Summary (funnel, match rate, causes), Fields (per field), Deals (one row
+     per deal: status, differing fields), Details (deal x leg x field, GBO / BOX / difference / cause), Rules (the
+     normalisation and decode rules applied). Outside the repo; only counts in the repo.
+Commit, push, give me the hash; then open the PR.

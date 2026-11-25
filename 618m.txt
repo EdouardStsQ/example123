@@ -1,13 +1,9 @@
-Please give me one easy-to-read table of the mismatch TYPES on the 156 CLEAN deals - one row per type, grouping all
-fields that fail for the same reason. Columns:
-| # | Mismatch type (plain words) | Category | Fields | Deals affected (of 156 / of the 88 with activity) |
-  Example: GBO DEAL_ID | BOX DEAL_ID | BOX FRONT_ID | Leg (direction, currency) | Field | GBO value | BOX value |
-  Difference | Likely cause | Question / owner |
-Category = one of: BOX calculation differs / BOX does not populate / timing or date convention / code mapping
-(normalised) / explained, no issue. One example per type (the clearest one), real values from the CSVs.
-Order: largest accounting impact first (P&L accrual, cash, notional...), conventions and explained items last.
-Add a final row "Unexplained" (count, even if 0).
-Deliver it: (1) here in the chat as a markdown table; (2) as a first sheet "Issues" in the xlsx; (3) in 03-results.md
-WITHOUT the id and value columns (counts only in the repo).
-Also, for 1.1544118: what do the 13 USD legs have in common (book, start date, amortising, fixed / floating, rate
-index, day count)? A constant on USD legs is not FX - give the common attribute if there is one.
+Two things:
+1. Paste the issue-type table here in the chat as a markdown table (one row per mismatch type, with the example: GBO
+   DEAL_ID, BOX DEAL_ID, field, GBO value, BOX value, difference, category, likely cause) - I need it in the chat, not
+   only in the xlsx. Add the 1.1544118 attributes you found.
+2. INTERESTCASH: "GBO stores it elsewhere" is not shown. In the earlier test (GBO 33340980) GBO's INTERESTCASH equalled
+   BOX's paid-to-date sum - so GBO accumulates too, from some start. For the 25 deals: list GBO's paid interest flows
+   <= 25-Sep (GBO flows table - give me the query, pgtadmin) and test which start makes GBO = 0: last coupon date,
+   1-Sep / month start, 1-Jan / year start, the GBO rebook date (CAPTUREDATE). Do the same on 3 deals where GBO and BOX
+   cash MATCH. State the rule with counts; then update the Issues sheet row and the BOX FE question.

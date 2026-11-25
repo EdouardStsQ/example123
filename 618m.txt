@@ -1,10 +1,13 @@
-Good catch. Three things on the 156:
-1. Split the match rate: deals WITH cash or accrual on 25-Sep vs deals without - matching / total for each. The
-   headline must be the "with activity" figure.
-2. The colleague's 114: list (counts + the FRONT_IDs, outside the repo) the 60 CLEAN deals not in his list and the 18
-   in his list with no DATADEAL row - for the 18, add them to the 506 open item as evidence: loaded properly in RAW,
-   dropped by the import anyway.
-3. The checks I asked for earlier, if not done: populated vs never-populated fields (match rate on populated fields
-   only), 1.1544118 = an FX rate?, INTERESTCASH timing (GBO's date for the 25 deals vs BOX's - same T+2 as
-   MATURITYDATE?), CAPTUREDATE vs the crosswalk PROCESS_DATE.
-Update 03-results.md, the xlsx and PR #134.
+Please give me one easy-to-read table of the mismatch TYPES on the 156 CLEAN deals - one row per type, grouping all
+fields that fail for the same reason. Columns:
+| # | Mismatch type (plain words) | Category | Fields | Deals affected (of 156 / of the 88 with activity) |
+  Example: GBO DEAL_ID | BOX DEAL_ID | BOX FRONT_ID | Leg (direction, currency) | Field | GBO value | BOX value |
+  Difference | Likely cause | Question / owner |
+Category = one of: BOX calculation differs / BOX does not populate / timing or date convention / code mapping
+(normalised) / explained, no issue. One example per type (the clearest one), real values from the CSVs.
+Order: largest accounting impact first (P&L accrual, cash, notional...), conventions and explained items last.
+Add a final row "Unexplained" (count, even if 0).
+Deliver it: (1) here in the chat as a markdown table; (2) as a first sheet "Issues" in the xlsx; (3) in 03-results.md
+WITHOUT the id and value columns (counts only in the repo).
+Also, for 1.1544118: what do the 13 USD legs have in common (book, start date, amortising, fixed / floating, rate
+index, day count)? A constant on USD legs is not FX - give the common attribute if there is one.

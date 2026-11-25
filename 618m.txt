@@ -1,11 +1,8 @@
-Good rule. Three follow-ups:
-1. Category: not "timing / date convention" - BOX counts cancelled flows of a replaced contract version, i.e. cash GBO
-   treats as void. Category = "BOX calculation differs" (or "load" - see 2); update the Issues row and the question.
-2. BOX side: do BOX's flow data (T_BOX_FLOW_DATA_S) and RAW flow data (T_BOX_RAW_FLOW_DATA_S) carry a cancel flag /
-   status for these flows, and with what value? Give me the query (BOX_ADMIN). Flag absent -> a load question (owner:
-   RAW / Data Lake); flag present but counted -> a BOX FE calculation question.
-3. Overlap: how many of the 25 cash-diff deals are among the 32 CAPTUREDATE (rebook) deals? If they are the same
-   cohort, merge them into one mismatch type "rebooked deals (May-25)" with both effects.
-Then paste the issue-type table here in the chat as markdown (one row per type: type, category, fields, deals of 156 /
-of 88, example GBO DEAL_ID, BOX DEAL_ID, field, GBO value, BOX value, difference, likely cause) - it has not come
-through yet.
+Table received, thanks. Three fixes, then final xlsx + PR #134:
+1. Row 9 FK_FLOATINGRATE: GBO 0 = fixed leg, so GBO 0 vs BOX blank is not a difference. Recount on floating legs only
+   (GBO > 0, BOX blank); if 0, move the row to "explained".
+2. Row 11 CAPTUREDATE: category "explained, no issue" (GBO = rebook date, BOX = original trade date); note the 12-deal
+   overlap with row 2.
+3. Row 4: add what the 25 deals with x1.1544118 have in common (book, start date, amortising, fixed / float, index,
+   day count) - or say "no common attribute found".
+Row 2 owner: Data Lake / RAW (the cancel status never arrives) - keep it that way.

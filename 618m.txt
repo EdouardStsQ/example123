@@ -1,15 +1,17 @@
-Thanks. One correction, then two more items.
-Correction: only PLACC / CARRY / readjustability are "not calculated by design" (FE expert). CASHD, PRINCIPALFWD,
-DAYSTOMAT (+ WORKDAYSTOMAT, MODEQYEAR) are "not calculated in BOX (code) - by design? to confirm with BOX FE": keep
-them as one confirmation row in the Issues table, with their counts and code citations.
-
-More from the FE expert: BOX's maturity = NVL(TRUNC(BOX_TRD.T_BOX_DEAL_S.MATURITY_DATE),
-TRUNC(T_BOX_RAW_DEAL_DATA_S.MATURITYDATEREAL)) -> T_BOX_DATADEAL_S.MATURITYDATE (quote it from the code, file:line).
-1. MATURITYDATE +2 business days (63 deals): for each, which source BOX took (T_BOX_DEAL_S or RAW), and RAW's
-   MATURITYDATE vs MATURITYDATEREAL vs GBO's. Check the payment-lag hypothesis: are the 63 floating legs on an
-   overnight index (SOFR OIS) with a 2-day payment lag, and is MATURITYDATEREAL the last flow's payment date
-   (T_BOX_FLOW_DATA_S) while GBO's = the last accrual end date? Counts and 2 examples. Give me the query (BOX_ADMIN).
-2. Parked 506 import drop: the same code reads BOX_TRD.T_BOX_DEAL_S. Is it an inner join? If yes, count how many of
-   the 506 (and of the colleague's 18) have no row in BOX_TRD.T_BOX_DEAL_S (query, BOX_ADMIN) - just this count,
-   then back to parked.
-I'm running 19, 20 and 21 now.
+Good progress. Follow-ups:
+1. "BOX lacks the current interest flow" (RATECUR data 64, INTERESTCUR data 29) is missing data, not a comparison
+   result: move those deals out of CLEAN (new funnel step "current interest flow present in BOX", count), park them,
+   and recount CLEAN and the match rates. For the parked legs, one line: does BOX have ANY flow for the leg (all
+   periods), and does RAW flow data have the current period? (query, BOX_ADMIN)
+2. RATECUR definition (USD, 47): GBO leaves 0 -> "explained, no issue".
+3. INTERESTCUR definition (74 deals) - prove, don't guess: read GBO's formula in DEVENG.PKG_ENGCD / PKG_ENGCF
+   p_insert_economical_data (give me an ALL_SOURCE query for the procedure's text, pgtadmin), quote it, and test it on
+   the 74 against GBO's values; also give the leg's index (SOFR / CDI / TIIE compounded?) and BOX's current flow
+   AMOUNT (0 / null?). Counts matching within 0.01, 2 examples. If GBO estimates the coupon and BOX has 0 until the
+   period ends, say so - that is a functional difference for BOX FE.
+4. Maturity: row 8 closed as explained (payment date vs accrual end) - fine.
+5. 506 vs the colleague's 18: all 506 have a T_BOX_DEAL_S row, but 9 of the 18 do not - are those 9 outside the 506
+   (not IRS / other product)? If they are IRS, the inner join does drop deals: count it. One answer, then back to
+   parked, with the clue for BOX FE: the loss is in FK_PARENT IS NULL / the BO_CODE suffix match (file:line).
+6. Currency 171.4: is it BRL (the CDI legs)? One query on the currency domain, then add it to the map notes.
+Then update the Issues table, 03-results.md and PR #134, and paste the final table here.

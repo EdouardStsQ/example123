@@ -1,15 +1,9 @@
-You have access to GBO's FE repo - use it:
-1. Find the repo holding DEVENG's engine package bodies (PKG_ENGIR, PKG_ENGIR_OPTZ, PKG_ENGGN, PKG_ENGCD / PKG_ENGCF)
-   and tell me its name and path. Read-only.
-2. Quote (file:line) how GBO computes INTERESTCUR and RATECUR for IRS legs (in / around p_insert_economical_data),
-   including how it picks the current period and how it treats compounded overnight legs (SOFR / CDI / TIIE) whose
-   coupon is not known until the period ends.
-3. Confirm on the data: apply that formula to the 74 INTERESTCUR legs (give me any pgtadmin query you need, e.g. the
-   accrual period bounds) - counts matching GBO's value within 0.01, 2 examples. Code + data, both.
-4. Compare with BOX's code for the same columns (p_update_current_values) and state the difference in one line, e.g.
-   "GBO estimates the current coupon on compounded legs; BOX takes the flow amount, 0 until the period ends".
-5. Headline: full-match deals on the 63 counting only the columns that should agree (exclude the "explained" and "not
-   calculated by design" columns).
-6. Parked legs (sql/24): no re-cut now - record the per-leg note and keep them parked.
-Add the GBO repo to docs/reference/repo-index.md in your PR (name, what it holds, read-only).
-I'm sending sql/26 and sql/27 now.
+Correction: you only have the BOX FE repo (cib-boxfin-dbboxfe), not GBO's - stop searching for a GBO engine repo, and
+don't add anything to repo-index.md. GBO's PKG_ENGIR body is not readable (pgtadmin sees specs only).
+1. INTERESTCUR: record it as "functional difference, BOX FE" - BOX takes the current flow amount (0 until a
+   compounded period ends; PKG_ENGMAINIR_OPTZ L194-290 copies and zeroes it, p_update_current_values sums the flows),
+   GBO computes an estimate in its engine (formula not readable). GBO's exact formula is a question for the GBO team.
+2. sql/28 (leg periods): keep it, I'll run it - if the notional x rate x days test then matches, add the formula as
+   "GBO formula inferred from data"; if not, leave it unproven. Don't spend more on it.
+3. With my sql/26 (labels) and sql/27 (the colleague's 18) outputs: finish items 5-6 of my earlier message.
+4. Final Issues table here in the chat (with the headline 33 / 63 and 49 / 63), 03-results.md, PR #134 final.

@@ -1,9 +1,65 @@
-Great finding. Merge rows 2, 4 and 11 into one mismatch type "rebooked deals: BOX holds the pre-rebook contract
-version" (owner: Data Lake / RAW, with a design question for BOX FE). For it, give:
-1. How many of the 156 CLEAN deals are rebooked (GBO CAPTUREDATE <> BOX trade date, or GBO cancelled flows), and, per
-   other mismatch type (1, 3, 5, 6, 7, 10, 12), how many of its deals are rebooked - so we see what else this cause
-   explains.
-2. The other notional ratios (1.09633 on 14550803.44, 0.097227 on 14872927.44/28): rebooked too? If yes, in the same
-   type; if not, their own row.
-3. Match rate excluding rebooked deals: deals with activity fully matching / total, populated-fields match %.
-Update the Issues sheet, 03-results.md and PR #134 (final), and paste the updated table here.
+Subject: NY SCH - GBO vs BOX FE comparison, IRS 25-Sep-2026 (PRE-PARALELO): results and questions
+
+Hi all,
+
+We compared GBO and BOX FE for NY SCH interest rate swaps on 25-Sep-2026 in PRE-PARALELO (IGBOUSIB).
+
+Scope
+- 156 deals that BOX holds completely: all legs, deal data, dated flows and fixings. Missing data (RAW load
+  failures, deals dropped by the BOX import) is out of this comparison and followed separately.
+- GBO and BOX deals are paired through the AUKI migration crosswalk (BOX_MIG.T_BOX_AUKI_MIG_DEALS_S: GBO DEAL_ID =
+  REGISTRY, BOX DEAL_ID = FK_AUKI_ID). FRONT_ID is not shared between the two systems.
+- Known conventions are normalised before comparing (blank = 0, GBO's 06-JUN-66 "no dead date", code values mapped
+  one-to-one).
+
+Headline
+- 45 of the 156 deals were rebooked in GBO, and BOX holds their original version (point 1 below).
+- Of the other 111 deals, 59 match GBO on every financial field. All 59 had no cash or accrual that day: none of the
+  45 deals with activity matches fully, mainly because of the accrual and rate differences in points 2 and 3.
+- The attached workbook (sheet "Issues") has one row per mismatch type with a worked example; the deal ids below
+  refer to it.
+
+1. Main finding - rebooked deals: BOX holds the pre-rebook contract version (45 deals)
+For deals amended / rebooked in GBO (most in May 2025), GBO holds the new contract version and BOX the original:
+- notional / principal = the pre-rebook amount (x1.1544118 on 10 deals of book 3684.44; other ratios on 2 deals);
+- flows paid before the rebook, cancelled in GBO, arrive in BOX as Live and are counted as cash (25 deals) - BOX's
+  RAW and processed flows show STATUS = 'Live' and a single CURRENT_CONTRACT for all of them;
+- trade / capture date = the original trade; GBO shows the rebook date (32 deals).
+Example: GBO 14550803.44 = BOX 38057225.513 (INTERESTCASH: GBO 0, BOX the sum of the cancelled paid flows).
+The same deals also account for 30 of the 36 fee-accrual differences and both unexplained CASHD differences.
+a) Data Lake / RAW: does the feed send the amended contract version, and a status for flows replaced by a rebook?
+b) BOX FE: how is BOX meant to handle an amendment / rebook - replace the deal version and drop the replaced flows?
+
+2. BOX FE - values BOX does not populate
+- P&L accrual (INTERESTPLACC, INTERESTPLACCEXCDIF): empty in BOX on 55 deals (15 of them rebooked).
+  Example GBO 14388438.44 / BOX 32558873.513: GBO 8,533,546.67, BOX empty. Calculated elsewhere, or not implemented?
+- Fee accruals (FEEPLACC, FEEPAYPLACCL, FEECOLPLACCL): 0 in BOX on 36 deals (30 rebooked - may resolve with point 1).
+  Example GBO 14550803.44 / BOX 38057225.513: FEEPLACC GBO 448,680, BOX 0.
+- Forward principal (PRINCIPALFWD): 0 in BOX on 9 deals while the notional matches.
+  Example GBO 13657558.44 / BOX 11785822.513: GBO 477,940,000, BOX 0.
+- Days to maturity (DAYSTOMAT, WORKDAYSTOMAT, MODEQYEAR): not populated on any deal (156). In scope for BOX?
+
+3. BOX FE - calculated values that differ (fixing present in BOX)
+- Current rate (RATECUR): 111 deals (28 rebooked). Example GBO 13657558.44 / BOX 11785822.513: GBO 4.08.
+- Current interest (INTERESTCUR): 103 deals (27 rebooked). Example GBO 13658753.44 / BOX 11845822.513:
+  GBO 90,917,555.19.
+Could we review two examples together to see where the calculations diverge?
+
+4. To confirm - maturity date
+Maturity date is 2 business days later in BOX on 63 deals (example GBO 13658753.44 / BOX 11845822.513:
+GBO 04-JAN-27). Is BOX storing the payment date? Is that intended?
+
+5. Unexplained
+CASHD differs on 2 deals (example GBO 40598.35 / BOX 1680671.513, GBO -701,849.09). Both are rebooked, so they may
+belong to point 1 - could you check them?
+
+Explained, no action
+- FK_FLOATINGRATE: GBO uses 0 for fixed legs; no difference on floating legs.
+- Code values (instrument, status, portfolio property, fee type) map one-to-one between GBO and BOX.
+
+Next steps
+Once the rebook handling (point 1) and the RAW load are fixed, we will re-run the comparison on the full NY
+population and on more dates.
+
+Thanks,
+Edouard

@@ -1,9 +1,11 @@
-Two things:
-1. Paste the issue-type table here in the chat as a markdown table (one row per mismatch type, with the example: GBO
-   DEAL_ID, BOX DEAL_ID, field, GBO value, BOX value, difference, category, likely cause) - I need it in the chat, not
-   only in the xlsx. Add the 1.1544118 attributes you found.
-2. INTERESTCASH: "GBO stores it elsewhere" is not shown. In the earlier test (GBO 33340980) GBO's INTERESTCASH equalled
-   BOX's paid-to-date sum - so GBO accumulates too, from some start. For the 25 deals: list GBO's paid interest flows
-   <= 25-Sep (GBO flows table - give me the query, pgtadmin) and test which start makes GBO = 0: last coupon date,
-   1-Sep / month start, 1-Jan / year start, the GBO rebook date (CAPTUREDATE). Do the same on 3 deals where GBO and BOX
-   cash MATCH. State the rule with counts; then update the Issues sheet row and the BOX FE question.
+Good rule. Three follow-ups:
+1. Category: not "timing / date convention" - BOX counts cancelled flows of a replaced contract version, i.e. cash GBO
+   treats as void. Category = "BOX calculation differs" (or "load" - see 2); update the Issues row and the question.
+2. BOX side: do BOX's flow data (T_BOX_FLOW_DATA_S) and RAW flow data (T_BOX_RAW_FLOW_DATA_S) carry a cancel flag /
+   status for these flows, and with what value? Give me the query (BOX_ADMIN). Flag absent -> a load question (owner:
+   RAW / Data Lake); flag present but counted -> a BOX FE calculation question.
+3. Overlap: how many of the 25 cash-diff deals are among the 32 CAPTUREDATE (rebook) deals? If they are the same
+   cohort, merge them into one mismatch type "rebooked deals (May-25)" with both effects.
+Then paste the issue-type table here in the chat as markdown (one row per type: type, category, fields, deals of 156 /
+of 88, example GBO DEAL_ID, BOX DEAL_ID, field, GBO value, BOX value, difference, likely cause) - it has not come
+through yet.

@@ -1,13 +1,10 @@
-Hold PR #134 - condition d was too broad (my wording) and must change before merge. It must test only INPUT data,
-not BOX's calculated results: RATECUR, INTERESTCUR and the other financial-table columns are outputs - blank in BOX
-is a comparison result (DIFF), not a reason to exclude.
-1. Redefine d: no input column empty in BOX that GBO fills - deal data (T_BOX_DATADEAL_S: notional, fixed rate,
-   spread, start / maturity dates, currencies) and, for floating legs, the fixing the leg needs on 25-Sep present in
-   BOX's market data - give me the query if you need one (BOX_ADMIN).
-2. The 154 excluded for RATECUR / INTERESTCUR: split by leg type (fixed / floating) and say whether the fixing is in
-   BOX's market data. Missing fixing = missing data (excluded, counted); fixing present but RATECUR blank = a
-   calculation difference (kept, its own cause).
-3. Redo the funnel 252 -> a -> b -> c (flows) -> d (inputs) = CLEAN, the comparison, 03-results.md and the xlsx;
-   update PR #134 and tell me the new CLEAN count.
-Also confirm the PR holds counts only - no CSV with trade ids (01-evidence/<date>/, 11-flow-counts.csv, 03-recon/)
-committed.
+Good catch. Three things on the 156:
+1. Split the match rate: deals WITH cash or accrual on 25-Sep vs deals without - matching / total for each. The
+   headline must be the "with activity" figure.
+2. The colleague's 114: list (counts + the FRONT_IDs, outside the repo) the 60 CLEAN deals not in his list and the 18
+   in his list with no DATADEAL row - for the 18, add them to the 506 open item as evidence: loaded properly in RAW,
+   dropped by the import anyway.
+3. The checks I asked for earlier, if not done: populated vs never-populated fields (match rate on populated fields
+   only), 1.1544118 = an FX rate?, INTERESTCASH timing (GBO's date for the 25 deals vs BOX's - same T+2 as
+   MATURITYDATE?), CAPTUREDATE vs the crosswalk PROCESS_DATE.
+Update 03-results.md, the xlsx and PR #134.

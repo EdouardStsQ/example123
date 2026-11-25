@@ -1,12 +1,15 @@
-Both, in this order:
-1. Empirical test now: give me the pgtadmin query for the 74 legs' accrual period bounds, and test GBO's INTERESTCUR
-   against: (a) coupon x days accrued / days in period, (b) notional x rate x days accrued / basis, (c) the projected
-   full coupon. Counts matching within 0.01, 2 examples each; if none matches, say so.
-2. Code lead: BOX's FE engine looks ported from GBO's (same PKG_ENG* names). In cib-boxfin-dbboxfe, read BOX's
-   PKG_ENGIR / PKG_ENGIR_OPTZ (and PKG_FE_DEAL_CALCULATION) for INTERESTCUR: quote what BOX does, and any older /
-   commented logic that looks like GBO's. Also search the other repos you can read for a DEVENG PKG_ENGIR body (see
-   docs/reference/repo-index.md). Treat what you find as a lead, confirmed only by step 1.
-3. Headline: report full-match deals on the 63 counting only the columns that should agree (exclude the "explained"
-   and "not calculated by design" columns) - that is the figure for the email.
-4. Parked legs (sql/24): no re-cut needed now - record the per-leg note and keep them parked.
+You have access to GBO's FE repo - use it:
+1. Find the repo holding DEVENG's engine package bodies (PKG_ENGIR, PKG_ENGIR_OPTZ, PKG_ENGGN, PKG_ENGCD / PKG_ENGCF)
+   and tell me its name and path. Read-only.
+2. Quote (file:line) how GBO computes INTERESTCUR and RATECUR for IRS legs (in / around p_insert_economical_data),
+   including how it picks the current period and how it treats compounded overnight legs (SOFR / CDI / TIIE) whose
+   coupon is not known until the period ends.
+3. Confirm on the data: apply that formula to the 74 INTERESTCUR legs (give me any pgtadmin query you need, e.g. the
+   accrual period bounds) - counts matching GBO's value within 0.01, 2 examples. Code + data, both.
+4. Compare with BOX's code for the same columns (p_update_current_values) and state the difference in one line, e.g.
+   "GBO estimates the current coupon on compounded legs; BOX takes the flow amount, 0 until the period ends".
+5. Headline: full-match deals on the 63 counting only the columns that should agree (exclude the "explained" and "not
+   calculated by design" columns).
+6. Parked legs (sql/24): no re-cut now - record the per-leg note and keep them parked.
+Add the GBO repo to docs/reference/repo-index.md in your PR (name, what it holds, read-only).
 I'm sending sql/26 and sql/27 now.

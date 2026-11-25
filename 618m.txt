@@ -1,9 +1,16 @@
-Correction: you only have the BOX FE repo (cib-boxfin-dbboxfe), not GBO's - stop searching for a GBO engine repo, and
-don't add anything to repo-index.md. GBO's PKG_ENGIR body is not readable (pgtadmin sees specs only).
-1. INTERESTCUR: record it as "functional difference, BOX FE" - BOX takes the current flow amount (0 until a
-   compounded period ends; PKG_ENGMAINIR_OPTZ L194-290 copies and zeroes it, p_update_current_values sums the flows),
-   GBO computes an estimate in its engine (formula not readable). GBO's exact formula is a question for the GBO team.
-2. sql/28 (leg periods): keep it, I'll run it - if the notional x rate x days test then matches, add the formula as
-   "GBO formula inferred from data"; if not, leave it unproven. Don't spend more on it.
-3. With my sql/26 (labels) and sql/27 (the colleague's 18) outputs: finish items 5-6 of my earlier message.
-4. Final Issues table here in the chat (with the headline 33 / 63 and 49 / 63), 03-results.md, PR #134 final.
+Please give me, here in the chat, the final summary of the NY SCH IRS GBO vs BOX comparison (25-Sep-2026,
+PRE-PARALELO), from 03-results.md and the xlsx as they stand at your last commit:
+
+A. Executive summary - max 10 lines, plain words, for a manager:
+   - scope and how deals are paired (crosswalk); the funnel from GBO deals to the 63 compared, one line each stage;
+   - headline: 33 / 63 full match on comparable columns, 49 / 63 excluding current rate / interest;
+   - the 3 findings that matter (rebooked deals, current interest on compounded legs, missing data / import drops),
+     each with its count and owner;
+   - what is explained / by design (one line).
+B. The final Issues table as markdown, one row per mismatch type, columns:
+   # | Mismatch type | Class | Fields | Deals | Example GBO DEAL_ID | Example BOX DEAL_ID | Field | GBO value |
+   BOX value | Cause (code / data reference) | Owner / question
+   Real values from the CSVs for the example (BOX value too - no blanks); "explained" rows included at the end.
+C. Open items, one line each, with owner: rebook handling, INTERESTCUR formula (GBO team), the 506 import drop,
+   missing current flows (RAW), the inner join on BOX_TRD.T_BOX_DEAL_S.
+Then confirm PR #134 holds counts only (list its files) and is ready to merge.

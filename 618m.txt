@@ -1,65 +1,30 @@
-Subject: NY SCH - GBO vs BOX FE comparison, IRS 25-Sep-2026 (PRE-PARALELO): results and questions
+Input from the BOX FE expert (2026-11-25), and a new standing rule.
 
-Hi all,
+A. By design (category "explained - not calculated in BOX"): BOX does not calculate CARRY, PLACC or
+   readjustability. P&L accrual (INTERESTPLACC*) and fee accruals (FEE*PLACC*) leave the issue counts.
 
-We compared GBO and BOX FE for NY SCH interest rate swaps on 25-Sep-2026 in PRE-PARALELO (IGBOUSIB).
+B. RATECUR / INTERESTCUR: BOX takes them from its flow table - RATECUR = max(RATE), INTERESTCUR = sum(AMOUNT) over
+   BOX_FE.T_BOX_FLOW_DATA_S rows with is_interest = 1 and chk_between = 1 - computed in
+   BOX_FE.PKG_FE_DEAL_CALCULATION.p_update_current_values.
 
-Scope
-- 156 deals that BOX holds completely: all legs, deal data, dated flows and fixings. Missing data (RAW load
-  failures, deals dropped by the BOX import) is out of this comparison and followed separately.
-- GBO and BOX deals are paired through the AUKI migration crosswalk (BOX_MIG.T_BOX_AUKI_MIG_DEALS_S: GBO DEAL_ID =
-  REGISTRY, BOX DEAL_ID = FK_AUKI_ID). FRONT_ID is not shared between the two systems.
-- Known conventions are normalised before comparing (blank = 0, GBO's 06-JUN-66 "no dead date", code values mapped
-  one-to-one).
-
-Headline
-- 45 of the 156 deals were rebooked in GBO, and BOX holds their original version (point 1 below).
-- Of the other 111 deals, 59 match GBO on every financial field. All 59 had no cash or accrual that day: none of the
-  45 deals with activity matches fully, mainly because of the accrual and rate differences in points 2 and 3.
-- The attached workbook (sheet "Issues") has one row per mismatch type with a worked example; the deal ids below
-  refer to it.
-
-1. Main finding - rebooked deals: BOX holds the pre-rebook contract version (45 deals)
-For deals amended / rebooked in GBO (most in May 2025), GBO holds the new contract version and BOX the original:
-- notional / principal = the pre-rebook amount (x1.1544118 on 10 deals of book 3684.44; other ratios on 2 deals);
-- flows paid before the rebook, cancelled in GBO, arrive in BOX as Live and are counted as cash (25 deals) - BOX's
-  RAW and processed flows show STATUS = 'Live' and a single CURRENT_CONTRACT for all of them;
-- trade / capture date = the original trade; GBO shows the rebook date (32 deals).
-Example: GBO 14550803.44 = BOX 38057225.513 (INTERESTCASH: GBO 0, BOX the sum of the cancelled paid flows).
-The same deals also account for 30 of the 36 fee-accrual differences and both unexplained CASHD differences.
-a) Data Lake / RAW: does the feed send the amended contract version, and a status for flows replaced by a rebook?
-b) BOX FE: how is BOX meant to handle an amendment / rebook - replace the deal version and drop the replaced flows?
-
-2. BOX FE - values BOX does not populate
-- P&L accrual (INTERESTPLACC, INTERESTPLACCEXCDIF): empty in BOX on 55 deals (15 of them rebooked).
-  Example GBO 14388438.44 / BOX 32558873.513: GBO 8,533,546.67, BOX empty. Calculated elsewhere, or not implemented?
-- Fee accruals (FEEPLACC, FEEPAYPLACCL, FEECOLPLACCL): 0 in BOX on 36 deals (30 rebooked - may resolve with point 1).
-  Example GBO 14550803.44 / BOX 38057225.513: FEEPLACC GBO 448,680, BOX 0.
-- Forward principal (PRINCIPALFWD): 0 in BOX on 9 deals while the notional matches.
-  Example GBO 13657558.44 / BOX 11785822.513: GBO 477,940,000, BOX 0.
-- Days to maturity (DAYSTOMAT, WORKDAYSTOMAT, MODEQYEAR): not populated on any deal (156). In scope for BOX?
-
-3. BOX FE - calculated values that differ (fixing present in BOX)
-- Current rate (RATECUR): 111 deals (28 rebooked). Example GBO 13657558.44 / BOX 11785822.513: GBO 4.08.
-- Current interest (INTERESTCUR): 103 deals (27 rebooked). Example GBO 13658753.44 / BOX 11845822.513:
-  GBO 90,917,555.19.
-Could we review two examples together to see where the calculations diverge?
-
-4. To confirm - maturity date
-Maturity date is 2 business days later in BOX on 63 deals (example GBO 13658753.44 / BOX 11845822.513:
-GBO 04-JAN-27). Is BOX storing the payment date? Is that intended?
-
-5. Unexplained
-CASHD differs on 2 deals (example GBO 40598.35 / BOX 1680671.513, GBO -701,849.09). Both are rebooked, so they may
-belong to point 1 - could you check them?
-
-Explained, no action
-- FK_FLOATINGRATE: GBO uses 0 for fixed legs; no difference on floating legs.
-- Code values (instrument, status, portfolio property, fee type) map one-to-one between GBO and BOX.
-
-Next steps
-Once the rebook handling (point 1) and the RAW load are fixed, we will re-run the comparison on the full NY
-population and on more dates.
-
-Thanks,
-Edouard
+Standing rule from now on: explain each DIFF from the code before asking anyone.
+1. In cib-boxfin-dbboxfe (read-only), read p_update_current_values: quote (file:line) how RATECUR and INTERESTCUR are
+   computed, including is_interest and chk_between (which date, which boundaries, which flow types).
+2. For every other column in the Issues table (MATURITYDATE, PRINCIPALFWD, NOTIONAL / PRINCIPAL, INTERESTCASH, CASHD,
+   DAYSTOMAT...): find where BOX_FE sets it (the UPDATE / INSERT / SELECT that writes it) and quote it; "not set
+   anywhere" is an answer too.
+3. GBO side, same columns: if GBO's FE source is in a repo you can read, quote it; if not, give me one ALL_SOURCE
+   query (pgtadmin; owners DEVENG / PGT_PRG / PGT_SYS) searching those column names, and read its output.
+4. RATECUR (111) / INTERESTCUR (103) deals:
+   a. rebuild BOX's two values from T_BOX_FLOW_DATA_S with the code's exact rule and confirm they equal BOX's
+      financial row;
+   b. take GBO's current interest flow for the same leg (PGT_TRD.T_PGT_CASH_FLOWS_S, link FK_INTRATE, live flows only)
+      and classify each deal: data (GBO flow rate / amount <> BOX flow), definition (flows equal but GBO's value means
+      something else - say what it equals: rate without spread? accrued to date?), convention (a different flow is
+      "current", e.g. a period boundary on / near 25-Sep). Counts per class, rebooked deals separate, 2 examples each.
+   Give me any query you need (BOX_ADMIN / pgtadmin).
+5. Classify every other DIFF the same way, from the code: data / definition / convention / defect (BOX's code doesn't
+   do what it intends).
+6. Add "BOX source (package, line)" and "GBO source" columns to the Issues sheet; same text in 03-results.md; update
+   PR #134 and paste the updated table here.
+If you cannot read cib-boxfin-dbboxfe, tell me - don't guess the code.

@@ -1,8 +1,9 @@
-Table received, thanks. Three fixes, then final xlsx + PR #134:
-1. Row 9 FK_FLOATINGRATE: GBO 0 = fixed leg, so GBO 0 vs BOX blank is not a difference. Recount on floating legs only
-   (GBO > 0, BOX blank); if 0, move the row to "explained".
-2. Row 11 CAPTUREDATE: category "explained, no issue" (GBO = rebook date, BOX = original trade date); note the 12-deal
-   overlap with row 2.
-3. Row 4: add what the 25 deals with x1.1544118 have in common (book, start date, amortising, fixed / float, index,
-   day count) - or say "no common attribute found".
-Row 2 owner: Data Lake / RAW (the cancel status never arrives) - keep it that way.
+Great finding. Merge rows 2, 4 and 11 into one mismatch type "rebooked deals: BOX holds the pre-rebook contract
+version" (owner: Data Lake / RAW, with a design question for BOX FE). For it, give:
+1. How many of the 156 CLEAN deals are rebooked (GBO CAPTUREDATE <> BOX trade date, or GBO cancelled flows), and, per
+   other mismatch type (1, 3, 5, 6, 7, 10, 12), how many of its deals are rebooked - so we see what else this cause
+   explains.
+2. The other notional ratios (1.09633 on 14550803.44, 0.097227 on 14872927.44/28): rebooked too? If yes, in the same
+   type; if not, their own row.
+3. Match rate excluding rebooked deals: deals with activity fully matching / total, populated-fields match %.
+Update the Issues sheet, 03-results.md and PR #134 (final), and paste the updated table here.

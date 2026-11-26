@@ -1,7 +1,7 @@
--- 1) IGBOUSIB: candidate tables
-SELECT owner, table_name FROM all_tables
-WHERE table_name LIKE '%JOB%CONF%' OR table_name LIKE '%MBJ%' OR table_name LIKE '%JOB%CFG%'
-ORDER BY 1, 2;
+-- 1) Rule out the MBJ properties table
+SELECT * FROM BOX_ACC.T_BOX_MBJ_PROPERTIES_S WHERE PK = 408.44;
 
--- 3) IGBOUS
-SELECT PK, <name column> FROM <owner>.<table> WHERE <name column> LIKE '%MBJ - Generic%';
+-- 2) Every JOB table in the BOX / PGT schemas
+SELECT owner, table_name FROM all_tables
+WHERE table_name LIKE '%JOB%' AND (owner LIKE 'BOX%' OR owner LIKE 'PGT%')
+ORDER BY 1, 2;

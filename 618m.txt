@@ -1,7 +1,22 @@
--- 1) Rule out the MBJ properties table
-SELECT * FROM BOX_ACC.T_BOX_MBJ_PROPERTIES_S WHERE PK = 408.44;
+Hola João, propuesta para MBJ PaaS (BOX) de NY SCH en PRE-Paralelo (IGBOUSIB). PRE (IGBOUS) después. ¿Lo validas?
 
--- 2) Every JOB table in the BOX / PGT schemas
-SELECT owner, table_name FROM all_tables
-WHERE table_name LIKE '%JOB%' AND (owner LIKE 'BOX%' OR owner LIKE 'PGT%')
-ORDER BY 1, 2;
+| # | Dónde | Qué | Por qué |
+|---|-------|-----|---------|
+| 1 | Repo cib-tiichl-gboamericasunix | Rama nueva desde develop (p.ej. feature/mbj-paas-box) | Cambio revisable |
+| 2 | src/gmny/bin/GBOCL_MBJBATCH/mbjbox.sh | Tu script + 1 línea tras LOGS=...: mkdir -p "$LOGS" | Si logs/box no existe, main no se ejecuta y Control-M ve exit 0 (OK falso) |
+| 3 | src/gmny/bin/GBOCL_MBJBATCH/mbjOnlineLib.sh | Tu fichero, sin cambios | Lanzamiento y polling |
+| 4 | src/gmny/bin/GBOCL_MBJBATCH/conf/BOX/mbjOnlineConf.sh | Tu conf de PRE-Paralelo: host box-security-gateway.scib.pre.corp/mbj, INSTANCE_CODE=TIER2-PARALLEL, JOB_CONFIG=408.44, USERNAME=CONTROLM, backoff y kill switch igual; TOKEN = ver paso 5 | mbjbox.sh lee conf/BOX y la lib desde su propia carpeta: sin cambiar rutas |
+| 5 | Token (elegir A o B) | A) Gluon: en el conf, TOKEN = placeholder Gluon; en sensitive-data/<env>/unix/cib-tiichl-gboamericasunix.yaml: mbj_api_token: {{ clave Vault }}. B) A mano: en git solo mbjOnlineConf.sh.example (TOKEN="") + .gitignore del conf real; en el servidor cp .example → mbjOnlineConf.sh, poner token, chmod 600 | El token nunca en git |
+| 6 | GitHub | PR a develop; merge solo con tu OK | Revisión |
+| 7 | GitHub Actions: deploy.yml | Desplegar en el entorno de PRE-Paralelo (environment-type / environment = ?; SNOW task si hace falta) | Instala en /appl/gmny/bin/GBOCL_MBJBATCH |
+| 8 | Servidor PRE-Paralelo | Comprobar: ficheros presentes, mbjbox.sh ejecutable (o llamado con bash), logs/box escribible por el usuario de Control-M, token relleno (sin mostrarlo) | Las subidas web no marcan ejecutable |
+| 9 | Control-M PRE-Paralelo | Jobs llamando a /appl/gmny/bin/GBOCL_MBJBATCH/mbjbox.sh <arg1> <arg2> <arg3> | Sin esto no se lanza nada |
+| 10 | Prueba | Lanzar 1 job; ver SIGOM IGBOUSIB > BOX\Job Control\Job Manager > "MBJ - Generic" y logs/box/<arg1>-<arg2>-<fecha>.log; un job KO debe salir KO en Control-M | Rollback = revert del PR y redeploy |
+
+Dudas:
+a) Token: ¿A (Gluon) o B (a mano)? Si A: sintaxis del placeholder en el conf, carpeta <env> de PRE-Paralelo en sensitive-data, y quién da de alta la clave en Vault.
+b) Paso 7: ¿qué environment-type / environment corresponde al servidor de PRE-Paralelo? ¿Hace falta SNOW task?
+c) Paso 9: ¿quién crea/cambia los jobs de Control-M y qué son <arg1> <arg2> <arg3>?
+d) ¿El servidor de PRE-Paralelo llega a box-security-gateway.scib.pre.corp y tiene curl (y jq si la lib lo usa)?
+e) ¿Existe el usuario CONTROLM en BOX IGBOUSIB con acceso a "MBJ - Generic"?
+f) Cuando hagamos PRE: si IGBOUS e IGBOUSIB comparten servidor (/appl/gmny), un solo conf no sirve para los dos instance codes. ¿Comparten?

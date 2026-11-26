@@ -1,62 +1,13 @@
-Subject: RE: NY SCH - GBO vs BOX FE comparison, IRS 25-Sep-2026 (PRE-PARALELO): results and questions
-
-Hi,
-
-Thanks for your answers - they let us explain most differences from the code. Here is where we are.
-
-Scope
-- NY SCH interest rate swaps, 25-Sep-2026, PRE-PARALELO (IGBOUSIB). GBO and BOX deals paired through the AUKI
-  migration crosswalk (BOX_MIG.T_BOX_AUKI_MIG_DEALS_S); FRONT_ID is not shared between the systems.
-- Compared: the 63 deals BOX holds completely (all legs, deal data, dated flows including the current interest period,
-  fixings). Deals with missing data are listed separately at the end.
-
-Headline
-- 33 of the 63 deals match GBO on every column that should agree.
-- 49 of 63 if we leave aside current rate / current interest (point 2).
-- The attached workbook (sheet "Issues") has one row per mismatch type, with an example and the code reference.
-
-1. Rebooked deals - BOX holds the pre-rebook contract version (45 of the 156 complete deals)
-For deals amended / rebooked in GBO (mostly May 2025), BOX holds the original version:
-- notional / principal = the pre-rebook amount (e.g. x1.1544118 on 10 deals of book 3684.44);
-- flows paid before the rebook, cancelled in GBO, arrive in BOX as Live and are counted as cash: INTERESTCASH sums all
-  paid flows with no cancel check (datadeal load, L150-153);
-- trade / capture date = the original trade; GBO shows the rebook date.
-Example: GBO 14550803.44 = BOX 38057225.513 (INTERESTCASH: GBO 0, BOX the sum of the cancelled paid flows).
-Questions:
-a) BOX FE: how should BOX handle an amendment / rebook - replace the deal version and drop the replaced flows?
-b) Data Lake / RAW: does the feed send the amended version and a status for replaced flows? Today RAW and processed
-   flows show STATUS = 'Live' and a single CURRENT_CONTRACT for all of them.
-
-2. Current interest on compounded overnight legs (SOFR, CDI, TIIE) - 74 deals
-BOX takes INTERESTCUR from the current flow's amount (p_update_current_values), which is 0 until a compounded period
-ends. GBO shows a projection of the current period's coupon: within about 0.1% of the period's scheduled cash flow
-in GBO (e.g. GBO INTERESTCUR 452,513 vs scheduled 452,872).
-Example: GBO 13658753.44 / BOX 11845822.513: GBO 90,917,555.19, BOX 0.
-Questions:
-a) BOX FE: should BOX project the current coupon on compounded legs, as GBO does?
-b) GBO team: what exactly does GBO's INTERESTCUR compute for these legs (projected coupon, adjusted how)?
-
-3. Not calculated in BOX - by design?
-From the code these are never computed (written as 0 / null or not written): PRINCIPALFWD (differs on 9 deals),
-DAYSTOMAT / WORKDAYSTOMAT / MODEQYEAR (all deals), CASHD (2 deals). Like PLACC / CARRY, by design - or to be built?
-
-Confirmed / explained - no action
-- P&L accrual and fee accruals (PLACC): not calculated in BOX, as you said.
-- RATECUR / INTERESTCUR: BOX's stored values equal your rule on every leg checked (max RATE / sum AMOUNT of the
-  current interest flow). On USD legs GBO leaves RATECUR at 0 while BOX stores the coupon rate - a GBO convention.
-- Maturity date: BOX takes RAW MATURITYDATEREAL = the last flow's payment date; GBO keeps the accrual end date
-  (1-5 days apart on overnight compounded legs). Just confirm this is the date you want BOX to keep.
-- FK_FLOATINGRATE (GBO 0 = fixed leg) and code values (instrument, status, portfolio property, fee type) map
-  one-to-one.
-
-Missing data - for the RAW / Data Lake owner (not part of the comparison)
-- 93 complete deals have no current interest flow in BOX: on 60 of them there is no interest flow at all and no RAW
-  row; on 4 the current period is not in the feed.
-- The BOX import drops NY IRS deals before T_BOX_DEAL_DATA_S:
-  - 506 on 25-Sep at the FK_PARENT IS NULL / BO_CODE source-suffix condition (pkg_fe_deal_calculation L79);
-  - and the inner join on BOX_TRD.T_BOX_DEAL_S drops deals with no row there (9 seen in a sample of 18).
-
-Next: once the rebook handling and the RAW load are fixed, we'll re-run on the full NY population and more dates.
-
-Thanks,
-Edouard
+Hola João, Rebe,
+Antes de preparar la PR: el mbjbox.sh del zip final hace cd a su propia carpeta (/appl/gmny/bin) y lee
+conf/BOX/mbjOnlineConf.sh, mbjOnlineLib.sh y logs/box de forma relativa a ella, es decir desde /appl/gmny/bin. Con
+las rutas del correo de Rebe (lib y conf en /appl/gmny/bin/GBOCL_MBJBATCH) no los encontraría.
+¿Qué preferís?
+A) todo junto en /appl/gmny/bin (bin/mbjOnlineLib.sh, bin/conf/BOX/, bin/logs/box/), como viene el zip; o
+B) las rutas de Rebe, cambiando en mbjbox.sh las tres rutas a GBOCL_MBJBATCH/.
+Y dos dudas más:
+- PRE US (IGBOUS): ¿qué valores de CFG_MBJ_API_INSTANCE_CODE y CFG_MBJ_JOB_CONFIG? (TIER2-PARALLEL / 408.44 son de
+  PRE-Paralelo.) ¿Y cómo gestionamos el token (uno solo ahora) en el despliegue?
+- mbjbox.sh termina con exit 0: si MBJ devuelve NOK o se agota el tiempo, ¿main sale con error para que Control-M
+  marque el job como fallido?
+Gracias!

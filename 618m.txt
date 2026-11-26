@@ -1,13 +1,7 @@
-Hola João, Rebe,
-Antes de preparar la PR: el mbjbox.sh del zip final hace cd a su propia carpeta (/appl/gmny/bin) y lee
-conf/BOX/mbjOnlineConf.sh, mbjOnlineLib.sh y logs/box de forma relativa a ella, es decir desde /appl/gmny/bin. Con
-las rutas del correo de Rebe (lib y conf en /appl/gmny/bin/GBOCL_MBJBATCH) no los encontraría.
-¿Qué preferís?
-A) todo junto en /appl/gmny/bin (bin/mbjOnlineLib.sh, bin/conf/BOX/, bin/logs/box/), como viene el zip; o
-B) las rutas de Rebe, cambiando en mbjbox.sh las tres rutas a GBOCL_MBJBATCH/.
-Y dos dudas más:
-- PRE US (IGBOUS): ¿qué valores de CFG_MBJ_API_INSTANCE_CODE y CFG_MBJ_JOB_CONFIG? (TIER2-PARALLEL / 408.44 son de
-  PRE-Paralelo.) ¿Y cómo gestionamos el token (uno solo ahora) en el despliegue?
-- mbjbox.sh termina con exit 0: si MBJ devuelve NOK o se agota el tiempo, ¿main sale con error para que Control-M
-  marque el job como fallido?
-Gracias!
+-- 1) IGBOUSIB: candidate tables
+SELECT owner, table_name FROM all_tables
+WHERE table_name LIKE '%JOB%CONF%' OR table_name LIKE '%MBJ%' OR table_name LIKE '%JOB%CFG%'
+ORDER BY 1, 2;
+
+-- 3) IGBOUS
+SELECT PK, <name column> FROM <owner>.<table> WHERE <name column> LIKE '%MBJ - Generic%';

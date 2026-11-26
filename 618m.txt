@@ -1,21 +1,30 @@
--- 5. Portfolio properties of the BOX products, per group (Asia + US for calibration)
-SELECT g.DESCRIPTION AS branch_group, sp.DESCRIPTION AS instrument, COUNT(*) AS n_port_props
-FROM   PGT_ACT.T_PGT_ACCT_PORT_PROP_S pp
-JOIN   PGT_STC.T_PGT_BRANCH_GROUP_S g  ON g.PK  = pp.FK_BRANCH
-LEFT   JOIN PGT_SYS.T_PGT_SUB_PRODUCT_S sp ON sp.PK = pp.FK_INSTRUMENT
-WHERE  pp.FK_OWNER_OBJ = 12646.4
-AND    pp.FK_BRANCH IN (21453.4, 21457.4, 21688.45, 21447.4)
-GROUP  BY g.DESCRIPTION, sp.DESCRIPTION
-ORDER  BY 1, 2;
+Hola,
 
--- 6. Last accounting activity of the three branches, per instrument (last 12 months)
-SELECT NVL(b.DESCRIPTION, g.DESCRIPTION) AS branch_or_group, sp.DESCRIPTION AS instrument,
-       COUNT(*) AS n_movements, MIN(m.REGDATE) AS first_date, MAX(m.REGDATE) AS last_date
-FROM   PGT_ACT.T_PGT_ACCT_MOV_S m
-LEFT   JOIN PGT_STC.T_PGT_BRANCH_S       b  ON b.PK  = m.FK_BRANCH
-LEFT   JOIN PGT_STC.T_PGT_BRANCH_GROUP_S g  ON g.PK  = m.FK_BRANCH
-LEFT   JOIN PGT_SYS.T_PGT_SUB_PRODUCT_S  sp ON sp.PK = m.FK_INSTRUMENT
-WHERE  m.FK_BRANCH IN (20063.4, 20081.4, 20159.4, 21453.4, 21457.4, 21688.45)
-AND    m.REGDATE >= DATE '2025-11-01'
-GROUP  BY NVL(b.DESCRIPTION, g.DESCRIPTION), sp.DESCRIPTION
-ORDER  BY 1, 2;
+He revisado Asia en IGBOAS (GBO Tier 2). Resumen:
+
+- Sucursales: Hong Kong, Shanghai y Shenzhen, cada una en su propio grupo.
+- Productos que ya están en BOX (como NY): Depósitos, OTC Option, Swap y CCS en las tres; FRA solo en Hong Kong
+  (2 portfolio properties). FX y Renta Fija quedan fuera.
+- Tamaño (portfolio properties de esos productos): Shanghai 129, Shenzhen 124, Hong Kong 182 (NY: 91).
+- Actividad reciente: solo Shanghai (jun-ago 2026). Shenzhen y Hong Kong apenas tienen; para el test paralelo
+  habría que lanzar GBO en fechas recientes.
+
+Reutilización de los agentes de NY: ~75% tal cual, ~15% adaptación única, ~10% datos de cada sucursal.
+- Adaptación única: leer GBO de Tier 2 (IGBOAS) y configurar BOX en Tier 1, con SLB como referencia.
+- Datos por sucursal: libros, nombres y decisiones.
+- Lo nuevo: FRA (solo Hong Kong).
+
+Estimación: 33-50 días.
+- Adaptación: 10-15.
+- Shanghai (piloto): 10-15.
+- Shenzhen (casi copia de Shanghai): 5-8.
+- Hong Kong: 8-12.
+
+Dependencias que pueden mover las fechas:
+1. Que los datos estáticos de GBO de Asia (sucursal, grupo, carpetas, cuentas) existan en Tier 1. El grupo de
+   Shenzhen se creó en local en IGBOAS.
+2. Los feeds RAW / Data Lake de Asia en Tier 1.
+3. Fechas recientes de GBO en IGBOAS para el test paralelo.
+
+Saludos,
+Edouard

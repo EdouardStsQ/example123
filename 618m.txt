@@ -1,41 +1,21 @@
--- 1. Environment: auth code and BOX schemas in IGBOAS
-SELECT (SELECT MAX(auth_code) FROM gom_glb_sys.t__core_info_s) AS auth_code,
-       (SELECT LISTAGG(username, ', ') WITHIN GROUP (ORDER BY username)
-          FROM all_users WHERE username LIKE 'BOX%') AS box_schemas
-FROM dual;
+-- 5. Portfolio properties of the BOX products, per group (Asia + US for calibration)
+SELECT g.DESCRIPTION AS branch_group, sp.DESCRIPTION AS instrument, COUNT(*) AS n_port_props
+FROM   PGT_ACT.T_PGT_ACCT_PORT_PROP_S pp
+JOIN   PGT_STC.T_PGT_BRANCH_GROUP_S g  ON g.PK  = pp.FK_BRANCH
+LEFT   JOIN PGT_SYS.T_PGT_SUB_PRODUCT_S sp ON sp.PK = pp.FK_INSTRUMENT
+WHERE  pp.FK_OWNER_OBJ = 12646.4
+AND    pp.FK_BRANCH IN (21453.4, 21457.4, 21688.45, 21447.4)
+GROUP  BY g.DESCRIPTION, sp.DESCRIPTION
+ORDER  BY 1, 2;
 
--- 2. Branches with a GBO FE configuration: group, folders, instruments
-SELECT b.PK AS branch_pk, b.CODE, b.DESCRIPTION AS branch, b.FK_LOCALGROUP AS group_pk, g.DESCRIPTION AS branch_group,
-       (SELECT COUNT(*) FROM PGT_STC.T_PGT_FOLDER_S f WHERE f.FK_BRANCH = b.PK) AS n_folders,
-       (SELECT COUNT(*) FROM DEVENG.T_PGT_ENGACCRCONF_S a WHERE a.FK_PARENT = bc.FK_MISCONFIG) AS n_instruments,
-       (SELECT LISTAGG(sp.DESCRIPTION, ', ') WITHIN GROUP (ORDER BY sp.DESCRIPTION)
-          FROM DEVENG.T_PGT_ENGACCRCONF_S a
-          LEFT JOIN PGT_SYS.T_PGT_SUB_PRODUCT_S sp ON sp.PK = a.FK_INSTRUMENT
-         WHERE a.FK_PARENT = bc.FK_MISCONFIG) AS instruments
-FROM   PGT_STC.T_PGT_BRANCH_S b
-JOIN   PGT_STC.T_PGT_BRANCH_CONFIG_S bc ON bc.FK_BRANCH = b.PK
-LEFT   JOIN PGT_STC.T_PGT_BRANCH_GROUP_S g ON g.PK = b.FK_LOCALGROUP
-ORDER  BY branch_group, branch;
-
--- 3. Accounting activity per branch and instrument over one month
---    (PRE data may be older: if it returns 0 rows, move both dates back)
-SELECT m.FK_BRANCH, NVL(b.DESCRIPTION, g.DESCRIPTION) AS branch_or_group, sp.DESCRIPTION AS instrument,
-       COUNT(*) AS n_movements, COUNT(DISTINCT m.FK_PROPERTIES) AS n_port_props_used,
-       MIN(m.REGDATE) AS first_date, MAX(m.REGDATE) AS last_date
+-- 6. Last accounting activity of the three branches, per instrument (last 12 months)
+SELECT NVL(b.DESCRIPTION, g.DESCRIPTION) AS branch_or_group, sp.DESCRIPTION AS instrument,
+       COUNT(*) AS n_movements, MIN(m.REGDATE) AS first_date, MAX(m.REGDATE) AS last_date
 FROM   PGT_ACT.T_PGT_ACCT_MOV_S m
 LEFT   JOIN PGT_STC.T_PGT_BRANCH_S       b  ON b.PK  = m.FK_BRANCH
 LEFT   JOIN PGT_STC.T_PGT_BRANCH_GROUP_S g  ON g.PK  = m.FK_BRANCH
 LEFT   JOIN PGT_SYS.T_PGT_SUB_PRODUCT_S  sp ON sp.PK = m.FK_INSTRUMENT
-WHERE  m.REGDATE >= DATE '2026-10-15' AND m.REGDATE < DATE '2026-11-15'
-GROUP  BY m.FK_BRANCH, NVL(b.DESCRIPTION, g.DESCRIPTION), sp.DESCRIPTION
-ORDER  BY 2, 3;
-
--- 4. Portfolio properties per branch or group (size of the ACC configs)
-SELECT pp.FK_BRANCH, NVL(b.DESCRIPTION, g.DESCRIPTION) AS branch_or_group,
-       COUNT(*) AS n_port_props, COUNT(DISTINCT pp.FK_INSTRUMENT) AS n_instruments
-FROM   PGT_ACT.T_PGT_ACCT_PORT_PROP_S pp
-LEFT   JOIN PGT_STC.T_PGT_BRANCH_S       b ON b.PK = pp.FK_BRANCH
-LEFT   JOIN PGT_STC.T_PGT_BRANCH_GROUP_S g ON g.PK = pp.FK_BRANCH
-WHERE  pp.FK_OWNER_OBJ = 12646.4
-GROUP  BY pp.FK_BRANCH, NVL(b.DESCRIPTION, g.DESCRIPTION)
-ORDER  BY 2;
+WHERE  m.FK_BRANCH IN (20063.4, 20081.4, 20159.4, 21453.4, 21457.4, 21688.45)
+AND    m.REGDATE >= DATE '2025-11-01'
+GROUP  BY NVL(b.DESCRIPTION, g.DESCRIPTION), sp.DESCRIPTION
+ORDER  BY 1, 2;
